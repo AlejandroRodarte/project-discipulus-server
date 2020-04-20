@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Node.js backend server API for a remote-class solution requested by the Call for Code 2020 challenge.",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlejandroRodarte/discipulus-server.git"
