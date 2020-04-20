@@ -1,6 +1,8 @@
 const { Schema } = require('mongoose');
 const validator = require('validator').default;
 
+const fileSchema = require('./file');
+
 const regexp = require('../../util/regexp');
 const badWordsFilter = require('../../util/filter/bad-words-filter');
 
@@ -76,7 +78,12 @@ const userSchema = new Schema({
 
     tokens: [{
         type: String
-    }]
+    }],
+
+    avatar: {
+        type: fileSchema,
+        required: false
+    }
 
 });
 
