@@ -56,3 +56,37 @@ describe('Invalid role models', () => {
     });
 
 });
+
+describe('Valid role models', () => {
+
+    test('Should trim a valid role name', () => {
+
+        const roleDoc = {
+            name: '  ROLE_ADMIN '
+        };
+
+        const role = new Role(roleDoc);
+
+        const validationError = role.validateSync();
+
+        expect(validationError).not.toBeDefined();
+        expect(role.name).toBe('ROLE_ADMIN');
+
+    });
+
+    test('Should uppercase a valid role name', () => {
+
+        const roleDoc = {
+            name: 'role_teacher'
+        };
+
+        const role = new Role(roleDoc);
+
+        const validationError = role.validateSync();
+
+        expect(validationError).not.toBeDefined();
+        expect(role.name).toBe('ROLE_TEACHER');
+
+    });
+
+});
