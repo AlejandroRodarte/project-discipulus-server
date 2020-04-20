@@ -29,6 +29,7 @@
     "supertest": "^4.0.2"
   },
   "dependencies": {
+    "bad-words": "^3.0.3",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
