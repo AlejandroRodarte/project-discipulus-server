@@ -1,10 +1,12 @@
 const { Schema } = require('mongoose');
 
+const regexp = require('../../util/regexp');
+
 const roleSchema = new Schema({
     name: {
         type: String,
         required: true,
-        validate: [/^ROLE_/, 'Roles must start with the ROLE_ keyword'],
+        validate: [regexp.roleName, 'Roles must start with the ROLE_ keyword'],
         unique: true,
         minlength: 6,
         maxlength: 30,
