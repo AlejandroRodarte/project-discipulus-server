@@ -11,7 +11,7 @@ const userSchema = new Schema({
         validate: [
             (value) => {
 
-                if (!regexp.fullName.test(value)){
+                if (!regexp.fullName.test(value) || !regexp.singleName.test(value)){
                     return false;
                 }
 
@@ -23,7 +23,11 @@ const userSchema = new Schema({
 
             },
             'Please provide a valid name (no bad words!)'
-        ]
+        ],
+        unique: false,
+        minlength: 3,
+        maxlength: 100,
+        trim: false
     }
 
 });
