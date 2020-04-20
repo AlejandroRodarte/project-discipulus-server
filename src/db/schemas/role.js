@@ -3,7 +3,7 @@ const { Schema } = require('mongoose');
 const roleSchema = new Schema({
     name: {
         type: String,
-        required: [true, 'Please assign a unique role name.'],
+        required: true,
         validate: [/^ROLE_/, 'Roles must start with the ROLE_ keyword'],
         unique: true,
         minlength: 6,
