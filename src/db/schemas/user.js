@@ -11,7 +11,7 @@ const userSchema = new Schema({
         validate: [
             (value) => {
 
-                if (value.match(regexp.fullName)){
+                if (!regexp.fullName.test(value)){
                     return false;
                 }
 
@@ -24,7 +24,6 @@ const userSchema = new Schema({
             },
             'Please provide a valid name (no bad words!)'
         ]
-        
     }
 
 });
