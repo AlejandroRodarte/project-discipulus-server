@@ -38,7 +38,7 @@ describe('Invalid user models', () => {
 
     });
 
-    test('Should not create a user with an invalid name', () => {
+    test('Should not create a user with a name that has invalid characters', () => {
 
         userDoc.name = 'Max+ User!';
 

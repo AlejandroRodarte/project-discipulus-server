@@ -13,7 +13,7 @@ const userDefinition = {
         validate: [
             (value) => {
 
-                if (!fullName.test(value) || !singleName.test(value)){
+                if (!fullName.test(value) && !singleName.test(value)) {
                     return false;
                 }
 
