@@ -3,14 +3,17 @@ const File = require('../../../src/db/models/file');
 const { fileDefinition } = require('../../../src/db/schemas/file');
 
 let fileDoc;
+let file;
 
 beforeEach(() => {
 
     fileDoc = {
         originalname: 'this is my file.pdf',
         mimetype: 'application/pdf',
-        keyname: 'unique-identifier-filename.pdf'
+        keyname: '710b962e-041c-11e1-9234-0123456789ab.pdf'
     };
+
+    file = new File(fileDoc);
 
 });
 
@@ -21,9 +24,7 @@ describe('Invalid file originalnames', () => {
 
     test('Should not validate a file without an original filename', () => {
 
-        delete fileDoc.originalname;
-
-        const file = new File(fileDoc);
+        file.originalname = null;
 
         const validationError = file.validateSync();
         const [, validationMessage] = fileDefinition.originalname.required;
@@ -34,22 +35,51 @@ describe('Invalid file originalnames', () => {
 
     test('Should not validate a file with an invalid original filename', () => {
 
-        fileDoc.originalname = ':bad_filename.csv';
+        const originalnames = [
+            ':bad_filename.csv',
+            '?bad name.txt',
+            'no-extension',
+            'what\\a name.pdf'
+        ];
 
-        const file = new File(fileDoc);
+        originalnames.forEach(originalname => {
 
-        const validationError = file.validateSync();
-        const [, validationMessage] = fileDefinition.originalname.validate;
+            file.originalname = originalname;
 
-        expect(validationError.message.includes(validationMessage)).toBe(true);
+            const validationError = file.validateSync();
+            const [, validationMessage] = fileDefinition.originalname.validate;
+
+            expect(validationError.message.includes(validationMessage)).toBe(true);
+
+        });
+
+    });
+
+    test('Should not validate a file with a profane original filename', () => {
+
+        const originalnames = [
+            'you-bastards.csv',
+            'extension.bitch',
+            'my-cock.gif',
+            'dick.txt'
+        ];
+
+        originalnames.forEach(originalname => {
+
+            file.originalname = originalname;
+
+            const validationError = file.validateSync();
+            const [, validationMessage] = fileDefinition.originalname.validate;
+
+            expect(validationError.message.includes(validationMessage)).toBe(true);
+
+        });
 
     });
 
     test(`Should not validate a file with an original filename shorter than ${ originalnameMinLength } characters`, () => {
 
-        fileDoc.originalname = '.c';
-
-        const file = new File(fileDoc);
+        file.originalname = '.c';
 
         const validationError = file.validateSync();
         const [, validationMessage] = fileDefinition.originalname.minlength;
@@ -60,9 +90,7 @@ describe('Invalid file originalnames', () => {
 
     test(`Should not validate a file with an original filename longer than ${ originalnameMaxLength } characters`, () => {
 
-        fileDoc.originalname = `${[...Array(originalnameMaxLength + 1)].map(_ => 'a').join('')}.txt`;
-
-        const file = new File(fileDoc);
+        file.originalname = `${[...Array(originalnameMaxLength + 1)].map(_ => 'a').join('')}.txt`;
 
         const validationError = file.validateSync();
         const [, validationMessage] = fileDefinition.originalname.maxlength;
@@ -70,5 +98,46 @@ describe('Invalid file originalnames', () => {
         expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
+
+});
+
+describe('Invalid file mimetypes', () => {
+
+    test('Should not validate a file without a mimetype', () => {
+
+        file.mimetype = null;
+
+        const validationError = file.validateSync();
+        const [, validationMessage] = fileDefinition.mimetype.required;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test('Should not validate a file with an invalid mimetype', () => {
+
+        const mimetypes = [
+            'application-json',
+            'image_jpeg',
+            'video//mp4',
+            'imege__png'
+        ];
+
+        mimetypes.forEach(mimetype => {
+
+            file.mimetype = mimetype;
+
+            const validationError = file.validateSync();
+            const [, validationMessage] = fileDefinition.mimetype.validate;
+
+            expect(validationError.message.includes(validationMessage)).toBe(true);
+
+        });
+
+    });
+
+});
+
+describe('Invalid file keynames', () => {
 
 });
