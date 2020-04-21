@@ -1,8 +1,6 @@
-const { Schema } = require('mongoose');
+const regexp = require('../../../util/regexp');
 
-const regexp = require('../../util/regexp');
-
-const roleSchema = new Schema({
+const roleDefinition = {
     name: {
         type: String,
         required: [true, 'A role name is required'],
@@ -13,6 +11,6 @@ const roleSchema = new Schema({
         trim: true,
         uppercase: true
     }
-});
+};
 
-module.exports = roleSchema;
+module.exports = roleDefinition;

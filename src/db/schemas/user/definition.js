@@ -1,12 +1,11 @@
-const { Schema } = require('mongoose');
-const validator = require('validator').default;
+const { isEmail } = require('validator').default;
 
-const fileSchema = require('./file');
+const { fileSchema } = require('../file');
 
-const regexp = require('../../util/regexp');
-const badWordsFilter = require('../../util/filter/bad-words-filter');
+const { fullName, singleName } = require('../../../util/regexp');
+const { isProfane } = require('../../../util/filter/bad-words-filter');
 
-const userSchema = new Schema({
+const userDefinition = {
 
     name: {
         type: String,
@@ -14,11 +13,11 @@ const userSchema = new Schema({
         validate: [
             (value) => {
 
-                if (!regexp.fullName.test(value) || !regexp.singleName.test(value)){
+                if (!fullName.test(value) || !singleName.test(value)){
                     return false;
                 }
 
-                if (badWordsFilter.isProfane(value)) {
+                if (isProfane(value)) {
                     return false;
                 }
 
@@ -39,11 +38,11 @@ const userSchema = new Schema({
         validate: [
             (value) => {
 
-                if (!regexp.username.test(value)){
+                if (!username.test(value)){
                     return false;
                 }
 
-                if (badWordsFilter.isProfane(value)) {
+                if (isProfane(value)) {
                     return false;
                 }
 
@@ -61,10 +60,7 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
-        validate: [
-            (value) => validator.isEmail(value),
-            'Please provide a valid email'
-        ],
+        validate: [isEmail, 'Please provide a valid email'],
         unique: true,
         trim: true
     },
@@ -85,6 +81,6 @@ const userSchema = new Schema({
         required: false
     }
 
-});
+};
 
-module.exports = userSchema;
+module.exports = userDefinition;

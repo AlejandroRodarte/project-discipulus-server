@@ -1,5 +1,7 @@
 const Role = require('../../../src/db/models/role');
 
+const { roleDefinition } = require('../../../src/db/schemas/role');
+
 describe('Invalid role models', () => {
 
     test('Should not create a role without a name', () => {
@@ -8,9 +10,10 @@ describe('Invalid role models', () => {
         const role = new Role(roleDoc);
 
         const validationError = role.validateSync();
+        const [, validationMessage] = roleDefinition.name.required;
 
         expect(validationError).toBeDefined();
-        expect(validationError.message.includes('A role name is required'));
+        expect(validationError.message.includes(validationMessage));
 
     });
 
@@ -23,9 +26,10 @@ describe('Invalid role models', () => {
         const role = new Role(roleDoc);
 
         const validationError = role.validateSync();
+        const [, validationMessage] = roleDefinition.name.validate;
 
         expect(validationError).toBeDefined();
-        expect(validationError.message.includes('Roles must start with the ROLE_ keyword'));
+        expect(validationError.message.includes(validationMessage));
 
     });
 
@@ -38,9 +42,10 @@ describe('Invalid role models', () => {
         const role = new Role(roleDoc);
 
         const validationError = role.validateSync();
+        const [, validationMessage] = roleDefinition.name.minlength;
 
         expect(validationError).toBeDefined();
-        expect(validationError.message.includes('Role name must be at least 6 characters long'));
+        expect(validationError.message.includes(validationMessage));
 
     });
 
@@ -53,9 +58,10 @@ describe('Invalid role models', () => {
         const role = new Role(roleDoc);
 
         const validationError = role.validateSync();
+        const [, validationMessage] = roleDefinition.name.maxlength;
 
         expect(validationError).toBeDefined();
-        expect(validationError.message.includes('Role name must be at least 30 characters long'));
+        expect(validationError.message.includes(validationMessage));
 
     });
 

@@ -1,9 +1,19 @@
-const roleSchema = require('./role');
-const userSchema = require('./user');
-const fileSchema = require('./file');
+const { roleDefinition, roleSchema } = require('./role');
+const { userDefinition, userSchema } = require('./user');
+const { fileDefinition, fileSchema } = require('./file');
 
 module.exports = {
-    roleSchema,
-    userSchema,
-    fileSchema
+
+    definitions: {
+        roleDefinition,
+        userDefinition,
+        fileDefinition
+    },
+
+    schemas: {
+        roleSchema,
+        userSchema,
+        fileSchema
+    }
+
 };
