@@ -5,6 +5,8 @@ const { fileSchema } = require('../file');
 const { fullName, singleName, username } = require('../../../util/regexp');
 const { badWordsFilter, utils } = require('../../../util/filter/bad-words-filter');
 
+const utilFunctions = require('../../../util/functions');
+
 const userDefinition = {
 
     name: {
@@ -31,7 +33,7 @@ const userDefinition = {
         maxlength: [100, 'Your name must not exceed 100 characters long'],
         set: (value) => {
             if (value) {
-                return value.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+                return utilFunctions.trimRedundantSpaces(value);
             }
             return null;
         }
