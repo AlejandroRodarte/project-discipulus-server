@@ -97,6 +97,9 @@ describe('Invalid user names', () => {
 
 describe('Invalid user usernames', () => {
 
+    const [usernameMinLength] = userDefinition.username.minlength;
+    const [usernameMaxLength] = userDefinition.username.maxlength;
+
     test('Should not validate a user without a username', () => {
 
         delete userDoc.username;
@@ -131,6 +134,32 @@ describe('Invalid user usernames', () => {
 
         const validationError = user.validateSync();
         const [, validationMessage] = userDefinition.username.validate;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test(`Should not validate a user with a username shorter than ${ usernameMinLength } characters`, () => {
+
+        userDoc.username = 'cz'
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.username.minlength;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test(`Should not validate a user with a username longer than ${ usernameMaxLength } characters`, () => {
+
+        userDoc.username = 'superlongusernamebruh'
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.username.maxlength;
 
         expect(validationError.message.includes(validationMessage)).toBe(true);
 
