@@ -1,9 +1,9 @@
-const { isEmail } = require('validator').default;
+const validator = require('validator').default;
 
 const { fileSchema } = require('../file');
 
 const { fullName, singleName } = require('../../../util/regexp');
-const { isProfane } = require('../../../util/filter/bad-words-filter');
+const badWordsFilter = require('../../../util/filter/bad-words-filter');
 
 const userDefinition = {
 
@@ -17,7 +17,7 @@ const userDefinition = {
                     return false;
                 }
 
-                if (isProfane(value)) {
+                if (badWordsFilter.isProfane(value)) {
                     return false;
                 }
 
@@ -28,7 +28,7 @@ const userDefinition = {
         ],
         unique: false,
         minlength: [3, 'Your name must be at least 3 characters long'],
-        maxlength: [3, 'Your name must not exceed 100 characters long'],
+        maxlength: [100, 'Your name must not exceed 100 characters long'],
         trim: false
     },
 
@@ -42,14 +42,14 @@ const userDefinition = {
                     return false;
                 }
 
-                if (isProfane(value)) {
+                if (badWordsFilter.isProfane(value)) {
                     return false;
                 }
 
                 return true;
 
             },
-            'Please provide a valid name (no bad words!)'
+            'Please provide a valid username (no bad words!)'
         ],
         unique: true,
         minlength: [4, 'Your username must be at least 4 characters long'],
@@ -60,7 +60,7 @@ const userDefinition = {
     email: {
         type: String,
         required: [true, 'A unique email is required'],
-        validate: [isEmail, 'Please provide a valid email'],
+        validate: [validator.isEmail, 'Please provide a valid email'],
         unique: true,
         trim: true
     },
