@@ -33,7 +33,7 @@ describe('Invalid user names', () => {
 
     test('Should not validate a user without a name', () => {
 
-        user.name = null;
+        user.name = undefined;
 
         const validationError = user.validateSync();
         const [, validationMessage] = userDefinition.name.required;
@@ -141,7 +141,7 @@ describe('Invalid user usernames', () => {
 
     test('Should not validate a user without a username', () => {
 
-        user.username = null;
+        user.username = undefined;
 
         const validationError = user.validateSync();
         const [, validationMessage] = userDefinition.username.required;
@@ -200,7 +200,7 @@ describe('Invalid user emails', () => {
 
     test('Should not validate a user without an email', () => {
 
-        user.email = null;
+        user.email = undefined;
 
         const validationError = user.validateSync();
         const [, validationMessage] = userDefinition.email.required;
@@ -229,7 +229,7 @@ describe('Invalid user passwords', () => {
 
     test('Should not validate a user without a password', () => {
 
-        user.password = null;
+        user.password = undefined;
 
         const validationError = user.validateSync();
         const [, validationMessage] = userDefinition.password.required;

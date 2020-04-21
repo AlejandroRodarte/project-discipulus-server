@@ -23,7 +23,7 @@ describe('Invalid role models', () => {
 
     test('Should not create a role without a name', () => {
 
-        role.name = null;
+        role.name = undefined;
 
         const validationError = role.validateSync();
         const [, validationMessage] = roleDefinition.name.required;

@@ -24,7 +24,7 @@ describe('Invalid file originalnames', () => {
 
     test('Should not validate a file without an original filename', () => {
 
-        file.originalname = null;
+        file.originalname = undefined;
 
         const validationError = file.validateSync();
         const [, validationMessage] = fileDefinition.originalname.required;
@@ -83,7 +83,7 @@ describe('Invalid file mimetypes', () => {
 
     test('Should not validate a file without a mimetype', () => {
 
-        file.mimetype = null;
+        file.mimetype = undefined;
 
         const validationError = file.validateSync();
         const [, validationMessage] = fileDefinition.mimetype.required;
@@ -112,7 +112,7 @@ describe('Invalid file keynames', () => {
 
     test('Should not validate a file without a keyname', () => {
 
-        file.keyname = null;
+        file.keyname = undefined;
 
         const validationError = file.validateSync();
         const [, validationMessage] = fileDefinition.keyname.required;
