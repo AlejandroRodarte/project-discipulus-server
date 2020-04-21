@@ -4,6 +4,10 @@ const { roleDefinition } = require('../../../src/db/schemas/role');
 
 describe('Invalid role models', () => {
 
+    const [regexp] = roleDefinition.name.validate;
+    const [minlength] = roleDefinition.name.minlength;
+    const [maxlength] = roleDefinition.name.maxlength;
+
     test('Should not create a role without a name', () => {
 
         const roleDoc = {};
@@ -17,7 +21,7 @@ describe('Invalid role models', () => {
 
     });
 
-    test('Should not create a role that does not start with ROLE_', () => {
+    test(`Should not create a role that does not start with ${ regexp }`, () => {
 
         const roleDoc = {
             name: 'MY_USER_ROLE'
@@ -33,7 +37,7 @@ describe('Invalid role models', () => {
 
     });
 
-    test('Should not create a role shorter than 6 characters', () => {
+    test(`Should not create a role shorter than ${ minlength } characters`, () => {
 
         const roleDoc = {
             name: 'ROLE_'
@@ -49,7 +53,7 @@ describe('Invalid role models', () => {
 
     });
 
-    test('Should not create a role longer than 30 characters', () => {
+    test(`Should not create a role longer than ${ maxlength } characters`, () => {
 
         const roleDoc = {
             name: 'ROLE_SUPER_ADMINISTRATOR_MAGICIAN_OWNER'
