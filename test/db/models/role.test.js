@@ -10,6 +10,7 @@ describe('Invalid role models', () => {
         const validationError = role.validateSync();
 
         expect(validationError).toBeDefined();
+        expect(validationError.message.includes('A role name is required'));
 
     });
 
@@ -24,6 +25,7 @@ describe('Invalid role models', () => {
         const validationError = role.validateSync();
 
         expect(validationError).toBeDefined();
+        expect(validationError.message.includes('Roles must start with the ROLE_ keyword'));
 
     });
 
@@ -38,6 +40,7 @@ describe('Invalid role models', () => {
         const validationError = role.validateSync();
 
         expect(validationError).toBeDefined();
+        expect(validationError.message.includes('Role name must be at least 6 characters long'));
 
     });
 
@@ -52,6 +55,7 @@ describe('Invalid role models', () => {
         const validationError = role.validateSync();
 
         expect(validationError).toBeDefined();
+        expect(validationError.message.includes('Role name must be at least 30 characters long'));
 
     });
 
