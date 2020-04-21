@@ -3,9 +3,7 @@ const validator = require('validator').default;
 const { fileSchema } = require('../file');
 
 const { fullName, singleName, username } = require('../../../util/regexp');
-const badWordsFilter = require('../../../util/filter/bad-words-filter');
-
-const includesProfaneWord = word => badWordsFilter.list.some(badWord => word.includes(badWord));
+const { badWordsFilter, utils } = require('../../../util/filter/bad-words-filter');
 
 const userDefinition = {
 
@@ -19,7 +17,7 @@ const userDefinition = {
                     return false;
                 }
 
-                if (badWordsFilter.isProfane(value)) {
+                if (badWordsFilter.isProfane(value) || utils.includesProfaneWord(value)) {
                     return false;
                 }
 
@@ -44,7 +42,7 @@ const userDefinition = {
                     return false;
                 }
 
-                if (includesProfaneWord(value)) {
+                if (utils.includesProfaneWord(value)) {
                     return false;
                 }
 

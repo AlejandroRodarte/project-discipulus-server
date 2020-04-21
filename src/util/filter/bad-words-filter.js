@@ -2,4 +2,11 @@ const Filter = require('bad-words');
 
 const badWordsFilter = new Filter();
 
-module.exports = badWordsFilter;
+const includesProfaneWord = word => badWordsFilter.list.some(badWord => word.toLowerCase().includes(badWord.toLowerCase()));
+
+module.exports = {
+    badWordsFilter,
+    utils: {
+        includesProfaneWord
+    }
+};

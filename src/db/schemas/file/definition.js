@@ -1,11 +1,28 @@
 const { filename, mimeType } = require('../../../util/regexp');
 
+const { badWordsFilter, utils } = require('../../../util/filter/bad-words-filter');
+
 const fileDefinition = {
 
     originalname: {
         type: String,
         required: [true, 'An original filename is required'],
-        validate: [filename, 'Please provide a valid filename'],
+        validate: [
+            (value) => {
+
+                if (!filename.test(value)) {
+                    return false;
+                }
+
+                if (badWordsFilter.isProfane(value) || utils.includesProfaneWord(value)) {
+                    return false;
+                }
+
+                return true;
+
+            }, 
+            'Please provide a valid filename (no bad words!)'
+        ],
         unique: false,
         minlength: [3, 'Original filename must be longer than 3 characters'],
         maxlength: [200, 'Original filename must be shorter than 200 characters'],

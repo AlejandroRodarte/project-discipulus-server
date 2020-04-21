@@ -68,14 +68,23 @@ describe('Invalid user names', () => {
 
     test('Should not validate a user with a profane name', () => {
 
-        userDoc.name = 'Max Fuck';
+        const names = [
+            'Pussy Destroyer',
+            'Matt Fuckme',
+            'Shittin on a Toilet',
+            'Sex'
+        ];
 
-        const user = new User(userDoc);
+        names.forEach(name => {
 
-        const validationError = user.validateSync();
-        const [, validationMessage] = userDefinition.name.validate;
+            user.name = name;
+    
+            const validationError = user.validateSync();
+            const [, validationMessage] = userDefinition.name.validate;
+    
+            expect(validationError.message.includes(validationMessage)).toBe(true);
 
-        expect(validationError.message.includes(validationMessage)).toBe(true);
+        });
 
     });
 
