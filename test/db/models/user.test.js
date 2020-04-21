@@ -3,6 +3,7 @@ const User = require('../../../src/db/models/user');
 const { userDefinition } = require('../../../src/db/schemas/user');
 
 let userDoc;
+let user = new User();
 
 beforeEach(() => {
 
@@ -17,9 +18,11 @@ beforeEach(() => {
         avatar: {
             originalname: 'this is my file.pdf',
             mimetype: 'application/pdf',
-            keyname: 'unique-identifier-filename.pdf'
+            keyname: '710b962e-041c-11e1-9234-0123456789ab.pdf'
         }
     };
+
+    user = new User(userDoc);
 
 });
 
@@ -43,14 +46,23 @@ describe('Invalid user names', () => {
 
     test('Should not validate a user with a name that has invalid characters', () => {
 
-        userDoc.name = 'Max+ User!';
+        const names = [
+            'Max+ User!',
+            '__Matt Damon',
+            '-George Ramirez',
+            '.Unknown'
+        ];
 
-        const user = new User(userDoc);
+        names.forEach(name => {
 
-        const validationError = user.validateSync();
-        const [, validationMessage] = userDefinition.name.validate;
+            user.name = name;
+    
+            const validationError = user.validateSync();
+            const [, validationMessage] = userDefinition.name.validate;
+    
+            expect(validationError.message.includes(validationMessage)).toBe(true);
 
-        expect(validationError.message.includes(validationMessage)).toBe(true);
+        });
 
     });
 

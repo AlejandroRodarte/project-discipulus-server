@@ -25,8 +25,8 @@ const fileDefinition = {
         required: [true, 'A unique keyname is required'],
         validate: [filename, 'Please provide a valid filename'],
         unique: true,
-        minlength: [36, 'Keyname must be longer than 36 characters'],
-        maxlength: [36, 'Keyname must be shorter than 36 characters']
+        minlength: [38, 'Keyname must be longer than 36 characters'],
+        maxlength: [60, 'Keyname must be shorter than 50 characters']
     }
 
 };
