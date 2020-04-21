@@ -196,6 +196,30 @@ describe('Invalid user usernames', () => {
 
 });
 
+describe('Valid user usernames', () => {
+
+    test('Should validate a correct username', () => {
+
+        user.username = 'lion_delta42'
+
+        const validationError = user.validateSync();
+        expect(validationError).not.toBeDefined();
+
+    });
+
+    test('Should trim a valid username', () => {
+
+        user.username = '   magician.red_68     '
+
+        const validationError = user.validateSync();
+
+        expect(validationError).not.toBeDefined();
+        expect(user.username).toBe('magician.red_68');
+
+    });
+
+});
+
 describe('Invalid user emails', () => {
 
     test('Should not validate a user without an email', () => {
@@ -217,6 +241,30 @@ describe('Invalid user emails', () => {
         const [, validationMessage] = userDefinition.email.validate;
     
         expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+});
+
+describe('Valid user emails', () => {
+
+    test('Should validate a correct email', () => {
+
+        user.email = 'john_smith@hotmail.com'
+
+        const validationError = user.validateSync();
+        expect(validationError).not.toBeDefined();
+
+    });
+
+    test('Should trim a valid email', () => {
+
+        user.email = '   smith@something.org     '
+
+        const validationError = user.validateSync();
+
+        expect(validationError).not.toBeDefined();
+        expect(user.email).toBe('smith@something.org');
 
     });
 
@@ -257,6 +305,37 @@ describe('Invalid user passwords', () => {
         const [, validationMessage] = userDefinition.password.maxlength;
 
         expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+});
+
+describe('Valid user passwords', () => {
+
+    test('Should validate a correct password', () => {
+
+        user.password = '$2y$12$r2ey63ZhWsufGBHhnK8Y4uAxUQrGGdxOwETEa7NtVdZJCyWn6yrnW'
+
+        const validationError = user.validateSync();
+        expect(validationError).not.toBeDefined();
+
+    });
+
+});
+
+describe('User avatar', () => {
+
+    test('Should validate a correctly defined file schema', () => {
+        const validationError = user.validateSync();
+        expect(validationError).not.toBeDefined();
+    });
+
+    test('Should validate a user without a defined file schema', () => {
+
+        user.avatar = undefined;
+
+        const validationError = user.validateSync();
+        expect(validationError).not.toBeDefined();
 
     });
 
