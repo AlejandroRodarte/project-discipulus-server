@@ -33,25 +33,15 @@ describe('Invalid role models', () => {
 
     });
 
-    test(`Should not validate a role that does not start with ${ regexp }`, () => {
+    test(`Should not validate a role with an unmatched ${ regexp } pattern`, () => {
 
-        const names = [
-            'MY_USER_ROLE',
-            'ADMIN_ROLE',
-            'SUPERVISOR'
-        ];
+        role.name = 'BAD_ROLE';
 
-        names.forEach(name => {
-
-            role.name = name;
+        const validationError = role.validateSync();
+        const [, validationMessage] = roleDefinition.name.validate;
     
-            const validationError = role.validateSync();
-            const [, validationMessage] = roleDefinition.name.validate;
-    
-            expect(validationError).toBeDefined();
-            expect(validationError.message.includes(validationMessage)).toBe(true);
-
-        });
+        expect(validationError).toBeDefined();
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
@@ -85,21 +75,10 @@ describe('Valid role models', () => {
 
     test('Should validate correct role names', () => {
 
-        const names = [
-            'ROLE_ADMIN',
-            'ROLE_TEACER',
-            'ROLE_STUDENT',
-            'ROLE_PARENT'
-        ];
+        role.name = 'ROLE_PARENT';
 
-        names.forEach(name => {
-
-            role.name = name;
-
-            const validationError = role.validateSync();
-            expect(validationError).not.toBeDefined();
-
-        });
+        const validationError = role.validateSync();
+        expect(validationError).not.toBeDefined();
 
     });
 
