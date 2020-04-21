@@ -29,7 +29,12 @@ const userDefinition = {
         unique: false,
         minlength: [3, 'Your name must be at least 3 characters long'],
         maxlength: [100, 'Your name must not exceed 100 characters long'],
-        trim: false
+        set: (value) => {
+            if (value) {
+                return value.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+            }
+            return null;
+        }
     },
 
     username: {

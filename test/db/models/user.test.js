@@ -37,7 +37,7 @@ describe('Invalid user names', () => {
 
         const validationError = user.validateSync();
         const [, validationMessage] = userDefinition.name.required;
-
+        
         expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
@@ -105,6 +105,30 @@ describe('Invalid user names', () => {
         const [, validationMessage] = userDefinition.name.maxlength;
 
         expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+});
+
+describe('Valid user names', () => {
+
+    test('Should validate a correct user name', () => {
+
+        user.name = 'Brian O\' Connor';
+
+        const validationError = user.validateSync();
+        expect(validationError).not.toBeDefined();
+
+    });
+
+    test('Should trim a valid user name', () => {
+
+        user.name = '   John        Smith    ';
+
+        const validationError = user.validateSync();
+
+        expect(validationError).not.toBeDefined();
+        expect(user.name).toBe('John Smith');
 
     });
 
