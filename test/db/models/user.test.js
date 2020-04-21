@@ -94,3 +94,46 @@ describe('Invalid user names', () => {
     });
 
 });
+
+describe('Invalid user usernames', () => {
+
+    test('Should not validate a user without a username', () => {
+
+        delete userDoc.username;
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.username.required;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test('Should not validate a user with a username that contains invalid characters', () => {
+
+        userDoc.username = '__monster!'
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.username.validate;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test('Should not validate a user with a profane username', () => {
+
+        userDoc.username = 'pussydestroyer'
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.username.validate;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+});

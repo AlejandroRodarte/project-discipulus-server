@@ -5,6 +5,8 @@ const { fileSchema } = require('../file');
 const { fullName, singleName, username } = require('../../../util/regexp');
 const badWordsFilter = require('../../../util/filter/bad-words-filter');
 
+const includesProfaneWord = word => badWordsFilter.list.some(badWord => word.includes(badWord));
+
 const userDefinition = {
 
     name: {
@@ -42,7 +44,7 @@ const userDefinition = {
                     return false;
                 }
 
-                if (badWordsFilter.isProfane(value)) {
+                if (includesProfaneWord(value)) {
                     return false;
                 }
 
