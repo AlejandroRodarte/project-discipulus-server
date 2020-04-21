@@ -2,6 +2,19 @@ const Role = require('../../../src/db/models/role');
 
 const { roleDefinition } = require('../../../src/db/schemas/role');
 
+let roleDoc;
+let role;
+
+beforeEach(() => {
+
+    roleDoc = {
+        name: 'ROLE_TEACHER'
+    };
+
+    role = new Role(roleDoc);
+
+});
+
 describe('Invalid role models', () => {
 
     const [regexp] = roleDefinition.name.validate;
@@ -10,8 +23,7 @@ describe('Invalid role models', () => {
 
     test('Should not create a role without a name', () => {
 
-        const roleDoc = {};
-        const role = new Role(roleDoc);
+        role.name = null;
 
         const validationError = role.validateSync();
         const [, validationMessage] = roleDefinition.name.required;
@@ -23,27 +35,29 @@ describe('Invalid role models', () => {
 
     test(`Should not validate a role that does not start with ${ regexp }`, () => {
 
-        const roleDoc = {
-            name: 'MY_USER_ROLE'
-        };
+        const names = [
+            'MY_USER_ROLE',
+            'ADMIN_ROLE',
+            'SUPERVISOR'
+        ];
 
-        const role = new Role(roleDoc);
+        names.forEach(name => {
 
-        const validationError = role.validateSync();
-        const [, validationMessage] = roleDefinition.name.validate;
+            role.name = name;
+    
+            const validationError = role.validateSync();
+            const [, validationMessage] = roleDefinition.name.validate;
+    
+            expect(validationError).toBeDefined();
+            expect(validationError.message.includes(validationMessage)).toBe(true);
 
-        expect(validationError).toBeDefined();
-        expect(validationError.message.includes(validationMessage)).toBe(true);
+        });
 
     });
 
     test(`Should not validate a role shorter than ${ minlength } characters`, () => {
 
-        const roleDoc = {
-            name: 'ROLE_'
-        };
-
-        const role = new Role(roleDoc);
+        role.name = 'ROLE_';
 
         const validationError = role.validateSync();
         const [, validationMessage] = roleDefinition.name.minlength;
@@ -55,11 +69,7 @@ describe('Invalid role models', () => {
 
     test(`Should not validate a role longer than ${ maxlength } characters`, () => {
 
-        const roleDoc = {
-            name: 'ROLE_SUPER_ADMINISTRATOR_MAGICIAN_OWNER'
-        };
-
-        const role = new Role(roleDoc);
+        role.name = 'ROLE_SUPER_ADMINISTRATOR_MAGICIAN_OWNER';
 
         const validationError = role.validateSync();
         const [, validationMessage] = roleDefinition.name.maxlength;
@@ -73,13 +83,29 @@ describe('Invalid role models', () => {
 
 describe('Valid role models', () => {
 
+    test('Should validate correct role names', () => {
+
+        const names = [
+            'ROLE_ADMIN',
+            'ROLE_TEACER',
+            'ROLE_STUDENT',
+            'ROLE_PARENT'
+        ];
+
+        names.forEach(name => {
+
+            role.name = name;
+
+            const validationError = role.validateSync();
+            expect(validationError).not.toBeDefined();
+
+        });
+
+    });
+
     test('Should trim a valid role name', () => {
 
-        const roleDoc = {
-            name: '  ROLE_ADMIN '
-        };
-
-        const role = new Role(roleDoc);
+        role.name = '  ROLE_ADMIN ';
 
         const validationError = role.validateSync();
 
@@ -90,11 +116,7 @@ describe('Valid role models', () => {
 
     test('Should uppercase a valid role name', () => {
 
-        const roleDoc = {
-            name: 'role_teacher'
-        };
-
-        const role = new Role(roleDoc);
+        role.name = 'role_teacher';
 
         const validationError = role.validateSync();
 
