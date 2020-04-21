@@ -107,4 +107,51 @@ describe('Invalid file mimetypes', () => {
 
 describe('Invalid file keynames', () => {
 
+    const [keynameMinLength] = fileDefinition.keyname.minlength;
+    const [keynameMaxLength] = fileDefinition.keyname.maxlength;
+
+    test('Should not validate a file without a keyname', () => {
+
+        file.keyname = null;
+
+        const validationError = file.validateSync();
+        const [, validationMessage] = fileDefinition.keyname.required;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test('Should not validate a file with a keyname that does not match the filename regexp pattern', () => {
+
+        file.keyname = '?super__wrong-name.csv';
+
+        const validationError = file.validateSync();
+        const [, validationMessage] = fileDefinition.keyname.validate;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test(`Should not validate a file with a keyname shorter than ${ keynameMinLength } characters`, () => {
+
+        file.keyname = 'not-a-unique-keyname-0f4d.txt';
+
+        const validationError = file.validateSync();
+        const [, validationMessage] = fileDefinition.keyname.minlength;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test(`Should not validate a file with a keyname longer than ${ keynameMaxLength } characters`, () => {
+
+        file.keyname = 'really-long-keyname-that-actually-does-not-match-with-the-uuid-package-710b962e-041c-11e1-9234-0123456789ab.mov';
+
+        const validationError = file.validateSync();
+        const [, validationMessage] = fileDefinition.keyname.maxlength;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
 });
