@@ -136,27 +136,45 @@ describe('Invalid user usernames', () => {
 
     test('Should not validate a user with a username that contains invalid characters', () => {
 
-        userDoc.username = '__monster!'
+        const usernames = [
+            '__monster!',
+            '.hidden',
+            'max+!',
+            'your__name'
+        ];
 
-        const user = new User(userDoc);
+        usernames.forEach(username => {
 
-        const validationError = user.validateSync();
-        const [, validationMessage] = userDefinition.username.validate;
+            user.username = username;
+    
+            const validationError = user.validateSync();
+            const [, validationMessage] = userDefinition.username.validate;
+    
+            expect(validationError.message.includes(validationMessage)).toBe(true);
 
-        expect(validationError.message.includes(validationMessage)).toBe(true);
+        });
 
     });
 
     test('Should not validate a user with a profane username', () => {
 
-        userDoc.username = 'pussydestroyer'
+        const usernames = [
+            'assmatic',
+            'colossalanus',
+            'favoritepussy',
+            'sexybiatch'
+        ];
 
-        const user = new User(userDoc);
+        usernames.forEach(username => {
 
-        const validationError = user.validateSync();
-        const [, validationMessage] = userDefinition.username.validate;
+            user.username = username;
+    
+            const validationError = user.validateSync();
+            const [, validationMessage] = userDefinition.username.validate;
+    
+            expect(validationError.message.includes(validationMessage)).toBe(true);
 
-        expect(validationError.message.includes(validationMessage)).toBe(true);
+        });
 
     });
 
@@ -205,14 +223,23 @@ describe('Invalid user emails', () => {
 
     test('Should not validate a user with an invalid email', () => {
 
-        userDoc.email = 'this-is@not-an@email.com';
+        const emails = [
+            'this-is@not-an@email.com',
+            'email',
+            'incomplete-email@',
+            '__?what@gmai.com-what'
+        ];
 
-        const user = new User(userDoc);
+        emails.forEach(email => {
 
-        const validationError = user.validateSync();
-        const [, validationMessage] = userDefinition.email.validate;
+            user.email = email;
+    
+            const validationError = user.validateSync();
+            const [, validationMessage] = userDefinition.email.validate;
+    
+            expect(validationError.message.includes(validationMessage)).toBe(true);
 
-        expect(validationError.message.includes(validationMessage)).toBe(true);
+        });
 
     });
 
