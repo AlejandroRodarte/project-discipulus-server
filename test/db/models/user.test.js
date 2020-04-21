@@ -166,3 +166,33 @@ describe('Invalid user usernames', () => {
     });
 
 });
+
+describe('Invalid user emails', () => {
+
+    test('Should not validate a user without an email', () => {
+
+        delete userDoc.email;
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.email.required;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test('Should not validate a user with an invalid email', () => {
+
+        userDoc.email = 'this-is@not-an@email.com';
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.email.validate;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+});
