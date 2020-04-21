@@ -13,7 +13,7 @@ describe('Invalid role models', () => {
         const [, validationMessage] = roleDefinition.name.required;
 
         expect(validationError).toBeDefined();
-        expect(validationError.message.includes(validationMessage));
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
@@ -29,7 +29,7 @@ describe('Invalid role models', () => {
         const [, validationMessage] = roleDefinition.name.validate;
 
         expect(validationError).toBeDefined();
-        expect(validationError.message.includes(validationMessage));
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
@@ -45,7 +45,7 @@ describe('Invalid role models', () => {
         const [, validationMessage] = roleDefinition.name.minlength;
 
         expect(validationError).toBeDefined();
-        expect(validationError.message.includes(validationMessage));
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
@@ -61,7 +61,7 @@ describe('Invalid role models', () => {
         const [, validationMessage] = roleDefinition.name.maxlength;
 
         expect(validationError).toBeDefined();
-        expect(validationError.message.includes(validationMessage));
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
