@@ -21,7 +21,7 @@ describe('Invalid role models', () => {
 
     });
 
-    test(`Should not create a role that does not start with ${ regexp }`, () => {
+    test(`Should not validate a role that does not start with ${ regexp }`, () => {
 
         const roleDoc = {
             name: 'MY_USER_ROLE'
@@ -37,7 +37,7 @@ describe('Invalid role models', () => {
 
     });
 
-    test(`Should not create a role shorter than ${ minlength } characters`, () => {
+    test(`Should not validate a role shorter than ${ minlength } characters`, () => {
 
         const roleDoc = {
             name: 'ROLE_'
@@ -53,7 +53,7 @@ describe('Invalid role models', () => {
 
     });
 
-    test(`Should not create a role longer than ${ maxlength } characters`, () => {
+    test(`Should not validate a role longer than ${ maxlength } characters`, () => {
 
         const roleDoc = {
             name: 'ROLE_SUPER_ADMINISTRATOR_MAGICIAN_OWNER'
