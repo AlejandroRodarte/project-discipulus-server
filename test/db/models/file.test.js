@@ -33,47 +33,25 @@ describe('Invalid file originalnames', () => {
 
     });
 
-    test('Should not validate a file with an invalid original filename', () => {
+    test('Should not validate a file that does not match the filename regexp pattern', () => {
 
-        const originalnames = [
-            ':bad_filename.csv',
-            '?bad name.txt',
-            'no-extension',
-            'what\\a name.pdf'
-        ];
+        file.originalname = ':bad_filename.csv';
 
-        originalnames.forEach(originalname => {
+        const validationError = file.validateSync();
+        const [, validationMessage] = fileDefinition.originalname.validate;
 
-            file.originalname = originalname;
-
-            const validationError = file.validateSync();
-            const [, validationMessage] = fileDefinition.originalname.validate;
-
-            expect(validationError.message.includes(validationMessage)).toBe(true);
-
-        });
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
     test('Should not validate a file with a profane original filename', () => {
 
-        const originalnames = [
-            'you-bastards.csv',
-            'extension.bitch',
-            'my-cock.gif',
-            'dick.txt'
-        ];
+        file.originalname = 'my-cock.gif';
 
-        originalnames.forEach(originalname => {
+        const validationError = file.validateSync();
+        const [, validationMessage] = fileDefinition.originalname.validate;
 
-            file.originalname = originalname;
-
-            const validationError = file.validateSync();
-            const [, validationMessage] = fileDefinition.originalname.validate;
-
-            expect(validationError.message.includes(validationMessage)).toBe(true);
-
-        });
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
@@ -114,25 +92,14 @@ describe('Invalid file mimetypes', () => {
 
     });
 
-    test('Should not validate a file with an invalid mimetype', () => {
+    test('Should not validate a file that does not match the mimeType regexp pattern', () => {
 
-        const mimetypes = [
-            'application-json',
-            'image_jpeg',
-            'video//mp4',
-            'imege__png'
-        ];
+        file.mimetype = 'image_jpeg';
 
-        mimetypes.forEach(mimetype => {
+        const validationError = file.validateSync();
+        const [, validationMessage] = fileDefinition.mimetype.validate;
 
-            file.mimetype = mimetype;
-
-            const validationError = file.validateSync();
-            const [, validationMessage] = fileDefinition.mimetype.validate;
-
-            expect(validationError.message.includes(validationMessage)).toBe(true);
-
-        });
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 

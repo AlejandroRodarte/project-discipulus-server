@@ -42,47 +42,47 @@ describe('Invalid user names', () => {
 
     });
 
-    test('Should not validate a user with a name that has invalid characters', () => {
+    test('Should not validate a user with a name that does not match the fullName regexp pattern', () => {
 
-        const names = [
-            'Max+ User!',
-            '__Matt Damon',
-            '-George Ramirez',
-            '.Unknown'
-        ];
-
-        names.forEach(name => {
-
-            user.name = name;
+        user.name = 'Max+ User!';
     
-            const validationError = user.validateSync();
-            const [, validationMessage] = userDefinition.name.validate;
-    
-            expect(validationError.message.includes(validationMessage)).toBe(true);
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.name.validate;
 
-        });
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
-    test('Should not validate a user with a profane name', () => {
+    test('Should not validate a user with a name that does not match the singleName regexp pattern', () => {
 
-        const names = [
-            'Pussy Destroyer',
-            'Matt Fuckme',
-            'Shittin on a Toilet',
-            'Sex'
-        ];
-
-        names.forEach(name => {
-
-            user.name = name;
+        user.name = '.Peter';
     
-            const validationError = user.validateSync();
-            const [, validationMessage] = userDefinition.name.validate;
-    
-            expect(validationError.message.includes(validationMessage)).toBe(true);
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.name.validate;
 
-        });
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test('Should not validate a user with an explicit profane name', () => {
+
+        user.name = 'Pussy Destroyer';
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.name.validate;
+    
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test('Should not validate a user with an implicit profane name', () => {
+
+        user.name = 'Matthew Cumblast';
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.name.validate;
+    
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
@@ -126,47 +126,25 @@ describe('Invalid user usernames', () => {
 
     });
 
-    test('Should not validate a user with a username that contains invalid characters', () => {
+    test('Should not validate a user with a username that does not match the username regexp pattern', () => {
 
-        const usernames = [
-            '__monster!',
-            '.hidden',
-            'max+!',
-            'your__name'
-        ];
-
-        usernames.forEach(username => {
-
-            user.username = username;
+        user.username = 'max+!';
     
-            const validationError = user.validateSync();
-            const [, validationMessage] = userDefinition.username.validate;
-    
-            expect(validationError.message.includes(validationMessage)).toBe(true);
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.username.validate;
 
-        });
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
     test('Should not validate a user with a profane username', () => {
 
-        const usernames = [
-            'assmatic',
-            'colossalanus',
-            'favoritepussy',
-            'sexybiatch'
-        ];
-
-        usernames.forEach(username => {
-
-            user.username = username;
+        user.username = 'colossalanus';
     
-            const validationError = user.validateSync();
-            const [, validationMessage] = userDefinition.username.validate;
-    
-            expect(validationError.message.includes(validationMessage)).toBe(true);
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.username.validate;
 
-        });
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
@@ -209,23 +187,12 @@ describe('Invalid user emails', () => {
 
     test('Should not validate a user with an invalid email', () => {
 
-        const emails = [
-            'this-is@not-an@email.com',
-            'email',
-            'incomplete-email@',
-            '__?what@gmai.com-what'
-        ];
-
-        emails.forEach(email => {
-
-            user.email = email;
+        user.email = 'this-is@not-an@email.com';
     
-            const validationError = user.validateSync();
-            const [, validationMessage] = userDefinition.email.validate;
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.email.validate;
     
-            expect(validationError.message.includes(validationMessage)).toBe(true);
-
-        });
+        expect(validationError.message.includes(validationMessage)).toBe(true);
 
     });
 
