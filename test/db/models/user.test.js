@@ -196,3 +196,49 @@ describe('Invalid user emails', () => {
     });
 
 });
+
+describe('Invalid user passwords', () => {
+
+    const [passwordMinLength] = userDefinition.password.minlength;
+    const [passwordMaxLength] = userDefinition.password.maxlength;
+
+    test('Should not validate a user without a password', () => {
+
+        delete userDoc.password;
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.password.required;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test(`Should not validate a user with a password shorter than ${ passwordMinLength } characters (unhashed)`, () => {
+
+        userDoc.password = 'this-is-an-unhashed-password';
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.password.minlength;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+    test(`Should not validate a user with a password longer than ${ passwordMaxLength } characters (unhashed)`, () => {
+
+        userDoc.password = 'really-long-password-that-is-not-actually-hashed-with-bcrypt-so-it-should-fail';
+
+        const user = new User(userDoc);
+
+        const validationError = user.validateSync();
+        const [, validationMessage] = userDefinition.password.maxlength;
+
+        expect(validationError.message.includes(validationMessage)).toBe(true);
+
+    });
+
+});
