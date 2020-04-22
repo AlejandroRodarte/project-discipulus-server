@@ -4,31 +4,26 @@ const { userDefinition } = require('../../../src/db/schemas/user');
 
 const modelFunctions = require('../../__fixtures__/functions/models');
 
-let userDoc;
-let user;
+const userDoc = {
+    name: 'Alejandro Rodarte',
+    username: 'rodarte8850',
+    email: 'alejandrorodarte1@gmail.com',
+    password: '$2y$08$uWMdVxKxs6tM72uzFM4cWOyJlpJNZPqHwwu0YMXQLgBvlMdjEo1wa',
+    tokens: [
+        'my-super-token'
+    ],
+    avatar: {
+        originalname: 'this is my file.pdf',
+        mimetype: 'application/pdf',
+        keyname: '710b962e-041c-11e1-9234-0123456789ab.pdf'
+    }
+};
 
-beforeEach(() => {
-
-    userDoc = {
-        name: 'Alejandro Rodarte',
-        username: 'rodarte8850',
-        email: 'alejandrorodarte1@gmail.com',
-        password: '$2y$08$uWMdVxKxs6tM72uzFM4cWOyJlpJNZPqHwwu0YMXQLgBvlMdjEo1wa',
-        tokens: [
-            'my-super-token'
-        ],
-        avatar: {
-            originalname: 'this is my file.pdf',
-            mimetype: 'application/pdf',
-            keyname: '710b962e-041c-11e1-9234-0123456789ab.pdf'
-        }
-    };
-
-    user = new User(userDoc);
-
-});
+let user = new User(userDoc);
 
 describe('Invalid user names', () => {
+
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
 
     const [userMinLength] = userDefinition.name.minlength;
     const [userMaxLength] = userDefinition.name.maxlength;
@@ -72,6 +67,8 @@ describe('Invalid user names', () => {
 
 describe('Valid user names', () => {
 
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
+
     test('Should validate a correct user name', () => {
         user.name = 'Brian O\' Connor';
         modelFunctions.testForValidModel(user);
@@ -89,6 +86,8 @@ describe('Valid user names', () => {
 });
 
 describe('Invalid user usernames', () => {
+
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
 
     const [usernameMinLength] = userDefinition.username.minlength;
     const [usernameMaxLength] = userDefinition.username.maxlength;
@@ -122,6 +121,8 @@ describe('Invalid user usernames', () => {
 
 describe('Valid user usernames', () => {
 
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
+
     test('Should validate a correct username', () => {
         user.username = 'lion_delta42';
         modelFunctions.testForValidModel(user);
@@ -140,6 +141,8 @@ describe('Valid user usernames', () => {
 
 describe('Invalid user emails', () => {
 
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
+
     test('Should not validate a user without an email', () => {
         user.email = undefined;
         modelFunctions.testForInvalidModel(user, userDefinition.email.required);
@@ -153,6 +156,8 @@ describe('Invalid user emails', () => {
 });
 
 describe('Valid user emails', () => {
+
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
 
     test('Should validate a correct email', () => {
         user.email = 'john_smith@hotmail.com';
@@ -171,6 +176,8 @@ describe('Valid user emails', () => {
 });
 
 describe('Invalid user passwords', () => {
+
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
 
     const [passwordMinLength] = userDefinition.password.minlength;
     const [passwordMaxLength] = userDefinition.password.maxlength;
@@ -194,6 +201,8 @@ describe('Invalid user passwords', () => {
 
 describe('Valid user passwords', () => {
 
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
+
     test('Should validate a correct password', () => {
         user.password = '$2y$12$r2ey63ZhWsufGBHhnK8Y4uAxUQrGGdxOwETEa7NtVdZJCyWn6yrnW';
         modelFunctions.testForValidModel(user);
@@ -202,6 +211,8 @@ describe('Valid user passwords', () => {
 });
 
 describe('User avatar', () => {
+
+    beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
 
     test('Should validate a correctly defined file schema', () => {
         modelFunctions.testForValidModel(user);

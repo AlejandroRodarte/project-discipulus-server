@@ -1,3 +1,3 @@
-const getNewModelInstance = (Model, doc) => () => new Model(doc);
+const getNewModelInstance = (Model, doc) => new Model(doc);
 
 module.exports = getNewModelInstance;

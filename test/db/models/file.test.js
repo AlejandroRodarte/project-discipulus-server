@@ -4,22 +4,17 @@ const { fileDefinition } = require('../../../src/db/schemas/file');
 
 const modelFunctions = require('../../__fixtures__/functions/models');
 
-let fileDoc;
-let file;
+const fileDoc = {
+    originalname: 'this is my file.pdf',
+    mimetype: 'application/pdf',
+    keyname: '710b962e-041c-11e1-9234-0123456789ab.pdf'
+};
 
-beforeEach(() => {
-
-    fileDoc = {
-        originalname: 'this is my file.pdf',
-        mimetype: 'application/pdf',
-        keyname: '710b962e-041c-11e1-9234-0123456789ab.pdf'
-    };
-
-    file = new File(fileDoc);
-
-});
+let file = new File(fileDoc);
 
 describe('Invalid file originalnames', () => {
+
+    beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
 
     const [originalnameMinLength] = fileDefinition.originalname.minlength;
     const [originalnameMaxLength] = fileDefinition.originalname.maxlength;
@@ -53,6 +48,8 @@ describe('Invalid file originalnames', () => {
 
 describe('Invalid file mimetypes', () => {
 
+    beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
+
     test('Should not validate a file without a mimetype', () => {
         file.mimetype = undefined;
         modelFunctions.testForInvalidModel(file, fileDefinition.mimetype.required);
@@ -66,6 +63,8 @@ describe('Invalid file mimetypes', () => {
 });
 
 describe('Invalid file keynames', () => {
+
+    beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
 
     const [keynameMinLength] = fileDefinition.keyname.minlength;
     const [keynameMaxLength] = fileDefinition.keyname.maxlength;
