@@ -17,21 +17,6 @@ beforeEach(() => {
 
 });
 
-const testForInvalidModel = (model, fieldOption) => {
-
-    const validationError = model.validateSync();
-    const [, validationMessage] = roleDefinition.name[fieldOption];
-
-    expect(validationError).toBeDefined();
-    expect(validationError.message.includes(validationMessage)).toBe(true);
-
-};
-
-const testForValidModel = (model) => {
-    const validationError = role.validateSync();
-    expect(validationError).not.toBeDefined();
-};
-
 describe('Invalid role models', () => {
 
     const [minlength] = roleDefinition.name.minlength;
