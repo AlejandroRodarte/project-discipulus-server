@@ -4,7 +4,7 @@ const { roleDefinition } = require('../../../src/db/schemas/role');
 
 const modelFunctions = require('../../__fixtures__/functions/models');
 
-const roleContexts = require('../../__fixtures__/functions/db/role');
+const roleContexts = require('../../__fixtures__/functions/db/models/role');
 
 const db = require('../../../src/db');
 
