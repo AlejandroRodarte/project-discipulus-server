@@ -35,7 +35,6 @@ const userDefinition = {
             if (value) {
                 return utilFunctions.trimRedundantSpaces(value);
             }
-            return null;
         }
     },
 
