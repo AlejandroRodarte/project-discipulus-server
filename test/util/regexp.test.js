@@ -7,7 +7,8 @@ describe('roleName', () => {
         const names = [
             'MY_USER_ROLE',
             'ADMIN_ROLE',
-            'SUPERVISOR'
+            'SUPERVISOR',
+            'ROLE_ PARENT'
         ];
 
         names.forEach(name => expect(regexp.roleName.test(name)).toBe(false));

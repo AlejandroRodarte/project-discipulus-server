@@ -47,7 +47,7 @@ describe('Invalid role models', () => {
 
     test(`Should not validate a role shorter than ${ minlength } characters`, () => {
 
-        role.name = 'ROLE_';
+        role.name = 'ROLE_A';
 
         const validationError = role.validateSync();
         const [, validationMessage] = roleDefinition.name.minlength;
