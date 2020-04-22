@@ -1,7 +1,7 @@
-const testForInvalidModelField = require('./test-for-invalid-model-field');
-const testForValidModelField = require('./test-for-valid-model-field');
+const testForInvalidModel = require('./test-for-invalid-model');
+const testForValidModel = require('./test-for-valid-model');
 
 module.exports = {
-    testForInvalidModelField,
-    testForValidModelField
+    testForInvalidModel,
+    testForValidModel
 }

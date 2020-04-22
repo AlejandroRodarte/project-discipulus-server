@@ -26,27 +26,27 @@ describe('Invalid file originalnames', () => {
 
     test('Should not validate a file without an original filename', () => {
         file.originalname = undefined;
-        modelFunctions.testForInvalidModelField(file, fileDefinition.originalname.required);
+        modelFunctions.testForInvalidModel(file, fileDefinition.originalname.required);
     });
 
     test('Should not validate a file that does not match the filename regexp pattern', () => {
         file.originalname = ':bad_filename.csv';
-        modelFunctions.testForInvalidModelField(file, fileDefinition.originalname.validate);
+        modelFunctions.testForInvalidModel(file, fileDefinition.originalname.validate);
     });
 
     test('Should not validate a file with a profane original filename', () => {
         file.originalname = 'my-cock.gif';
-        modelFunctions.testForInvalidModelField(file, fileDefinition.originalname.validate);
+        modelFunctions.testForInvalidModel(file, fileDefinition.originalname.validate);
     });
 
     test(`Should not validate a file with an original filename shorter than ${ originalnameMinLength } characters`, () => {
         file.originalname = '.c';
-        modelFunctions.testForInvalidModelField(file, fileDefinition.originalname.minlength);
+        modelFunctions.testForInvalidModel(file, fileDefinition.originalname.minlength);
     });
 
     test(`Should not validate a file with an original filename longer than ${ originalnameMaxLength } characters`, () => {
         file.originalname = `${[...Array(originalnameMaxLength + 1)].map(_ => 'a').join('')}.txt`;
-        modelFunctions.testForInvalidModelField(file, fileDefinition.originalname.maxlength);
+        modelFunctions.testForInvalidModel(file, fileDefinition.originalname.maxlength);
     });
 
 });
@@ -55,12 +55,12 @@ describe('Invalid file mimetypes', () => {
 
     test('Should not validate a file without a mimetype', () => {
         file.mimetype = undefined;
-        modelFunctions.testForInvalidModelField(file, fileDefinition.mimetype.required);
+        modelFunctions.testForInvalidModel(file, fileDefinition.mimetype.required);
     });
 
     test('Should not validate a file that does not match the mimeType regexp pattern', () => {
         file.mimetype = 'image_jpeg';
-        modelFunctions.testForInvalidModelField(file, fileDefinition.mimetype.validate);
+        modelFunctions.testForInvalidModel(file, fileDefinition.mimetype.validate);
     });
 
 });
@@ -72,22 +72,22 @@ describe('Invalid file keynames', () => {
 
     test('Should not validate a file without a keyname', () => {
         file.keyname = undefined;
-        modelFunctions.testForInvalidModelField(file, fileDefinition.keyname.required);
+        modelFunctions.testForInvalidModel(file, fileDefinition.keyname.required);
     });
 
     test('Should not validate a file with a keyname that does not match the filename regexp pattern', () => {
         file.keyname = '?super__wrong-name.csv';
-        modelFunctions.testForInvalidModelField(file, fileDefinition.keyname.validate);
+        modelFunctions.testForInvalidModel(file, fileDefinition.keyname.validate);
     });
 
     test(`Should not validate a file with a keyname shorter than ${ keynameMinLength } characters`, () => {
         file.keyname = 'not-a-unique-keyname-0f4d.txt';
-        modelFunctions.testForInvalidModelField(file, fileDefinition.keyname.minlength);
+        modelFunctions.testForInvalidModel(file, fileDefinition.keyname.minlength);
     });
 
     test(`Should not validate a file with a keyname longer than ${ keynameMaxLength } characters`, () => {
         file.keyname = 'really-long-keyname-that-actually-does-not-match-with-the-uuid-package-710b962e-041c-11e1-9234-0123456789ab.mov';
-        modelFunctions.testForInvalidModelField(file, fileDefinition.keyname.maxlength);
+        modelFunctions.testForInvalidModel(file, fileDefinition.keyname.maxlength);
     });
 
 });

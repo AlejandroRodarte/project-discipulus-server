@@ -1,4 +1,4 @@
-const testForInvalidModelField = (model, fieldOption) => {
+const testForInvalidModel = (model, fieldOption) => {
 
     const validationError = model.validateSync();
     const [, validationMessage] = fieldOption;
@@ -8,4 +8,4 @@ const testForInvalidModelField = (model, fieldOption) => {
 
 };
 
-module.exports = testForInvalidModelField;
+module.exports = testForInvalidModel;

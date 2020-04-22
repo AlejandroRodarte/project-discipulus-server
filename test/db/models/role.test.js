@@ -17,7 +17,7 @@ beforeEach(() => {
 
 });
 
-const testForInvalidModelField = (model, fieldOption) => {
+const testForInvalidModel = (model, fieldOption) => {
 
     const validationError = model.validateSync();
     const [, validationMessage] = roleDefinition.name[fieldOption];
@@ -27,7 +27,7 @@ const testForInvalidModelField = (model, fieldOption) => {
 
 };
 
-const testForValidModelField = (model) => {
+const testForValidModel = (model) => {
     const validationError = role.validateSync();
     expect(validationError).not.toBeDefined();
 };
@@ -39,22 +39,22 @@ describe('Invalid role models', () => {
 
     test('Should not create a role without a name', () => {
         role.name = undefined;
-        modelFunctions.testForInvalidModelField(role, roleDefinition.name.required);
+        modelFunctions.testForInvalidModel(role, roleDefinition.name.required);
     });
 
     test('Should not validate a role that does not match the rolename regexp pattern', () => {
         role.name = 'BAD_ROLE';
-        modelFunctions.testForInvalidModelField(role, roleDefinition.name.validate);
+        modelFunctions.testForInvalidModel(role, roleDefinition.name.validate);
     });
 
     test(`Should not validate a role shorter than ${ minlength } characters`, () => {
         role.name = 'ROLE_A';
-        modelFunctions.testForInvalidModelField(role, roleDefinition.name.minlength);
+        modelFunctions.testForInvalidModel(role, roleDefinition.name.minlength);
     });
 
     test(`Should not validate a role longer than ${ maxlength } characters`, () => {
         role.name = 'ROLE_SUPER_ADMINISTRATOR_MAGICIAN_OWNER';
-        modelFunctions.testForInvalidModelField(role, roleDefinition.name.maxlength);
+        modelFunctions.testForInvalidModel(role, roleDefinition.name.maxlength);
     });
 
 });
@@ -63,13 +63,13 @@ describe('Valid role models', () => {
 
     test('Should validate correct role names', () => {
         role.name = 'ROLE_PARENT';
-        modelFunctions.testForValidModelField(role);
+        modelFunctions.testForValidModel(role);
     });
 
     test('Should trim a valid role name', () => {
 
         role.name = '  ROLE_ADMIN ';
-        modelFunctions.testForValidModelField(role);
+        modelFunctions.testForValidModel(role);
 
         expect(role.name).toBe('ROLE_ADMIN');
 
@@ -78,7 +78,7 @@ describe('Valid role models', () => {
     test('Should uppercase a valid role name', () => {
 
         role.name = 'role_teacher';
-        modelFunctions.testForValidModelField(role);
+        modelFunctions.testForValidModel(role);
 
         expect(role.name).toBe('ROLE_TEACHER');
 
