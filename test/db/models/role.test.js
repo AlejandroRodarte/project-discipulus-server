@@ -1,3 +1,5 @@
+const { mongo } = require('mongoose');
+
 const Role = require('../../../src/db/models/role');
 
 const { roleDefinition } = require('../../../src/db/schemas/role');
@@ -5,6 +7,8 @@ const { roleDefinition } = require('../../../src/db/schemas/role');
 const modelFunctions = require('../../__fixtures__/functions/models');
 
 const roleContexts = require('../../__fixtures__/functions/db/models/role');
+
+const { nonUniqueRoles } = require('../../__fixtures__/models/role/unpersisted');
 
 const db = require('../../../src/db');
 
@@ -77,8 +81,8 @@ describe('Unique roles', () => {
     beforeAll(db.mongoose.connect);
     beforeEach(roleContexts.sampleRole.init);
 
-    test('Sample test', () => {
-        expect(1).toBe(1);
+    test('Should not persist a role with a non unique name', async () => {
+        await expect(nonUniqueRoles.nonUniqueNameRole.save()).rejects.toThrowError(mongo.MongoError);
     });
 
     afterEach(roleContexts.sampleRole.teardown);
