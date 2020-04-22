@@ -1,5 +1,5 @@
-const connect = require('./mongoose');
+const mongoose = require('./mongoose');
 
 module.exports = {
-    connect
+    mongoose
 };

@@ -4,6 +4,10 @@ const { roleDefinition } = require('../../../src/db/schemas/role');
 
 const modelFunctions = require('../../__fixtures__/functions/models');
 
+const roleContexts = require('../../__fixtures__/functions/db/role');
+
+const db = require('../../../src/db');
+
 const roleDoc = {
     name: 'ROLE_TEACHER'
 };
@@ -65,5 +69,19 @@ describe('Valid role models', () => {
         expect(role.name).toBe('ROLE_TEACHER');
 
     });
+
+});
+
+describe('Unique roles', () => {
+
+    beforeAll(db.mongoose.connect);
+    beforeEach(roleContexts.sampleRole.init);
+
+    test('Sample test', () => {
+        expect(1).toBe(1);
+    });
+
+    afterEach(roleContexts.sampleRole.teardown);
+    afterAll(db.mongoose.disconnect);
 
 });
