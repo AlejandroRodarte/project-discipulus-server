@@ -12,9 +12,9 @@ const roleDoc = {
 
 let role = new Role(roleDoc);
 
-describe('Invalid role models', () => {
+beforeEach(() => role = modelFunctions.getNewModelInstance(Role, roleDoc));
 
-    beforeEach(() => role = modelFunctions.getNewModelInstance(Role, roleDoc));
+describe('Invalid role models', () => {
 
     const [minlength] = roleDefinition.name.minlength;
     const [maxlength] = roleDefinition.name.maxlength;
@@ -42,8 +42,6 @@ describe('Invalid role models', () => {
 });
 
 describe('Valid role models', () => {
-
-    beforeEach(() => role = modelFunctions.getNewModelInstance(Role, roleDoc));
 
     it('Should validate correct role names', () => {
         role.name = 'ROLE_PARENT';

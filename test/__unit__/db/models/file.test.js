@@ -12,9 +12,10 @@ const fileDoc = {
 
 let file = new File(fileDoc);
 
-describe('Invalid file originalnames', () => {
+beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
 
-    beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
+
+describe('Invalid file originalnames', () => {
 
     const [originalnameMinLength] = fileDefinition.originalname.minlength;
     const [originalnameMaxLength] = fileDefinition.originalname.maxlength;
@@ -48,8 +49,6 @@ describe('Invalid file originalnames', () => {
 
 describe('Invalid file mimetypes', () => {
 
-    beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
-
     it('Should not validate a file without a mimetype', () => {
         file.mimetype = undefined;
         modelFunctions.testForInvalidModel(file, fileDefinition.mimetype.required);
@@ -63,8 +62,6 @@ describe('Invalid file mimetypes', () => {
 });
 
 describe('Invalid file keynames', () => {
-
-    beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
 
     const [keynameMinLength] = fileDefinition.keyname.minlength;
     const [keynameMaxLength] = fileDefinition.keyname.maxlength;
