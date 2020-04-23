@@ -20,4 +20,22 @@ describe('[db/models/user] - Non-unique usernames', () => {
 
 });
 
+describe('[db/models/user] - Non-unique emails', () => {
+
+    it('Should not persist a user with a non-unique email', async () => {
+        const duplicateUser = new User(nonUniqueUsers.nonUniqueEmail);
+        await expect(duplicateUser.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+    });
+
+});
+
+describe('[db/models/user] - Non-unique avatar keynames', () => {
+
+    it('Should not persist a user with a non-unique avatar keyname', async () => {
+        const duplicateUser = new User(nonUniqueUsers.nonUniqueAvatarKeyname);
+        await expect(duplicateUser.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+    });
+
+});
+
 afterEach(userContexts.sampleUser.teardown);
