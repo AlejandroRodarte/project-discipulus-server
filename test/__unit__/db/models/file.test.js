@@ -6,11 +6,12 @@ const modelFunctions = require('../../../__fixtures__/functions/models');
 
 const fileDoc = {
     originalname: 'this is my file.pdf',
-    mimetype: 'application/pdf',
-    keyname: '710b962e-041c-11e1-9234-0123456789ab.pdf'
+    mimetype: 'application/pdf'
 };
 
 let file = new File(fileDoc);
+
+const validate = (model) => new Promise(resolve => model.validate(resolve));
 
 beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
 
@@ -96,30 +97,45 @@ describe('[db/models/file] - valid mimetype', () => {
 
 });
 
-describe('[db/models/file] - invalid keyname', () => {
+describe('[db/models/file] - keyname', () => {
 
     const [keynameMinLength] = fileDefinition.keyname.minlength;
     const [keynameMaxLength] = fileDefinition.keyname.maxlength;
 
-    it('Should not validate a file without a keyname', () => {
-        file.keyname = undefined;
-        modelFunctions.testForInvalidModel(file, fileDefinition.keyname.required);
+    it('Should trigger pre validate hook and generate a unique file keyname, conserving the original extension', async () => {
+
+        const validationError = await validate(file);
+
+        const [originalName, originalNameExtension] = file.originalname.split('.');
+        const [keyname, keynameExtension] = file.keyname.split('.');
+
+        expect(validationError).to.be.null;
+
+        expect(keynameExtension).to.equal(originalNameExtension);
+        expect(keyname.length).to.equal(36);
+        expect(originalName).to.not.equal(keyname);
+
     });
 
-    it('Should not validate a file with a keyname that does not match the filename regexp pattern', () => {
-        file.keyname = '?super__wrong-name.csv';
-        modelFunctions.testForInvalidModel(file, fileDefinition.keyname.validate);
-    });
+    // it('Should not validate a file without a keyname', () => {
+    //     file.keyname = undefined;
+    //     modelFunctions.testForInvalidModel(file, fileDefinition.keyname.required);
+    // });
 
-    it(`Should not validate a file with a keyname shorter than ${ keynameMinLength } characters`, () => {
-        file.keyname = 'not-a-unique-keyname-0f4d.txt';
-        modelFunctions.testForInvalidModel(file, fileDefinition.keyname.minlength);
-    });
+    // it('Should not validate a file with a keyname that does not match the filename regexp pattern', () => {
+    //     file.keyname = '?super__wrong-name.csv';
+    //     modelFunctions.testForInvalidModel(file, fileDefinition.keyname.validate);
+    // });
 
-    it(`Should not validate a file with a keyname longer than ${ keynameMaxLength } characters`, () => {
-        file.keyname = 'really-long-keyname-that-actually-does-not-match-with-the-uuid-package-710b962e-041c-11e1-9234-0123456789ab.mov';
-        modelFunctions.testForInvalidModel(file, fileDefinition.keyname.maxlength);
-    });
+    // it(`Should not validate a file with a keyname shorter than ${ keynameMinLength } characters`, () => {
+    //     file.keyname = 'not-a-unique-keyname-0f4d.txt';
+    //     modelFunctions.testForInvalidModel(file, fileDefinition.keyname.minlength);
+    // });
+
+    // it(`Should not validate a file with a keyname longer than ${ keynameMaxLength } characters`, () => {
+    //     file.keyname = 'really-long-keyname-that-actually-does-not-match-with-the-uuid-package-710b962e-041c-11e1-9234-0123456789ab.mov';
+    //     modelFunctions.testForInvalidModel(file, fileDefinition.keyname.maxlength);
+    // });
 
 });
 
