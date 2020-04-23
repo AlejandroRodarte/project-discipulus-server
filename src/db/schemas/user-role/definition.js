@@ -4,13 +4,13 @@ const userRoleDefinition = {
 
     role: {
         type: Schema.Types.ObjectId,
-        required: true,
+        required: [true, 'A role id is required'],
         ref: 'Role'
     },
 
     user: {
         type: Schema.Types.ObjectId,
-        required: true,
+        required: [true, 'A user id is required'],
         ref: 'User'
     }
 
