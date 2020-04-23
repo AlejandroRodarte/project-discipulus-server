@@ -8,9 +8,6 @@
     "test:unit": "mocha test/__unit__/**/*.test.js --watch",
     "test:int": "env-cmd -f config/.env.test mocha test/__integration__/**/*.test.js --watch"
   },
-  "jest": {
-    "testEnvironment": "node"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlejandroRodarte/discipulus-server.git"
