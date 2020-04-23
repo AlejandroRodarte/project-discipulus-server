@@ -2,6 +2,10 @@ const { Schema } = require('mongoose');
 
 const userDefinition = require('./definition');
 
-const userSchema = new Schema(userDefinition);
+const schemaOpts = {
+    collection: 'users'
+};
+
+const userSchema = new Schema(userDefinition, schemaOpts);
 
 module.exports = userSchema;

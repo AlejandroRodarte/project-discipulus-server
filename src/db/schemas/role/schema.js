@@ -2,6 +2,10 @@ const { Schema } = require('mongoose');
 
 const roleDefinition = require('./definition');
 
-const roleSchema = new Schema(roleDefinition);
+const schemaOpts = {
+    collection: 'roles'
+};
+
+const roleSchema = new Schema(roleDefinition, schemaOpts);
 
 module.exports = roleSchema;
