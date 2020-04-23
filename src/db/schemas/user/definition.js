@@ -19,7 +19,7 @@ const userDefinition = {
                     return false;
                 }
 
-                if (badWordsFilter.isProfane(value) || utils.includesProfaneWord(value)) {
+                if (value.split(' ').some(word => badWordsFilter.isProfane(word))) {
                     return false;
                 }
 
@@ -48,7 +48,7 @@ const userDefinition = {
                     return false;
                 }
 
-                if (utils.includesProfaneWord(value)) {
+                if (badWordsFilter.isProfane(value)) {
                     return false;
                 }
 

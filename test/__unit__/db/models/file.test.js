@@ -30,7 +30,7 @@ describe('[db/models/file] - invalid originalname', () => {
     });
 
     it('Should not validate a file with a profane original filename', () => {
-        file.originalname = 'my-cock.gif';
+        file.originalname = 'cock.gif';
         modelFunctions.testForInvalidModel(file, fileDefinition.originalname.validate);
     });
 
@@ -42,6 +42,15 @@ describe('[db/models/file] - invalid originalname', () => {
     it(`Should not validate a file with an original filename longer than ${ originalnameMaxLength } characters`, () => {
         file.originalname = `${[...Array(originalnameMaxLength + 1)].map(_ => 'a').join('')}.txt`;
         modelFunctions.testForInvalidModel(file, fileDefinition.originalname.maxlength);
+    });
+
+});
+
+describe('[db/models/file] - valid originalname', () => {
+
+    it('Should validate a file with a correct originalname', () => {
+        file.originalname = 'my super exam document.txt';
+        modelFunctions.testForValidModel(file);
     });
 
 });

@@ -50,11 +50,6 @@ describe('[db/models/user] - invalid name', () => {
         modelFunctions.testForInvalidModel(user, userDefinition.name.validate);
     });
 
-    it('Should not validate a user with an implicit profane name', () => {
-        user.name = 'Matthew Cumblast';
-        modelFunctions.testForInvalidModel(user, userDefinition.name.validate);
-    });
-
     it(`Should not validate a user with a name shorter than ${ userMinLength } characters`, () => {
         user.name = 'A';
         modelFunctions.testForInvalidModel(user, userDefinition.name.minlength);
@@ -101,7 +96,7 @@ describe('[db/models/user] - invalid username', () => {
     });
 
     it('Should not validate a user with a profane username', () => {
-        user.username = 'colossalanus';
+        user.username = 'anus';
         modelFunctions.testForInvalidModel(user, userDefinition.username.validate);
     });
 

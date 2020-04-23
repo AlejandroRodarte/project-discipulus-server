@@ -1,6 +1,6 @@
 const { filename, mimeType } = require('../../../util/regexp');
 
-const { badWordsFilter, utils } = require('../../../util/filter/bad-words-filter');
+const { badWordsFilter } = require('../../../util/filter/bad-words-filter');
 
 const fileDefinition = {
 
@@ -14,7 +14,9 @@ const fileDefinition = {
                     return false;
                 }
 
-                if (badWordsFilter.isProfane(value) || utils.includesProfaneWord(value)) {
+                const [name] = value.split('.');
+
+                if (badWordsFilter.isProfane(name)) {
                     return false;
                 }
 
