@@ -1,3 +1,5 @@
+const expect = require('chai').expect;
+
 const File = require('../../../../src/db/models/file');
 
 const { fileDefinition } = require('../../../../src/db/schemas/file');
@@ -53,6 +55,15 @@ describe('[db/models/file] - valid originalname', () => {
         modelFunctions.testForValidModel(file);
     });
 
+    it('Should trim a valid originalname', () => {
+
+        file.originalname = '    hey-man.csv     ';
+        modelFunctions.testForValidModel(file);
+
+        expect(file.originalname).to.equal('hey-man.csv');
+
+    });
+
 });
 
 describe('[db/models/file] - invalid mimetype', () => {
@@ -65,6 +76,24 @@ describe('[db/models/file] - invalid mimetype', () => {
     it('Should not validate a file that does not match the mimetype regexp pattern', () => {
         file.mimetype = 'image_jpeg';
         modelFunctions.testForInvalidModel(file, fileDefinition.mimetype.validate);
+    });
+
+});
+
+describe('[db/models/file] - valid mimetype', () => {
+
+    it('Should validate a file with a correct mimetype', () => {
+        file.mimetype = 'audio/mp3';
+        modelFunctions.testForValidModel(file);
+    });
+
+    it('Should trim a valid mimetype', () => {
+
+        file.mimetype = '    application/xml        ';
+        modelFunctions.testForValidModel(file);
+
+        expect(file.mimetype).to.equal('application/xml');
+
     });
 
 });
@@ -92,6 +121,24 @@ describe('[db/models/file] - invalid keyname', () => {
     it(`Should not validate a file with a keyname longer than ${ keynameMaxLength } characters`, () => {
         file.keyname = 'really-long-keyname-that-actually-does-not-match-with-the-uuid-package-710b962e-041c-11e1-9234-0123456789ab.mov';
         modelFunctions.testForInvalidModel(file, fileDefinition.keyname.maxlength);
+    });
+
+});
+
+describe('[db/models/file] - valid keyname', () => {
+
+    it('Should validate a file with a correct keyname', () => {
+        file.keyname = 'e8b5a51d-11c8-3310-a6ab-367563f20686.torrent';
+        modelFunctions.testForValidModel(file);
+    });
+
+    it('Should trim a valid keyname', () => {
+
+        file.keyname = '      9f282611-e0fd-5650-8953-89c8e342da0b.mp4      ';
+        modelFunctions.testForValidModel(file);
+
+        expect(file.keyname).to.equal('9f282611-e0fd-5650-8953-89c8e342da0b.mp4');
+
     });
 
 });

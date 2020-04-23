@@ -45,7 +45,8 @@ const fileDefinition = {
         validate: [filename, 'Please provide a valid filename'],
         unique: true,
         minlength: [38, 'Keyname must be longer than 36 characters'],
-        maxlength: [60, 'Keyname must be shorter than 50 characters']
+        maxlength: [60, 'Keyname must be shorter than 50 characters'],
+        trim: true
     }
 
 };
