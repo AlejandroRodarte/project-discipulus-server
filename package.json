@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "env-cmd -f config/.env.development nodemon src/index.js",
     "test": "env-cmd -f ./config/.env.test jest --watch --runInBand",
-    "test:mocha": "mocha test/__unit__"
+    "test:mocha": "mocha test/__unit__ --watch"
   },
   "jest": {
     "testEnvironment": "node"
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/AlejandroRodarte/discipulus-server#readme",
   "devDependencies": {
+    "chai": "^4.2.0",
     "chalk": "^4.0.0",
     "env-cmd": "^10.1.0",
     "jest": "^25.4.0",
