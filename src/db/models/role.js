@@ -1,7 +1,7 @@
-const { model } = require('mongoose');
+const db = require('../');
 
 const { roleSchema } = require('../schemas/role');
 
-const Role = model('Role', roleSchema)
+const Role = db.getModel('Role', roleSchema);
 
 module.exports = Role;

@@ -1,7 +1,7 @@
-const { model } = require('mongoose');
+const db = require('../');
 
 const { fileSchema } = require('../schemas/file');
 
-const File = model('File', fileSchema)
+const File = db.getModel('File', fileSchema);
 
 module.exports = File;
