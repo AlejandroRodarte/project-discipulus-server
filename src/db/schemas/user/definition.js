@@ -1,10 +1,8 @@
 const validator = require('validator').default;
 
 const { fileSchema } = require('../file');
-
 const { fullName, singleName, username } = require('../../../util/regexp');
-const { badWordsFilter, utils } = require('../../../util/filter/bad-words-filter');
-
+const { badWordsFilter } = require('../../../util/filter/bad-words-filter');
 const utilFunctions = require('../../../util/functions');
 
 const userDefinition = {

@@ -1,5 +1,3 @@
-const Role = require('../../../../../src/db/models/role');
-
 const uniqueRoles = [
 
     // parent role

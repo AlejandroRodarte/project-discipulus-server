@@ -1,9 +1,7 @@
 const expect = require('chai').expect;
 
 const Role = require('../../../../src/db/models/role');
-
 const { roleDefinition } = require('../../../../src/db/schemas/role');
-
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
 const roleDoc = {

@@ -1,9 +1,7 @@
 const expect = require('chai').expect;
 
 const User = require('../../../../src/db/models/user');
-
 const { userDefinition } = require('../../../../src/db/schemas/user');
-
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
 const userDoc = {

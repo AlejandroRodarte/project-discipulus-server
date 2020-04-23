@@ -1,9 +1,7 @@
 const expect = require('chai').expect;
 
 const File = require('../../../../src/db/models/file');
-
 const { fileDefinition } = require('../../../../src/db/schemas/file');
-
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
 const fileDoc = {

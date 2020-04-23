@@ -2,17 +2,13 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo } = require('mongoose');
 
-chai.use(chaiAsPromised);
+const Role = require('../../../../src/db/models/role');
+const roleContexts = require('../../../__fixtures__/functions/db/models/role');
+const { nonUniqueRoles, uniqueRoles } = require('../../../__fixtures__/models/role/unpersisted');
+const db = require('../../../../src/db');
 
 const expect = chai.expect;
-
-const Role = require('../../../../src/db/models/role');
-
-const roleContexts = require('../../../__fixtures__/functions/db/models/role');
-
-const { nonUniqueRoles, uniqueRoles } = require('../../../__fixtures__/models/role/unpersisted');
-
-const db = require('../../../../src/db');
+chai.use(chaiAsPromised);
 
 before(db.mongoose.connect);
 beforeEach(roleContexts.sampleRole.init);
