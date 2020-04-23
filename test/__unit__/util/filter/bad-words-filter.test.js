@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 
 const { utils } = require('../../../../src/util/filter/bad-words-filter');
 
-describe('includesProfaneWord', () => {
+describe('[util/filter] - includesProfaneWord', () => {
 
     it('Should return true on texts that include profane words', () => {
 

@@ -25,7 +25,7 @@ let user = new User(userDoc);
 
 beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
 
-describe('Invalid user names', () => {
+describe('[db/models/user] - invalid name', () => {
 
     const [userMinLength] = userDefinition.name.minlength;
     const [userMaxLength] = userDefinition.name.maxlength;
@@ -67,7 +67,7 @@ describe('Invalid user names', () => {
 
 });
 
-describe('Valid user names', () => {
+describe('[db/models/user] - valid name', () => {
 
     it('Should validate a correct user name', () => {
         user.name = 'Brian O\' Connor';
@@ -85,7 +85,7 @@ describe('Valid user names', () => {
 
 });
 
-describe('Invalid user usernames', () => {
+describe('[db/models/user] - invalid username', () => {
 
     const [usernameMinLength] = userDefinition.username.minlength;
     const [usernameMaxLength] = userDefinition.username.maxlength;
@@ -117,7 +117,7 @@ describe('Invalid user usernames', () => {
 
 });
 
-describe('Valid user usernames', () => {
+describe('[db/models/user] - valid username', () => {
 
     it('Should validate a correct username', () => {
         user.username = 'lion_delta42';
@@ -135,7 +135,7 @@ describe('Valid user usernames', () => {
 
 });
 
-describe('Invalid user emails', () => {
+describe('[db/models/user] - invalid email', () => {
 
     it('Should not validate a user without an email', () => {
         user.email = undefined;
@@ -149,7 +149,7 @@ describe('Invalid user emails', () => {
 
 });
 
-describe('Valid user emails', () => {
+describe('[db/models/user] - valid email', () => {
 
     it('Should validate a correct email', () => {
         user.email = 'john_smith@hotmail.com';
@@ -167,7 +167,7 @@ describe('Valid user emails', () => {
 
 });
 
-describe('Invalid user passwords', () => {
+describe('[db/models/user] - invalid password', () => {
 
     const [passwordMinLength] = userDefinition.password.minlength;
     const [passwordMaxLength] = userDefinition.password.maxlength;
@@ -189,7 +189,7 @@ describe('Invalid user passwords', () => {
 
 });
 
-describe('Valid user passwords', () => {
+describe('[db/models/user] - valid password', () => {
 
     it('Should validate a correct password', () => {
         user.password = '$2y$12$r2ey63ZhWsufGBHhnK8Y4uAxUQrGGdxOwETEa7NtVdZJCyWn6yrnW';
@@ -198,7 +198,7 @@ describe('Valid user passwords', () => {
 
 });
 
-describe('User avatar', () => {
+describe('[db/models/user] - avatar', () => {
 
     it('Should validate a correctly defined file schema', () => {
         modelFunctions.testForValidModel(user);

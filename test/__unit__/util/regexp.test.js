@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 
 const regexp = require('../../../src/util/regexp');
 
-describe('roleName', () => {
+describe('[util/regexp] - roleName', () => {
 
     it('Should return false on invalid role names', () => {
 
@@ -32,7 +32,7 @@ describe('roleName', () => {
 
 });
 
-describe('singleName', () => {
+describe('[util/regexp] - singleName', () => {
     
     it('Should return false on invalid single names', () => {
 
@@ -61,7 +61,7 @@ describe('singleName', () => {
 
 });
 
-describe('fullName', () => {
+describe('[util/regexp] - fullName', () => {
     
     it('Should return false on invalid full names', () => {
 
@@ -91,7 +91,7 @@ describe('fullName', () => {
 
 });
 
-describe('username', () => {
+describe('[util/regexp] - username', () => {
     
     it('Should return false on invalid usernames', () => {
 
@@ -121,7 +121,7 @@ describe('username', () => {
 
 });
 
-describe('mimeType', () => {
+describe('[util/regexp] - mimeType', () => {
     
     it('Should return false on invalid mimetypes', () => {
 
@@ -151,7 +151,7 @@ describe('mimeType', () => {
 
 });
 
-describe('filename', () => {
+describe('[util/regexp] - filename', () => {
     
     it('Should return false on invalid filenames', () => {
 

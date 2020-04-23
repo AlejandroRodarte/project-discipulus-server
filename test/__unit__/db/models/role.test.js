@@ -14,7 +14,7 @@ let role = new Role(roleDoc);
 
 beforeEach(() => role = modelFunctions.getNewModelInstance(Role, roleDoc));
 
-describe('Invalid role models', () => {
+describe('[db/models/role] - invalid name', () => {
 
     const [minlength] = roleDefinition.name.minlength;
     const [maxlength] = roleDefinition.name.maxlength;
@@ -29,19 +29,19 @@ describe('Invalid role models', () => {
         modelFunctions.testForInvalidModel(role, roleDefinition.name.validate);
     });
 
-    it(`Should not validate a role shorter than ${ minlength } characters`, () => {
+    it(`Should not validate a role with a name shorter than ${ minlength } characters`, () => {
         role.name = 'ROLE_A';
         modelFunctions.testForInvalidModel(role, roleDefinition.name.minlength);
     });
 
-    it(`Should not validate a role longer than ${ maxlength } characters`, () => {
+    it(`Should not validate a role with a name longer than ${ maxlength } characters`, () => {
         role.name = 'ROLE_SUPER_ADMINISTRATOR_MAGICIAN_OWNER';
         modelFunctions.testForInvalidModel(role, roleDefinition.name.maxlength);
     });
 
 });
 
-describe('Valid role models', () => {
+describe('[db/models/role] - valid rolename', () => {
 
     it('Should validate correct role names', () => {
         role.name = 'ROLE_PARENT';
