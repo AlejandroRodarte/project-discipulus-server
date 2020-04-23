@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "env-cmd -f config/.env.development nodemon src/index.js",
     "test:unit": "mocha test/__unit__/**/*.test.js --watch",
-    "test:int": "mocha test/__integration__/**/*.test.js --watch"
+    "test:int": "env-cmd -f config/.env.test mocha test/__integration__/**/*.test.js --watch"
   },
   "jest": {
     "testEnvironment": "node"
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/AlejandroRodarte/discipulus-server#readme",
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "chalk": "^4.0.0",
     "env-cmd": "^10.1.0",
     "mocha": "^7.1.1",
