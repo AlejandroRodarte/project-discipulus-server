@@ -1,5 +1,5 @@
 const Role = require('../../../../../src/db/models/role');
 
-module.exports = new Role({
+module.exports = {
     name: 'ROLE_TEACHER'
-});
+};
