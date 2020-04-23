@@ -4,7 +4,7 @@ const Role = require('../../../../src/db/models/role');
 
 const { roleDefinition } = require('../../../../src/db/schemas/role');
 
-const modelFunctions = require('../../__fixtures__/functions/db/models');
+const modelFunctions = require('../../../__fixtures__/functions/models');
 
 const roleDoc = {
     name: 'ROLE_TEACHER'

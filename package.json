@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "env-cmd -f config/.env.development nodemon src/index.js",
-    "test:unit": "mocha test/__unit__/**/*.test.js --watch --useChildProcesses",
-    "test:int": "mocha test/__integration__/**/*.test.js --watch --useChildProcesses"
+    "test:unit": "mocha test/__unit__/**/*.test.js --watch",
+    "test:int": "mocha test/__integration__/**/*.test.js --watch"
   },
   "jest": {
     "testEnvironment": "node"
