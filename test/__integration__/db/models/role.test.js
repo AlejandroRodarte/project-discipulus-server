@@ -5,12 +5,10 @@ const { mongo } = require('mongoose');
 const Role = require('../../../../src/db/models/role');
 const roleContexts = require('../../../__fixtures__/functions/db/models/role');
 const { nonUniqueRoles, uniqueRoles } = require('../../../__fixtures__/models/role/unpersisted');
-const db = require('../../../../src/db');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-before(db.mongoose.connect);
 beforeEach(roleContexts.sampleRole.init);
 
 describe('[db/models/test] - non-unique role name', () => {
@@ -32,4 +30,3 @@ describe('[db/models/test] - unique role name', () => {
 });
 
 afterEach(roleContexts.sampleRole.teardown);
-after(db.mongoose.disconnect);

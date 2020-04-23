@@ -10,6 +10,7 @@ const connect = async () => {
         useUnifiedTopology: true,
         useFindAndModify: false
     });
+    console.log('connecting');
 
     if (process.env.NODE_ENV !== 'test') {
         console.log(`Connected to MongoDB database at ${uri}`);
@@ -20,6 +21,7 @@ const connect = async () => {
 const disconnect = async () => {
 
     await mongoose.disconnect();
+    console.log('disconnecting');
 
     if (process.env.NODE_ENV !== 'test') {
         console.log('Disconnected from database');
