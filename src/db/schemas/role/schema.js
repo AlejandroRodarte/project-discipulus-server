@@ -8,4 +8,10 @@ const schemaOpts = {
 
 const roleSchema = new Schema(roleDefinition, schemaOpts);
 
+roleSchema.virtual('roleusers', {
+    ref: 'UserRole',
+    localField: '_id',
+    foreignField: 'role'
+});
+
 module.exports = roleSchema;
