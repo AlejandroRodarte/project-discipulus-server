@@ -181,3 +181,34 @@ describe('[util/regexp] - filename', () => {
     });
 
 });
+
+describe('[util/regexp] - strongPassword', () => {
+    
+    it('Should return false on invalid strong passwords', () => {
+
+        const passwords = [
+            '123',
+            '_secret',
+            'Nasdaq81',
+            '-aba'
+        ];
+
+        passwords.forEach(password => expect(regexp.strongPassword.test(password)).to.equal(false));
+
+    });
+
+    it('Should return true on valid strong passwords', () => {
+
+        const passwords = [
+            '?fOrtnite34}',
+            '!Sh1t43*',
+            'daR3kim.!',
+            'goNzalo3.]',
+            '-maS.4$'
+        ];
+
+        passwords.forEach(password => expect(regexp.strongPassword.test(password)).to.equal(true));
+
+    });
+
+});
