@@ -203,3 +203,11 @@ describe('[db/models/user] - avatar', () => {
     });
 
 });
+
+describe('[db/models/user] - enabled', () => {
+
+    it('Should set enabled flag to true as default upon user model instance creation', () => {
+        expect(user.enabled).to.equal(true);
+    });
+
+});
