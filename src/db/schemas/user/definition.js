@@ -1,7 +1,7 @@
 const validator = require('validator').default;
 
 const { fileSchema } = require('../file');
-const { fullName, singleName, username } = require('../../../util/regexp');
+const { fullName, singleName, username, strongPassword } = require('../../../util/regexp');
 const { badWordsFilter } = require('../../../util/filter/bad-words-filter');
 const utilFunctions = require('../../../util/functions');
 
@@ -72,8 +72,8 @@ const userDefinition = {
     password: {
         type: String,
         required: [true, 'A password is required'],
-        minlength: [60, 'Your username must be at least 60 characters long'],
-        maxlength: [60, 'Your username must not exceed 60 characters long'],
+        validate: [strongPassword, 'Please provide a strong enough password'],
+        minlength: [8, 'Your username must be at least 8 characters long']
     },
 
     tokens: [{
