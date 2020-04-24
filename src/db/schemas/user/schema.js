@@ -1,6 +1,8 @@
 const { Schema } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const UserRole = require('../../models/user-role');
+
 const userDefinition = require('./definition');
 
 const schemaOpts = {
@@ -22,6 +24,18 @@ userSchema.pre('save', async function(next) {
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, +process.env.BCRYPT_ROUNDS || 8);
     }
+
+    next();
+
+});
+
+userDefinition.pre('remove', async function(next) {
+
+    const user = this;
+
+    await UserRole.deleteMany({
+        user: user._id
+    });
 
     next();
 
