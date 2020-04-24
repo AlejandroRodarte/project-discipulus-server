@@ -3,10 +3,10 @@ const XRegExp = require('xregexp');
 module.exports = {
     roleName: /^ROLE_([A-Z]*|[A-Z]*_)*(?<!_)$/,
     singleName: XRegExp('^\\p{L}+$'),
-    fullName: XRegExp('^[\\p{L} \'\\u2019]+$'),
+    fullName: XRegExp('^(Sr\\.\\s|Mr\\.\\s|Ms\\.\\s|Dr\\.\\s|Mrs\\.\\s)*[\\p{L} \'\\u2019]+(Sr\\.|Mr\\.|Ms\\.|Dr\\.|Mrs\\.|Jr\\.)*$'),
     username: /^(?![_.\d])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
-    mimeType: /^\w+\/[-+.\w]+$/,
-    filename: /^[\sA-Za-z0-9_-]*(\.[A-Za-z0-9]{1,})+$/,
+    mimeType: /^(\w|-)+\/[-+.\w]+$/,
+    filename: /^([\s'&\\.A-Za-z0-9_-]|\(.+\))*(\.[A-Za-z0-9_]{1,})+$/,
     trimCornerSpaces: /^\s+|\s+$/g,
     reduceMiddleSpaces: /\s+/g,
     strongPassword: /^((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
