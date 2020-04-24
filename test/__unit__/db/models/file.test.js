@@ -97,6 +97,7 @@ describe('[db/models/file] - valid mimetype', () => {
 
 describe('[db/models/file] - keyname', () => {
 
+    const [keynameMinLength] = fileDefinition.keyname.minlength;
     const [keynameMaxLength] = fileDefinition.keyname.maxlength;
 
     it('Should trigger pre validate hook and generate a unique file keyname, conserving the original extension', async () => {
@@ -112,6 +113,11 @@ describe('[db/models/file] - keyname', () => {
         expect(keyname.length).to.equal(36);
         expect(originalName).to.not.equal(keyname);
 
+    });
+
+    it(`Should not validate a file with a keyname shorter than ${ keynameMinLength } characters`, async () => {
+        file.keyname = 'bad-keyname.txt';
+        await modelFunctions.testForInvalidModelAsync(file, fileDefinition.keyname.minlength);
     });
 
     it(`Should not validate a file with a keyname longer than ${ keynameMaxLength } characters`, async () => {

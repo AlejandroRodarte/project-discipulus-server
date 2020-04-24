@@ -29,7 +29,7 @@ userSchema.pre('save', async function(next) {
 
 });
 
-userDefinition.pre('remove', async function(next) {
+userSchema.pre('remove', async function(next) {
 
     const user = this;
 
