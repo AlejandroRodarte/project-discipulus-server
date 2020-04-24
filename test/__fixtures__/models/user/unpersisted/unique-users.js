@@ -3,7 +3,7 @@ const uniqueUsers = [
         name: 'Patricia Mendoza',
         username: 'paty85',
         email: 'paty@paty.com',
-        password: '$2y$12$tSdQuHVlw0TP6o1Mx33VNurXgl1KSi3p0DaXOcfkDdz77F6PF2PAK',
+        password: 'My!$up3r.P4ssw0rd',
         tokens: [
             'super-token'
         ],

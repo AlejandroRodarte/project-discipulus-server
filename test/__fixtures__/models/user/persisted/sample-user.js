@@ -5,7 +5,7 @@ module.exports = {
     name: 'Alejandro Rodarte',
     username: 'alex8850',
     email: 'alex@alex.com',
-    password: '$2y$12$tSdQuHVlw0TP6o1Mx33VNurXgl1KSi3p0DaXOcfkDdz77F6PF2PAK',
+    password: 'My!$up3r.P4ssw0rd',
     tokens: [
         'super-token'
     ],
