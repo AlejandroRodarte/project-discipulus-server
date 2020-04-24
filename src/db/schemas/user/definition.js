@@ -83,6 +83,12 @@ const userDefinition = {
     avatar: {
         type: fileSchema,
         required: false
+    },
+
+    enabled: {
+        type: Boolean,
+        required: false,
+        default: true
     }
 
 };
