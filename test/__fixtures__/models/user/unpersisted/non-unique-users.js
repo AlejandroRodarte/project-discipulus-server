@@ -18,14 +18,6 @@ const nonUniqueUsers = {
     nonUniqueEmail: {
         ...baseUser,
         email: sampleUser.email
-    },
-
-    nonUniqueAvatarKeyname: {
-        ...baseUser,
-        avatar: {
-            ...baseUser.avatar,
-            keyname: sampleUser.avatar.keyname
-        }
     }
 
 };

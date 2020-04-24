@@ -11,7 +11,6 @@ module.exports = {
     ],
     avatar: {
         originalname: 'my-image.png',
-        mimetype: 'image/png',
-        keyname: '2c5ea4c0-4067-11e9-8b2d-1b9d6bcdbbfd.png'
+        mimetype: 'image/png'
     }
 };

@@ -9,8 +9,7 @@ const uniqueUsers = [
         ],
         avatar: {
             originalname: 'my-avatar.jpg',
-            mimetype: 'image/jpg',
-            keyname: '2c5ea4c0-4067-11e9-8b2d-1b9d6bcdbbfd.jpg'
+            mimetype: 'image/jpg'
         }
     }
 ];
