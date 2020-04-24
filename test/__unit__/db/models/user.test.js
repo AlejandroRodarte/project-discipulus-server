@@ -8,7 +8,7 @@ const userDoc = {
     name: 'Alejandro Rodarte',
     username: 'rodarte8850',
     email: 'alejandrorodarte1@gmail.com',
-    password: '$2y$08$uWMdVxKxs6tM72uzFM4cWOyJlpJNZPqHwwu0YMXQLgBvlMdjEo1wa',
+    password: 'Sup3rpa$Sword!-',
     tokens: [
         'my-super-token'
     ],
@@ -163,21 +163,20 @@ describe('[db/models/user] - valid email', () => {
 describe('[db/models/user] - invalid password', () => {
 
     const [passwordMinLength] = userDefinition.password.minlength;
-    const [passwordMaxLength] = userDefinition.password.maxlength;
 
     it('Should not validate a user without a password', () => {
         user.password = undefined;
         modelFunctions.testForInvalidModel(user, userDefinition.password.required);
     });
 
-    it(`Should not validate a user with a password shorter than ${ passwordMinLength } characters (unhashed)`, () => {
-        user.password = 'this-is-an-unhashed-password';
-        modelFunctions.testForInvalidModel(user, userDefinition.password.minlength);
+    it('Should not validate a user with a password that does not match the strongPassword regexp', () => {
+        user.password = 'weak-shit';
+        modelFunctions.testForInvalidModel(user, userDefinition.password.validate);
     });
 
-    it(`Should not validate a user with a password longer than ${ passwordMaxLength } characters (unhashed)`, () => {
-        user.password = 'really-long-password-that-is-not-actually-hashed-with-bcrypt-so-it-should-fail';
-        modelFunctions.testForInvalidModel(user, userDefinition.password.maxlength);
+    it(`Should not validate a user with a password shorter than ${ passwordMinLength } characters (unhashed)`, () => {
+        user.password = '?sH1t.';
+        modelFunctions.testForInvalidModel(user, userDefinition.password.minlength);
     });
 
 });
@@ -185,7 +184,7 @@ describe('[db/models/user] - invalid password', () => {
 describe('[db/models/user] - valid password', () => {
 
     it('Should validate a correct password', () => {
-        user.password = '$2y$12$r2ey63ZhWsufGBHhnK8Y4uAxUQrGGdxOwETEa7NtVdZJCyWn6yrnW';
+        user.password = 'Str0ng?P4s$w0rd!';
         modelFunctions.testForValidModel(user);
     });
 
