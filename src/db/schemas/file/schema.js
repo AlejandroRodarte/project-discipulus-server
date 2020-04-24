@@ -15,8 +15,10 @@ fileSchema.pre('validate', function(next) {
 
     const file = this;
 
-    const [, extension] = file.originalname.split('.');
-    file.keyname = `${uuidv4()}.${extension}`;
+    if (file.originalname) {
+        const [, ...extensions] = file.originalname.split('.');
+        file.keyname = `${uuidv4()}.${extensions.join('.')}`;
+    }
 
     next();
 

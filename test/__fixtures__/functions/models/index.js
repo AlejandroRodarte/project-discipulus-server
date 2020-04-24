@@ -1,9 +1,15 @@
 const testForInvalidModel = require('./test-for-invalid-model');
 const testForValidModel = require('./test-for-valid-model');
+const testForInvalidModelAsync = require('./test-for-invalid-model-async');
+const testForValidModelAsync = require('./test-for-valid-model-async'); 
 const getNewModelInstance = require('./get-new-model-instance');
+const validateAsync = require('./validate-async');
 
 module.exports = {
     testForInvalidModel,
     testForValidModel,
-    getNewModelInstance
+    testForInvalidModelAsync,
+    testForValidModelAsync,
+    getNewModelInstance,
+    validateAsync
 };
