@@ -8,5 +8,6 @@ module.exports = {
     mimeType: /^\w+\/[-+.\w]+$/,
     filename: /^[\sA-Za-z0-9_-]*(\.[A-Za-z0-9]{1,})+$/,
     trimCornerSpaces: /^\s+|\s+$/g,
-    reduceMiddleSpaces: /\s+/g
+    reduceMiddleSpaces: /\s+/g,
+    strongPassword: /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
 };
