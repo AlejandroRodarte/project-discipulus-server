@@ -11,7 +11,7 @@ jobs:
       - run:
           command: npm run test:unit
       - run:
-          command: npm run test:int:circleci
+          command: npm run test:int
 workflows:
     build-and-test:
       jobs:
