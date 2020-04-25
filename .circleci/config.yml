@@ -2,28 +2,16 @@ version: 2.1
 orbs:
   node: circleci/node@2.0.3
 jobs:
-  build:
+  test:
     executor:
       name: node/default
       tag: '12'
     steps:
       - checkout
       - node/install-packages
-  unit-test:
-    executor:
-      name: node/default
-    steps:
       - run:
           command: npm run test:unit
-  integration-test:
-    executor:
-      name: node/default
-    steps:
-      - run:
-          command: npm run test:int:circleci
 workflows:
     build-and-test:
       jobs:
-        - build
-        - unit-test
-        - integration-test
+        - test
