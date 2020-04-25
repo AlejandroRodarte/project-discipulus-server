@@ -1,9 +1,14 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo, connection } = require('mongoose');
+const { mongo } = require('mongoose');
 
+const UserRole = require('../../../../src/db/models/user-role');
 const Role = require('../../../../src/db/models/role');
+
 const roleContexts = require('../../../__fixtures__/functions/db/models/role');
+const userRoleContexts = require('../../../__fixtures__/functions/db/models/user-role');
+
+const { roles } = require('../../../__fixtures__/models/role/persisted');
 const { nonUniqueRoles, uniqueRoles } = require('../../../__fixtures__/models/role/unpersisted');
 
 const expect = chai.expect;
@@ -32,5 +37,27 @@ describe('[db/models/role] - sampleRole context', () => {
     });
 
     afterEach(roleContexts.sampleRole.teardown);
+
+});
+
+describe('[db/models/role] - singleUserRole context', () => {
+
+    beforeEach(userRoleContexts.singleUserRole.init);
+
+    describe('[db/models/role] - Pre remove hook', () => {
+
+        it('Should remove user-role association upon role deletion', async () => {
+
+            const role = await Role.findOne({ _id: roles[0]._id });
+            await role.remove();
+
+            const userRoleDocCount = await UserRole.countDocuments({});
+            expect(userRoleDocCount).to.equal(0);
+
+        });
+
+    });
+
+    afterEach(userRoleContexts.singleUserRole.teardown);
 
 });
