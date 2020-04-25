@@ -8,7 +8,6 @@ const Role = require('../../../../src/db/models/role');
 const roleContexts = require('../../../__fixtures__/functions/db/models/role');
 const userRoleContexts = require('../../../__fixtures__/functions/db/models/user-role');
 
-const { roles } = require('../../../__fixtures__/models/role/persisted');
 const { nonUniqueRoles, uniqueRoles } = require('../../../__fixtures__/models/role/unpersisted');
 
 const expect = chai.expect;
@@ -16,7 +15,7 @@ chai.use(chaiAsPromised);
 
 describe('[db/models/role] - sampleRole context', () => {
 
-    beforeEach(roleContexts.sampleRole.init);
+    beforeEach(roleContexts.sampleRole.init.fn);
 
     describe('[db/models/role] - non-unique role name', () => {
 
@@ -42,13 +41,13 @@ describe('[db/models/role] - sampleRole context', () => {
 
 describe('[db/models/role] - singleUserRole context', () => {
 
-    beforeEach(userRoleContexts.singleUserRole.init);
+    beforeEach(userRoleContexts.singleUserRole.init.fn);
 
     describe('[db/models/role] - Pre remove hook', () => {
 
         it('Should remove user-role association upon role deletion', async () => {
 
-            const role = await Role.findOne({ _id: roles[0]._id });
+            const role = await Role.findOne({ _id: userRoleContexts.singleUserRole.init.data.role._id });
             await role.remove();
 
             const userRoleDocCount = await UserRole.countDocuments({});

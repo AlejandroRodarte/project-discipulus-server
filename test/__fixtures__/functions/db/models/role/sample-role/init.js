@@ -5,4 +5,9 @@ const init = async () => {
     await new Role(sampleRole).save();
 };
 
-module.exports = init;
+module.exports = {
+    fn: init,
+    data: {
+        sampleRole
+    }
+};

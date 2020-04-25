@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo, connection } = require('mongoose');
+const { mongo } = require('mongoose');
 
 const UserRole = require('../../../../src/db/models/user-role');
 const userRoleContexts = require('../../../__fixtures__/functions/db/models/user-role');
@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 
 describe('[db/models/user-role] - sampleUserRole context', () => {
 
-    beforeEach(userRoleContexts.sampleUserRole.init);
+    beforeEach(userRoleContexts.sampleUserRole.init.fn);
    
     describe('[db/models/user-role] - Non-unique user-roles', async () => {
 

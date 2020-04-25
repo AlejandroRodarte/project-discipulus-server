@@ -5,4 +5,9 @@ const init = async () => {
     await new User(sampleUser).save();
 };
 
-module.exports = init;
+module.exports = {
+    fn: init,
+    data: {
+        sampleUser
+    }
+}

@@ -7,8 +7,6 @@ const UserRole = require('../../../../src/db/models/user-role');
 const userContexts = require('../../../__fixtures__/functions/db/models/user');
 const userRoleContexts = require('../../../__fixtures__/functions/db/models/user-role');
 
-const { users } = require('../../../__fixtures__/models/user/persisted');
-
 const { sampleUser } = require('../../../__fixtures__/models/user/persisted');
 const { nonUniqueUsers, uniqueUsers } = require('../../../__fixtures__/models/user/unpersisted');
 
@@ -17,7 +15,7 @@ chai.use(chaiAsPromised);
 
 describe('[db/models/user] - sampleUser context', () => {
 
-    beforeEach(userContexts.sampleUser.init);
+    beforeEach(userContexts.sampleUser.init.fn);
 
     describe('[db/models/user] - Non-unique names', () => {
 
@@ -50,7 +48,7 @@ describe('[db/models/user] - sampleUser context', () => {
     
         it('Should not persist a user with a non-unique avatar keyname', async () => {
     
-            const persistedUser = await User.findOne({ _id: sampleUser._id });
+            const persistedUser = await User.findOne({ _id: userContexts.sampleUser.init.data.sampleUser._id });
     
             const unpersistedUser = new User(uniqueUsers[0]);
             unpersistedUser.avatar.keyname = persistedUser.avatar.keyname;
@@ -103,13 +101,13 @@ describe('[db/models/user] - sampleUser context', () => {
 
 describe('[db/models/user] - singleUserRole context', () => {
 
-    beforeEach(userRoleContexts.singleUserRole.init);
+    beforeEach(userRoleContexts.singleUserRole.init.fn);
 
     describe('[db/models/user] - Pre remove hook', () => {
 
         it('Should remove user-role association upon user deletion', async () => {
 
-            const user = await User.findOne({ _id: users[0]._id });
+            const user = await User.findOne({ _id: userRoleContexts.singleUserRole.init.data.user });
             await user.remove();
 
             const userRoleDocCount = await UserRole.countDocuments({});
