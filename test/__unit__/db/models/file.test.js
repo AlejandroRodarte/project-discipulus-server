@@ -4,10 +4,9 @@ const File = require('../../../../src/db/models/file');
 const { fileDefinition } = require('../../../../src/db/schemas/file');
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
-const fileDoc = {
-    originalname: 'this is my file.test.pdf',
-    mimetype: 'application/pdf'
-};
+const { sampleFile } = require('../../../__fixtures__/models/file/persisted');
+
+const fileDoc = sampleFile;
 
 let file = new File(fileDoc);
 

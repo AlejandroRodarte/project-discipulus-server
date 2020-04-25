@@ -1,5 +1,7 @@
 const { Types } = require('mongoose');
 
+const { sampleFile } = require('../../file/persisted');
+
 module.exports = {
     _id: new Types.ObjectId(),
     name: 'Alejandro Rodarte',
@@ -9,8 +11,5 @@ module.exports = {
     tokens: [
         'super-token'
     ],
-    avatar: {
-        originalname: 'my-image.png',
-        mimetype: 'image/png'
-    }
+    avatar: sampleFile
 };
