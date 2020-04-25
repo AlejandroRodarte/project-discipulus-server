@@ -2,8 +2,6 @@ const jwt = require('jsonwebtoken');
 const faker = require('faker');
 const { Types } = require('mongoose');
 
-const { strongPassword } = require('../../../../../src/util/regexp');
-
 const userIds = [...new Array(1)].map(_ => new Types.ObjectId());
 
 const users = userIds.map(_id => ({
@@ -11,7 +9,7 @@ const users = userIds.map(_id => ({
     name: faker.name.findName(),
     username: faker.internet.userName(),
     email: faker.internet.email(),
-    password: faker.internet.password(12, false, strongPassword),
+    password: '$s4tic!paSsw0rd',
     tokens: [
         jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME })
     ],
