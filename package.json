@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "env-cmd -f config/.env.development nodemon src/index.js",
     "test:unit": "mocha test/__unit__/**/*.test.js",
-    "test:int": "env-cmd -f config/.env.test mocha --file ./test/__fixtures__/functions/db/setup.js test/__integration__/**/*.test.js"
+    "test:int": "env-cmd -f config/.env.test mocha --file ./test/__fixtures__/functions/db/setup.js test/__integration__/**/*.test.js --watch",
+    "test:int:circleci": "mocha --file ./test/__fixtures__/functions/db/setup.js test/__integration__/**/*.test.js"
   },
   "repository": {
     "type": "git",
