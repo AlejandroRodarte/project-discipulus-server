@@ -20,6 +20,18 @@ userSchema.virtual('userroles', {
     foreignField: 'user'
 });
 
+userSchema.virtual('parentstudents', {
+    ref: parentStudent.modelName,
+    localField: '_id',
+    foreignField: 'parent'
+});
+
+userSchema.virtual('studentparents', {
+    ref: parentStudent.modelName,
+    localField: '_id',
+    foreignField: 'student'
+});
+
 userSchema.pre('save', async function(next) {
 
     const user = this;
