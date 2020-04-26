@@ -2,9 +2,11 @@ const { Schema } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userDefinition = require('./definition');
-const { user, userRole, parentStudent, role } = require('../../names');
+const { user, userRole, parentStudent } = require('../../names');
 
 const { getRolesPipeline } = require('../../aggregation/user-role');
+
+const deletionUserRules = require('../../../util/models/user/deletion-user-rules');
 
 const schemaOpts = {
     collection: user.collectionName
@@ -34,17 +36,27 @@ userSchema.pre('remove', async function(next) {
 
     const user = this;
 
+    const roles = await this.getUserRoles();
+
     await user.model(userRole.modelName).deleteMany({
         user: user._id
     });
 
-    await user.model(parentStudent.modelName).deleteMany({
-        parent: user._id
-    });
+    for (const role in deletionUserRules) {
 
-    await user.model(parentStudent.modelName).deleteMany({
-        student: user._id
-    });
+        if (roles.includes(role)) {
+
+            for (const rule of deletionUserRules[role]) {
+
+                await user.model(rule.modelName).deleteMany({
+                    [rule.fieldName]: user._id
+                });
+
+            }
+
+        }
+
+    }
 
     next();
 
