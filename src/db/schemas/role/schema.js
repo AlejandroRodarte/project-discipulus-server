@@ -1,7 +1,5 @@
 const { Schema } = require('mongoose');
 
-const UserRole = require('../../models/user-role');
-
 const roleDefinition = require('./definition');
 const { role, userRole } = require('../../names');
 
@@ -21,7 +19,7 @@ roleSchema.pre('remove', async function(next) {
 
     const role = this;
 
-    await UserRole.deleteMany({
+    await role.model(userRole.modelName).deleteMany({
         role: role._id
     });
 

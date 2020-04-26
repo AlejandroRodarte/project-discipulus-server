@@ -16,7 +16,7 @@ const names = {
     },
 
     userRole: {
-        collectionName: 'userroles',
+        collectionName: 'usersroles',
         modelName: 'UserRole'
     },
 

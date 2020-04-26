@@ -1,10 +1,8 @@
 const { Schema } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const { UserRole, ParentStudent } = require('../../models');
-
 const userDefinition = require('./definition');
-const { user, userRole } = require('../../names');
+const { user, userRole, parentStudent } = require('../../names');
 
 const schemaOpts = {
     collection: user.collectionName
@@ -34,15 +32,15 @@ userSchema.pre('remove', async function(next) {
 
     const user = this;
 
-    await UserRole.deleteMany({
+    await user.model(userRole.modelName).deleteMany({
         user: user._id
     });
 
-    await ParentStudent.deleteMany({
+    await user.model(parentStudent.modelName).deleteMany({
         parent: user._id
     });
 
-    await ParentStudent.deleteMany({
+    await user.model(parentStudent.modelName).deleteMany({
         student: user._id
     });
 
