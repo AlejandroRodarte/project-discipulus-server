@@ -1,0 +1,11 @@
+const ROLE_TEACHER = 'ROLE_TEACHER';
+const ROLE_PARENT = 'ROLE_PARENT';
+const ROLE_STUDENT = 'ROLE_STUDENT';
+const ROLE_ADMIN = 'ROLE_ADMIN';
+
+module.exports = {
+    ROLE_ADMIN,
+    ROLE_PARENT,
+    ROLE_STUDENT,
+    ROLE_TEACHER
+};
