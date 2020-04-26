@@ -1,9 +1,10 @@
 const { Schema } = require('mongoose');
 
 const userRoleDefinition = require('./definition');
+const { userRole } = require('../../names');
 
 const schemaOpts = {
-    collection: 'userroles'
+    collection: userRole.collectionName
 };
 
 const userRoleSchema = new Schema(userRoleDefinition, schemaOpts);

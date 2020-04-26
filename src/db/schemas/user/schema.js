@@ -4,9 +4,10 @@ const bcrypt = require('bcryptjs');
 const { UserRole, ParentStudent } = require('../../models');
 
 const userDefinition = require('./definition');
+const { user } = require('../../names');
 
 const schemaOpts = {
-    collection: 'users'
+    collection: user.collectionName
 };
 
 const userSchema = new Schema(userDefinition, schemaOpts);

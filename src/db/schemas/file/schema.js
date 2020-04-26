@@ -2,11 +2,12 @@ const { Schema } = require('mongoose');
 const { v4 } = require('uuid');
 
 const fileDefinition = require('./definition');
+const { file } = require('../../names');
 
 const uuidv4 = v4;
 
 const schemaOpts = {
-    collection: 'files'
+    collection: file.collectionName
 };
 
 const fileSchema = new Schema(fileDefinition, schemaOpts);

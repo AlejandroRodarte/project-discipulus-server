@@ -1,6 +1,8 @@
 const db = require('../');
 const { fileSchema } = require('../schemas/file');
 
-const File = db.getModel('File', fileSchema);
+const { file } = require('../names');
+
+const File = db.getModel(file.modelName, fileSchema);
 
 module.exports = File;

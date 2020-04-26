@@ -1,9 +1,10 @@
 const { Schema } = require('mongoose');
 
 const parentStudentDefinition = require('./definition');
+const { parentStudent } = require('../../names');
 
 const schemaOpts = {
-    collection: 'parentsstudents'
+    collection: parentStudent.collectionName
 };
 
 const parentStudentSchema = new Schema(parentStudentDefinition, schemaOpts);

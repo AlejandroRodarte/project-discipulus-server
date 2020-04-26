@@ -3,9 +3,10 @@ const { Schema } = require('mongoose');
 const UserRole = require('../../models/user-role');
 
 const roleDefinition = require('./definition');
+const { role } = require('../../names');
 
 const schemaOpts = {
-    collection: 'roles'
+    collection: role.collectionName
 };
 
 const roleSchema = new Schema(roleDefinition, schemaOpts);
