@@ -2,7 +2,9 @@ const { Schema } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userDefinition = require('./definition');
-const { user, userRole, parentStudent } = require('../../names');
+const { user, userRole, parentStudent, role } = require('../../names');
+
+const { getRolesPipeline } = require('../../aggregation/user-role');
 
 const schemaOpts = {
     collection: user.collectionName
@@ -47,5 +49,22 @@ userSchema.pre('remove', async function(next) {
     next();
 
 });
+
+userSchema.methods.getUserRoles = async function() {
+
+    const user = this;
+    
+    const pipeline = getRolesPipeline(user._id);
+    const docs = await user.model(userRole.modelName).aggregate(pipeline);
+
+    if (!docs.length) {
+        return [];
+    }
+
+    const [uniqueUser] = docs;
+
+    return uniqueUser.roles;
+
+};
 
 module.exports = userSchema;
