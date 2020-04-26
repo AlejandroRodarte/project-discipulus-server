@@ -3,7 +3,7 @@ const { Schema } = require('mongoose');
 const UserRole = require('../../models/user-role');
 
 const roleDefinition = require('./definition');
-const { role } = require('../../names');
+const { role, userRole } = require('../../names');
 
 const schemaOpts = {
     collection: role.collectionName
@@ -12,7 +12,7 @@ const schemaOpts = {
 const roleSchema = new Schema(roleDefinition, schemaOpts);
 
 roleSchema.virtual('roleusers', {
-    ref: 'UserRole',
+    ref: userRole.modelName,
     localField: '_id',
     foreignField: 'role'
 });

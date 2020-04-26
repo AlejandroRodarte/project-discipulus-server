@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const { UserRole, ParentStudent } = require('../../models');
 
 const userDefinition = require('./definition');
-const { user } = require('../../names');
+const { user, userRole } = require('../../names');
 
 const schemaOpts = {
     collection: user.collectionName
@@ -13,9 +13,9 @@ const schemaOpts = {
 const userSchema = new Schema(userDefinition, schemaOpts);
 
 userSchema.virtual('userroles', {
-    ref: 'UserRole',
+    ref: userRole.modelName,
     localField: '_id',
-    foreignField: 'owner'
+    foreignField: 'user'
 });
 
 userSchema.pre('save', async function(next) {
