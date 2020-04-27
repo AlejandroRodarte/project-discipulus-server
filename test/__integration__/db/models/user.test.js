@@ -13,6 +13,8 @@ const { user } = require('../../../../src/db/names');
 const uniqueUserContextModelNames = Object.keys(uniqueUserContext.persisted);
 const baseUserRoleContextModelNames = Object.keys(baseUserRoleContext.persisted);
 
+const roleTypes = require('../../../../src/util/roles');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -126,8 +128,43 @@ describe('[db/models/user] - baseUserRole context', () => {
             const user = await User.findOne({ _id: persistedUserId });
             await user.remove();
 
-            const userRoleDocCount = await UserRole.countDocuments({});
+            const userRoleDocCount = await UserRole.countDocuments({
+                user: persistedUserId
+            });
+
             expect(userRoleDocCount).to.equal(0);
+
+        });
+
+    });
+
+    describe('[db/models/user] - getUserRoles', () => {
+
+        const users = baseUserRoleContext.persisted[user.modelName];
+
+        const userTwoId = users[1]._id;
+        const userThreeId = users[2]._id;
+
+        it('Should return an array of rolenames on user with roles', async () => {
+
+            const user = await User.findOne({ _id: userTwoId });
+            const roles = await user.getUserRoles();
+
+            expect(roles.length).to.equal(2);
+
+            const [roleOne, roleTwo] = roles;
+
+            expect(roleOne).to.equal(roleTypes.ROLE_ADMIN);
+            expect(roleTwo).to.equal(roleTypes.ROLE_PARENT);
+
+        });
+
+        it ('Should return an empty array on user without roles', async () => {
+
+            const user = await User.findOne({ _id: userThreeId });
+            const roles = await user.getUserRoles();
+
+            expect(roles.length).to.equal(0);
 
         });
 

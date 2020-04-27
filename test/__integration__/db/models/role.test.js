@@ -59,7 +59,10 @@ describe('[db/models/role] - baseUserRole context', () => {
             const role = await Role.findOne({ _id: persistedRoleId });
             await role.remove();
 
-            const userRoleDocCount = await UserRole.countDocuments({});
+            const userRoleDocCount = await UserRole.countDocuments({
+                role: persistedRoleId
+            });
+
             expect(userRoleDocCount).to.equal(0);
 
         });
