@@ -1,4 +1,5 @@
 const expect = require('chai').expect;
+const sinon = require('sinon');
 
 const User = require('../../../../src/db/models/user');
 const { userDefinition } = require('../../../../src/db/schemas/user');
@@ -209,6 +210,14 @@ describe('[db/models/user] - enabled', () => {
 
     it('Should set enabled flag to true as default upon user model instance creation', async () => {
         expect(user.enabled).to.equal(true);
+    });
+
+});
+
+describe('[db/models/user] - getUserRoles', () => {
+
+    it('Should create a correct pipeline for the aggregate call', () => {
+
     });
 
 });
