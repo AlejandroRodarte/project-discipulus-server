@@ -4,23 +4,23 @@ const { mongo } = require('mongoose');
 
 const UserRole = require('../../../../src/db/models/user-role');
 
-const { sampleUserRoleContext } = require('../../../__fixtures__/models');
+const { uniqueUserRoleContext } = require('../../../__fixtures__/models');
 const db = require('../../../__fixtures__/functions/db');
 
 const { userRole } = require('../../../../src/db/names');
 
-const sampleUserRoleContexttModelNames = Object.keys(sampleUserRoleContext.persisted);
+const uniqueUserRoleContexttModelNames = Object.keys(uniqueUserRoleContext.persisted);
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe('[db/models/user-role] - sampleUserRole context', () => {
+describe('[db/models/user-role] - uniqueUserRole context', () => {
 
-    beforeEach(db.init(sampleUserRoleContext.persisted));
+    beforeEach(db.init(uniqueUserRoleContext.persisted));
    
     describe('[db/models/user-role] - Non-unique user-roles', async () => {
 
-        const nonUniqueUserRoleDoc = sampleUserRoleContext.unpersisted[userRole.modelName][3];
+        const nonUniqueUserRoleDoc = uniqueUserRoleContext.unpersisted[userRole.modelName][3];
 
         it('Should not persist a user-role that has the same user/role composite _id', async () => {
             const duplicateUserRole = new UserRole(nonUniqueUserRoleDoc);
@@ -31,7 +31,7 @@ describe('[db/models/user-role] - sampleUserRole context', () => {
     
     describe('[db/modsls/user-role] - Unique user-roles', () => {
     
-        const uniqueUserRoles = sampleUserRoleContext.unpersisted[userRole.modelName];
+        const uniqueUserRoles = uniqueUserRoleContext.unpersisted[userRole.modelName];
 
         it('Should persist a user-role with same role _id and different user _id', async () => {
             const userRole = new UserRole(uniqueUserRoles[1]);
@@ -50,6 +50,6 @@ describe('[db/models/user-role] - sampleUserRole context', () => {
     
     });
     
-    afterEach(db.teardown(sampleUserRoleContexttModelNames));
+    afterEach(db.teardown(uniqueUserRoleContexttModelNames));
 
 });

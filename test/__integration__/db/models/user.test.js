@@ -5,29 +5,29 @@ const { mongo } = require('mongoose');
 const User = require('../../../../src/db/models/user');
 const UserRole = require('../../../../src/db/models/user-role');
 
-const { sampleUserContext, singleUserRoleContext } = require('../../../__fixtures__/models');
+const { uniqueUserContext, baseUserRoleContext } = require('../../../__fixtures__/models');
 const db = require('../../../__fixtures__/functions/db');
 
 const { user } = require('../../../../src/db/names');
 
-const sampleUserContextModelNames = Object.keys(sampleUserContext.persisted);
-const singleUserRoleContextModelNames = Object.keys(singleUserRoleContext.persisted);
+const uniqueUserContextModelNames = Object.keys(uniqueUserContext.persisted);
+const baseUserRoleContextModelNames = Object.keys(baseUserRoleContext.persisted);
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe('[db/models/user] - sampleUser context', () => {
+describe('[db/models/user] - uniqueUser context', () => {
 
-    beforeEach(db.init(sampleUserContext.persisted));
+    beforeEach(db.init(uniqueUserContext.persisted));
 
-    const persistedUser = sampleUserContext.persisted[user.modelName][0];
+    const persistedUser = uniqueUserContext.persisted[user.modelName][0];
     const persistedUserId = persistedUser._id;
 
-    const uniqueUserDoc = sampleUserContext.unpersisted[user.modelName][0];
+    const uniqueUserDoc = uniqueUserContext.unpersisted[user.modelName][0];
 
     describe('[db/models/user] - Non-unique names', () => {
 
-        const nonUniqueUserDoc = sampleUserContext.unpersisted[user.modelName][1];
+        const nonUniqueUserDoc = uniqueUserContext.unpersisted[user.modelName][1];
 
         it('Should persist a user with a non-unique name', async () => {
             const user = new User(nonUniqueUserDoc);
@@ -38,7 +38,7 @@ describe('[db/models/user] - sampleUser context', () => {
     
     describe('[db/models/user] - Non-unique usernames', () => {
     
-        const nonUniqueUserDoc = sampleUserContext.unpersisted[user.modelName][2];
+        const nonUniqueUserDoc = uniqueUserContext.unpersisted[user.modelName][2];
 
         it('Should not persist a user with a non-unique username', async () => {
             const duplicateUser = new User(nonUniqueUserDoc);
@@ -49,7 +49,7 @@ describe('[db/models/user] - sampleUser context', () => {
     
     describe('[db/models/user] - Non-unique emails', () => {
     
-        const nonUniqueUserDoc = sampleUserContext.unpersisted[user.modelName][3];
+        const nonUniqueUserDoc = uniqueUserContext.unpersisted[user.modelName][3];
 
         it('Should not persist a user with a non-unique email', async () => {
             const duplicateUser = new User(nonUniqueUserDoc);
@@ -109,15 +109,15 @@ describe('[db/models/user] - sampleUser context', () => {
     
     });
 
-    afterEach(db.teardown(sampleUserContextModelNames));
+    afterEach(db.teardown(uniqueUserContextModelNames));
 
 });
 
-describe('[db/models/user] - singleUserRole context', () => {
+describe('[db/models/user] - baseUserRole context', () => {
 
-    beforeEach(db.init(singleUserRoleContext.persisted));
+    beforeEach(db.init(baseUserRoleContext.persisted));
 
-    const persistedUserId = singleUserRoleContext.persisted[user.modelName][0]._id;
+    const persistedUserId = baseUserRoleContext.persisted[user.modelName][0]._id;
 
     describe('[db/models/user] - Pre remove hook', () => {
 
@@ -133,6 +133,6 @@ describe('[db/models/user] - singleUserRole context', () => {
 
     });
 
-    afterEach(db.teardown(singleUserRoleContextModelNames));
+    afterEach(db.teardown(baseUserRoleContextModelNames));
 
 });

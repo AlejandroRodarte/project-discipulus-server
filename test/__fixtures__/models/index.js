@@ -1,13 +1,13 @@
 const sampleFileContext = require('./sample-file');
-const sampleRoleContext = require('./sample-role');
-const sampleUserContext = require('./sample-user');
-const sampleUserRoleContext = require('./sample-user-role');
-const singleUserRoleContext = require('./single-user-role');
+const uniqueRoleContext = require('./unique-role');
+const uniqueUserContext = require('./unique-user');
+const uniqueUserRoleContext = require('./unique-user-role');
+const baseUserRoleContext = require('./base-user-role');
 
 module.exports = {
     sampleFileContext,
-    sampleRoleContext,
-    sampleUserContext,
-    sampleUserRoleContext,
-    singleUserRoleContext
+    uniqueRoleContext,
+    uniqueUserContext,
+    uniqueUserRoleContext,
+    baseUserRoleContext
 };

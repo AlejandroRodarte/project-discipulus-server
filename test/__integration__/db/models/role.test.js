@@ -5,24 +5,24 @@ const { mongo } = require('mongoose');
 const UserRole = require('../../../../src/db/models/user-role');
 const Role = require('../../../../src/db/models/role');
 
-const { sampleRoleContext, singleUserRoleContext } = require('../../../__fixtures__/models');
+const { uniqueRoleContext, baseUserRoleContext } = require('../../../__fixtures__/models');
 const db = require('../../../__fixtures__/functions/db');
 
 const { role } = require('../../../../src/db/names');
 
-const sampleRoleContextModelNames = Object.keys(sampleRoleContext.persisted);
-const singleUserRoleContextModelNames = Object.keys(singleUserRoleContext.persisted);
+const uniqueRoleContextModelNames = Object.keys(uniqueRoleContext.persisted);
+const baseUserRoleContextModelNames = Object.keys(baseUserRoleContext.persisted);
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe('[db/models/role] - sampleRole context', () => {
+describe('[db/models/role] - uniqueRole context', () => {
 
-    beforeEach(db.init(sampleRoleContext.persisted));
+    beforeEach(db.init(uniqueRoleContext.persisted));
 
     describe('[db/models/role] - non-unique role name', () => {
 
-        const nonUniqueRoleDoc = sampleRoleContext.unpersisted[role.modelName][1];
+        const nonUniqueRoleDoc = uniqueRoleContext.unpersisted[role.modelName][1];
 
         it('Should not persist a role with a non unique role name', async () => {
             const duplicateRole = new Role(nonUniqueRoleDoc);
@@ -33,7 +33,7 @@ describe('[db/models/role] - sampleRole context', () => {
     
     describe('[db/models/role] - unique role name', () => {
     
-        const uniqueRoleDoc = sampleRoleContext.unpersisted[role.modelName][0];
+        const uniqueRoleDoc = uniqueRoleContext.unpersisted[role.modelName][0];
 
         it('Should persist a role with a unique role name', async () => {
             const uniqueRole = new Role(uniqueRoleDoc);
@@ -42,17 +42,17 @@ describe('[db/models/role] - sampleRole context', () => {
         
     });
 
-    afterEach(db.teardown(sampleRoleContextModelNames));
+    afterEach(db.teardown(uniqueRoleContextModelNames));
 
 });
 
-describe('[db/models/role] - singleUserRole context', () => {
+describe('[db/models/role] - baseUserRole context', () => {
 
-    beforeEach(db.init(singleUserRoleContext.persisted));
+    beforeEach(db.init(baseUserRoleContext.persisted));
 
     describe('[db/models/role] - Pre remove hook', () => {
 
-        const persistedRoleId = singleUserRoleContext.persisted[role.modelName][0]._id;
+        const persistedRoleId = baseUserRoleContext.persisted[role.modelName][0]._id;
 
         it('Should remove user-role association upon role deletion', async () => {
 
@@ -66,6 +66,6 @@ describe('[db/models/role] - singleUserRole context', () => {
 
     });
 
-    afterEach(db.teardown(singleUserRoleContextModelNames));
+    afterEach(db.teardown(baseUserRoleContextModelNames));
 
 });
