@@ -4,9 +4,11 @@ const File = require('../../../../src/db/models/file');
 const { fileDefinition } = require('../../../../src/db/schemas/file');
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
-const { sampleFile } = require('../../../__fixtures__/models/file/persisted');
+const sampleFileContext = require('../../../__fixtures__/models/sample-file');
 
-const fileDoc = sampleFile;
+const names = require('../../../../src/db/names');
+
+const [fileDoc] = sampleFileContext.persisted[names.file.modelName];
 
 let file = new File(fileDoc);
 

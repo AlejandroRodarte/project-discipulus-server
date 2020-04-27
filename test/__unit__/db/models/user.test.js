@@ -4,7 +4,11 @@ const User = require('../../../../src/db/models/user');
 const { userDefinition } = require('../../../../src/db/schemas/user');
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
-const { sampleFile } = require('../../../__fixtures__/models/file/persisted');
+const sampleFileContext = require('../../../__fixtures__/models/sample-file');
+
+const { file } = require('../../../../src/db/names');
+
+const [fileDoc] = sampleFileContext.persisted[file.modelName];
 
 const userDoc = {
     name: 'Alejandro Rodarte',
@@ -14,7 +18,7 @@ const userDoc = {
     tokens: [
         'my-super-token'
     ],
-    avatar: sampleFile
+    avatar: fileDoc
 };
 
 let user = new User(userDoc);
