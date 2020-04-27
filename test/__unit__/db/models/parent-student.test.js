@@ -8,6 +8,8 @@ const { testForInvalidModel, testForValidModel, generateFakeUsers, getNewModelIn
 
 const { User, ParentStudent } = require('../../../../src/db/models');
 
+const roleTypes = require('../../../../src/util/roles');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -16,9 +18,17 @@ const parentStudentDoc = {
     student: new Types.ObjectId()
 };
 
-let parentStudent = new ParentStudent(parentStudentDoc);
+const userDoc = generateFakeUsers(1, {
+    fakeToken: true
+});
 
-beforeEach(() => parentStudent = getNewModelInstance(ParentStudent, parentStudentDoc));
+let parentStudent = new ParentStudent(parentStudentDoc);
+let user = new User(userDoc);
+
+beforeEach(() => {
+    parentStudent = getNewModelInstance(ParentStudent, parentStudentDoc);
+    user = getNewModelInstance(User, userDoc);
+});
 
 describe('[db/models/parent-student] - invalid parent', () => {
 
@@ -58,11 +68,11 @@ describe('[db/models/parent-student - add]', () => {
     let userHasRoleStub;
     let userSaveStub;
 
-    it('Should call User.findOne with correct args', () => {
+    it('Should call User.findOne with correct args and throw error when resolves null user', async () => {
 
         userFindOneStub = sandbox.stub(User, 'findOne').resolves(null);
         
-        ParentStudent.add(parentStudent).catch(() => {});
+        await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.rejectedWith(Error);
     
         sinon.assert.calledOnceWithExactly(userFindOneStub, {
             _id: parentStudent.parent,
@@ -71,23 +81,36 @@ describe('[db/models/parent-student - add]', () => {
 
     });
 
-    it('Should throw error if User.findOne resolves null user', async () => {
-        userFindOneStub = sandbox.stub(User, 'findOne').resolves(null);
-        await expect(ParentStudent.add(parentStudent)).to.eventually.be.rejectedWith(Error);
-    });
-
-    it('Should throw error if parent.hasRole resolves to false', async () => {
-
-        const [userDoc] = generateFakeUsers(1, {
-            fakeToken: true
-        });
-        
-        const user = new User(userDoc);
+    it('Should call parent.hasRole with correct args and throw error when resolves to false', async () => {
 
         userFindOneStub = sandbox.stub(User, 'findOne').resolves(user);
         userHasRoleStub = sandbox.stub(user, 'hasRole').resolves(false);
 
-        await expect(ParentStudent.add(parentStudent)).to.eventually.be.rejectedWith(Error);
+        await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_PARENT);
+
+    });
+
+    it('Should throw error on save if ParentStudent model validation rules fail', async () => {
+
+        userFindOneStub = sandbox.stub(User, 'findOne').resolves(user);
+        userHasRoleStub = sandbox.stub(user, 'hasRole').resolves(true);
+        userSaveStub = sandbox.stub(ParentStudent.prototype, 'save').rejects();
+
+        await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnce(userSaveStub);
+
+    });
+
+    it('Should return parentStudent instance model when validations pass', async () => {
+
+        userFindOneStub = sandbox.stub(User, 'findOne').resolves(user);
+        userHasRoleStub = sandbox.stub(user, 'hasRole').resolves(true);
+        userSaveStub = sandbox.stub(ParentStudent.prototype, 'save').resolves();
+
+        await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.instanceof(ParentStudent);
 
     });
 
