@@ -170,6 +170,33 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     });
 
+    describe('[db/models/user] - hasRole', () => {
+
+        const users = baseUserRoleContext.persisted[user.modelName];
+
+        const userOneId = users[0]._id;
+        const userTwoId = users[2]._id;
+
+        it('Should return true on user that has a role', async () => {
+
+            const user = await User.findOne({ _id: userOneId });
+            const hasRole = await user.hasRole(roleTypes.ROLE_ADMIN);
+
+            expect(hasRole).to.equal(true);
+
+        });
+
+        it('Should return false on user that does not have a role', async () => {
+
+            const user = await User.findOne({ _id: userTwoId });
+            const hasRole = await user.hasRole(roleTypes.ROLE_STUDENT);
+
+            expect(hasRole).to.equal(false);
+
+        });
+
+    });
+
     afterEach(db.teardown(baseUserRoleContextModelNames));
 
 });
