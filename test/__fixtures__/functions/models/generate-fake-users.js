@@ -2,7 +2,9 @@ const jwt = require('jsonwebtoken');
 const faker = require('faker');
 const { Types } = require('mongoose');
 
-const generateFakeUsers = (amount, enabled) => {
+const generateFakeUsers = (amount, config = {}) => {
+
+    const { enabled = true, fakeToken = false } = config;
 
     const userIds = [...new Array(amount)].map(_ => new Types.ObjectId());
 
@@ -13,7 +15,7 @@ const generateFakeUsers = (amount, enabled) => {
         email: faker.internet.email(),
         password: '$s4tic!paSsw0rd',
         tokens: [
-            jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME })
+            fakeToken ? 'some-token' : jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME })
         ],
         avatar: {
             originalname: faker.system.fileName(),

@@ -23,7 +23,7 @@ const roles = [
 ];
 
 // 0-2: generate 3 enabled fake users
-const users = generateFakeUsers(3, true);
+const users = generateFakeUsers(3);
 
 const usersRoles = [
 

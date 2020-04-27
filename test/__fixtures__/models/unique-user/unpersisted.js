@@ -4,7 +4,7 @@ const generateFakeUsers = require('../../functions/models/generate-fake-users');
 
 const persisted = require('./persisted');
 
-const [uniqueUser] = generateFakeUsers(1, true);
+const [uniqueUser] = generateFakeUsers(1);
 
 const [persistedUser] = persisted[user.modelName];
 

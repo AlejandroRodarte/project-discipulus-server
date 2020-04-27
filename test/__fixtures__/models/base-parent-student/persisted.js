@@ -26,9 +26,9 @@ const roles = [
 // 1: disabled user
 // 2-3: enabled users
 const users = [
-    ...generateFakeUsers(1, true),
-    ...generateFakeUsers(1, false),
-    ...generateFakeUsers(2, true)
+    ...generateFakeUsers(1),
+    ...generateFakeUsers(1, { enabled: false }),
+    ...generateFakeUsers(2)
 ];
 
 const usersRoles = [
