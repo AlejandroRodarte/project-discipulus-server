@@ -62,7 +62,7 @@ describe('[db/models/parent-student - add]', () => {
 
         userFindOneStub = sandbox.stub(User, 'findOne').resolves(null);
         
-        ParentStudent.add(parentStudent);
+        ParentStudent.add(parentStudent).catch(() => {});
     
         sinon.assert.calledOnceWithExactly(userFindOneStub, {
             _id: parentStudent.parent,
