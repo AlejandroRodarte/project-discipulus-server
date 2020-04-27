@@ -7,7 +7,10 @@ const modelFunctions = require('../../../__fixtures__/functions/models');
 
 const sampleFileContext = require('../../../__fixtures__/models/sample-file');
 
-const { file } = require('../../../../src/db/names');
+const { getRolesPipeline } = require('../../../../src/db/aggregation/user-role');
+
+const { file, userRole } = require('../../../../src/db/names');
+const roleTypes = require('../../../../src/util/roles');
 
 const [fileDoc] = sampleFileContext.persisted[file.modelName];
 
@@ -216,8 +219,54 @@ describe('[db/models/user] - enabled', () => {
 
 describe('[db/models/user] - getUserRoles', () => {
 
-    it('Should create a correct pipeline for the aggregate call', () => {
+    let userAggregateStub;
 
+    it('Should create a correct pipeline for the aggregate call', async () => {
+
+        userAggregateStub = sinon.stub(user.model(userRole.modelName), 'aggregate').resolves([]);
+        const roles = await user.getUserRoles();
+
+        const wasCalledProperly = userAggregateStub.calledOnceWith(getRolesPipeline(user._id));
+        expect(wasCalledProperly).to.equal(true);
+
+        expect(roles.length).to.equal(0);
+
+    });
+
+    it('Should return an empty array on found user with no roles', async () => {
+
+        userAggregateStub = sinon.stub(user.model(userRole.modelName), 'aggregate').resolves([]);
+        const roles = await user.getUserRoles();
+
+        expect(roles.length).to.equal(0);
+
+    });
+
+    it ('Should return an array of role names on found user with roles', async () => {
+
+        userAggregateStub = sinon.stub(user.model(userRole.modelName), 'aggregate').resolves([
+            {
+                _id: user._id,
+                roles: [
+                    roleTypes.ROLE_ADMIN,
+                    roleTypes.ROLE_PARENT
+                ]
+            }
+        ]);
+
+        const roles = await user.getUserRoles();
+
+        expect(roles.length).to.equal(2);
+        
+        const [roleOne, roleTwo] = roles;
+
+        expect(roleOne).to.equal(roleTypes.ROLE_ADMIN);
+        expect(roleTwo).to.equal(roleTypes.ROLE_PARENT);
+
+    });
+
+    afterEach(() => {
+        userAggregateStub.restore();
     });
 
 });
