@@ -110,7 +110,7 @@ describe('[db/models/user] - invalid username', () => {
     });
 
     it(`Should not validate a user with a username longer than ${ usernameMaxLength } characters`, async () => {
-        user.username = 'superlongusernamebruh';
+        user.username = 'superlongusernamebruhohmygodsuperbadass';
         await modelFunctions.testForInvalidModelAsync(user, userDefinition.username.maxlength);
     });
 

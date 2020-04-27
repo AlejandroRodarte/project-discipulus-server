@@ -57,7 +57,7 @@ const userDefinition = {
         ],
         unique: true,
         minlength: [4, 'Your username must be at least 4 characters long'],
-        maxlength: [20, 'Your username must not exceed 20 characters long'],
+        maxlength: [30, 'Your username must not exceed 30 characters long'],
         trim: true
     },
 
