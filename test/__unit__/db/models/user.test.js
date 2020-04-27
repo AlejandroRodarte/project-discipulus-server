@@ -270,3 +270,35 @@ describe('[db/models/user] - getUserRoles', () => {
     });
 
 });
+
+describe('[db/models/user] - hasRole', () => {
+
+    let getUserRolesStub;
+
+    it('Should return true on user that has a role', async () => {
+
+        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([roleTypes.ROLE_PARENT]);
+
+        const hasRole = await user.hasRole(roleTypes.ROLE_PARENT);
+
+        sinon.assert.calledOnce(getUserRolesStub);
+        expect(hasRole).to.equal(true);
+
+    });
+
+    it('Should return false on user that does not have a role', async () => {
+
+        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([roleTypes.ROLE_TEACHER]);
+
+        const hasRole = await user.hasRole(roleTypes.ROLE_STUDENT);
+
+        sinon.assert.calledOnce(getUserRolesStub);
+        expect(hasRole).to.equal(false);
+
+    });
+
+    afterEach(() => {
+        getUserRolesStub.restore();
+    });
+
+});
