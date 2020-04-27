@@ -91,4 +91,13 @@ userSchema.methods.getUserRoles = async function() {
 
 };
 
+userSchema.methods.hasRole = async function(role) {
+
+    const user = this;
+    const roles = await user.getUserRoles();
+
+    return roles.includes(role);
+
+};
+
 module.exports = userSchema;
