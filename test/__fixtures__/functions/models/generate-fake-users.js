@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const faker = require('faker');
 const { Types } = require('mongoose');
 
-const generateFakeUsers = (amount) => {
+const generateFakeUsers = (amount, enabled) => {
 
     const userIds = [...new Array(amount)].map(_ => new Types.ObjectId());
 
@@ -18,7 +18,8 @@ const generateFakeUsers = (amount) => {
         avatar: {
             originalname: faker.system.fileName(),
             mimetype: faker.system.mimeType()
-        }
+        },
+        enabled
     }));
 
     return users;

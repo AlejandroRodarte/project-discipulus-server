@@ -4,7 +4,7 @@ const generateFakeUsers = require('../../functions/models/generate-fake-users');
 
 const persisted = require('./persisted');
 
-const [uniqueUser] = generateFakeUsers(1);
+const [uniqueUser] = generateFakeUsers(1, true);
 
 const [persistedUser] = persisted[user.modelName];
 
@@ -12,7 +12,7 @@ const unpersisted = {
 
     [user.modelName]: [
 
-        // 0. completely unique user
+        // 0. completely unique enabled user
         uniqueUser,
 
         // 1. unique user but exact name against persisted one
