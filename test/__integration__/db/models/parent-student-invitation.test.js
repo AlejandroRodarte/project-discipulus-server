@@ -74,7 +74,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
     const persistedUsers = baseParentStudentInvitationContext.persisted[user.modelName];
     const unpersistedParentUserInvitations = baseParentStudentInvitationContext.unpersisted[parentStudentInvitation.modelName];
 
-    describe('[db/models/parent-student-invitation] - add', () => {
+    describe('[db/models/parent-student-invitation] - statics.add', () => {
 
         it('Should throw an error if parent and student id match', async () => {
 

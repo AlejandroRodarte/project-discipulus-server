@@ -138,7 +138,7 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     });
 
-    describe('[db/models/user] - getUserRoles', () => {
+    describe('[db/models/user] - methods.getUserRoles', () => {
 
         const users = baseUserRoleContext.persisted[user.modelName];
 
@@ -170,7 +170,7 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     });
 
-    describe('[db/models/user] - hasRole', () => {
+    describe('[db/models/user] - methods.hasRole', () => {
 
         const users = baseUserRoleContext.persisted[user.modelName];
 

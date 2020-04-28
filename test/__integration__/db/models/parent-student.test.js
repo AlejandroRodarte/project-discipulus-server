@@ -74,7 +74,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
     const persistedUsers = baseParentStudentContext.persisted[user.modelName];
     const unpersistedParentStudents = baseParentStudentContext.unpersisted[parentStudent.modelName];
 
-    describe('[db/models/parent-student] - add', () => {
+    describe('[db/models/parent-student] - statics.add', () => {
 
         it('Should throw an error if parent and student id match', async () => {
 

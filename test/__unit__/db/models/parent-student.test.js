@@ -48,7 +48,7 @@ describe('[db/models/parent-student] - invalid student', () => {
 
 });
 
-describe('[db/models/parent-student - valid parent-student]', () => {
+describe('[db/models/parent-student] - valid parent-student', () => {
 
     it('Should validate parent-student with correct ids', () => {
         testForValidModel(parentStudent);
@@ -56,7 +56,7 @@ describe('[db/models/parent-student - valid parent-student]', () => {
 
 });
 
-describe('[db/models/parent-student - add]', () => {
+describe('[db/models/parent-student] - statics.add', () => {
 
     let sandbox;
 

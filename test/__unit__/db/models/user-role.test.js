@@ -31,7 +31,7 @@ describe('[db/models/user-role] - invalid user', () => {
 
 });
 
-describe('[db/models/user-role - valid user-role]', () => {
+describe('[db/models/user-role] - valid user-role', () => {
 
     it('Should validate user-role with correct ids', () => {
         modelFunctions.testForValidModel(userRole);

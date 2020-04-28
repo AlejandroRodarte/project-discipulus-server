@@ -217,7 +217,7 @@ describe('[db/models/user] - enabled', () => {
 
 });
 
-describe('[db/models/user] - getUserRoles', () => {
+describe('[db/models/user] - methods.getUserRoles', () => {
 
     let userAggregateStub;
 
@@ -271,7 +271,7 @@ describe('[db/models/user] - getUserRoles', () => {
 
 });
 
-describe('[db/models/user] - hasRole', () => {
+describe('[db/models/user] - methods.hasRole', () => {
 
     let getUserRolesStub;
 
