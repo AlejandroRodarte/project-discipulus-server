@@ -68,6 +68,17 @@ describe('[db/models/parent-student - add]', () => {
     let userHasRoleStub;
     let userSaveStub;
 
+    it('Should throw an error if parentStudentDoc has same ids', async () => {
+
+        const sameIdParentStudentDoc = {
+            parent: parentStudent.parent,
+            student: parentStudent.parent
+        };
+
+        await expect(ParentStudent.add(sameIdParentStudentDoc)).to.eventually.be.rejectedWith(Error);
+
+    });
+
     it('Should call User.findOne with correct args and throw error when resolves null user', async () => {
 
         userFindOneStub = sandbox.stub(User, 'findOne').resolves(null);
