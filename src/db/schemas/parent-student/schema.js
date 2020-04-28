@@ -18,7 +18,11 @@ parentStudentSchema.statics.add = async function(parentStudentDoc) {
     const ParentStudent = this;
     const User = model(user.modelName);
 
-    const { parent: parentId } = parentStudentDoc;
+    const { parent: parentId, student: studentId } = parentStudentDoc;
+
+    if (parentId.toString() === studentId.toString()) {
+        throw new Error('Self-association is denied');
+    }
 
     const parent = await User.findOne({
         _id: parentId,
