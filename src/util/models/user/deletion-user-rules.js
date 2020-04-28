@@ -8,12 +8,20 @@ const deletionUserRules = {
         {
             modelName: names.parentStudent.modelName,
             fieldName: 'parent'
+        },
+        {
+            modelName: names.parentStudentInvitation.modelName,
+            fieldName: 'parent'
         }
     ],
 
     [roles.ROLE_STUDENT]: [
         {
             modelName: names.parentStudent.modelName,
+            fieldName: 'student'
+        },
+        {
+            modelName: names.parentStudentInvitation.modelName,
             fieldName: 'student'
         }
     ]
