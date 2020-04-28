@@ -76,6 +76,19 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
 
     describe('[db/models/parent-student] - add', () => {
 
+        it('Should throw an error if parent and student id match', async () => {
+
+            const userId = persistedUsers[0]._id;
+
+            const parentStudentDoc = {
+                parent: userId,
+                student: userId
+            };
+
+            await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.rejectedWith(Error);
+
+        });
+
         it('Should throw an error if a parent account is deleted', async () => {
 
             const studentId = persistedUsers[0]._id;
