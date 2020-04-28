@@ -122,7 +122,7 @@ describe('[db/models/shared/file] - keyname', () => {
     });
 
     it(`Should not validate a file with a keyname longer than ${ keynameMaxLength } characters`, async () => {
-        file.originalname = 'some.superlongextensionnameman';
+        file.originalname = 'some.superlongextensionnameman.with.somemore.c75bullshit.txt.whaaaat';
         await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.keyname.maxlength);
     });
 

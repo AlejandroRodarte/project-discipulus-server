@@ -43,7 +43,7 @@ const sharedFileDefinition = {
         required: [true, 'A unique keyname is required'],
         unique: true,
         minlength: [38, 'Keyname must be longer than 38 characters'],
-        maxlength: [60, 'Keyname must be shorter than 60 characters']
+        maxlength: [80, 'Keyname must be shorter than 80 characters']
     }
 
 };
