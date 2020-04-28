@@ -23,6 +23,11 @@ const names = {
     parentStudent: {
         collectionName: 'parentsstudents',
         modelName: 'ParentStudent'
+    },
+
+    parentStudentInvitation: {
+        collectionName: 'parentsstudentsinvitations',
+        modelName: 'ParentStudentInvitation'
     }
 
 };
