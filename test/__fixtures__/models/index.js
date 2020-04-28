@@ -5,6 +5,7 @@ const uniqueUserRoleContext = require('./unique-user-role');
 const baseUserRoleContext = require('./base-user-role');
 const baseParentStudentContext = require('./base-parent-student');
 const uniqueParentStudentContext = require('./unique-parent-student');
+const uniqueParentStudentInvitationContext = require('./unique-parent-student-invitation');
 
 module.exports = {
     sampleFileContext,
@@ -13,5 +14,6 @@ module.exports = {
     uniqueUserRoleContext,
     baseUserRoleContext,
     baseParentStudentContext,
-    uniqueParentStudentContext
+    uniqueParentStudentContext,
+    uniqueParentStudentInvitationContext
 };
