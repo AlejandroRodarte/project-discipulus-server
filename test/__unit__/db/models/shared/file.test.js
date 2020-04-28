@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const SharedFile = require('../../../../../src/db/models/shared/file');
+const File = require('../../../../../src/db/models/shared/file');
 const { sharedFileDefinition } = require('../../../../../src/db/schemas/shared/file');
 const modelFunctions = require('../../../../__fixtures__/functions/models');
 
@@ -10,9 +10,9 @@ const names = require('../../../../../src/db/names');
 
 const [fileDoc] = sampleFileContext.persisted[names.sharedFile.modelName];
 
-let file = new SharedFile(fileDoc);
+let file = new File(fileDoc);
 
-beforeEach(() => file = modelFunctions.getNewModelInstance(SharedFile, fileDoc));
+beforeEach(() => file = modelFunctions.getNewModelInstance(File, fileDoc));
 
 describe('[db/models/shared/file] - invalid originalname', () => {
 

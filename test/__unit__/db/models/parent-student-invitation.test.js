@@ -30,32 +30,6 @@ beforeEach(() => {
     user = getNewModelInstance(User, userDoc);
 });
 
-describe('[db/models/parent-student-invitation] - invalid parent', () => {
-
-    it('Should not validate parent-student-invitation if a parent id is not defined', () => {
-        parentStudentInvitation.parent = undefined;
-        testForInvalidModel(parentStudentInvitation, parentStudentInvitationDefinition.parent.required);
-    });
-
-});
-
-describe('[db/models/parent-student-invitation] - invalid student', () => {
-
-    it('Should not validate parent-student-invitation if a student id is not defined', () => {
-        parentStudentInvitation.student = undefined;
-        testForInvalidModel(parentStudentInvitation, parentStudentInvitationDefinition.student.required);
-    });
-
-});
-
-describe('[db/models/parent-student-invitation] - valid parent-student-invitation', () => {
-
-    it('Should validate parent-student-invitation with correct ids', () => {
-        testForValidModel(parentStudentInvitation);
-    });
-
-});
-
 describe('[db/models/parent-student-invitation] - statics.add', () => {
 
     let sandbox;
