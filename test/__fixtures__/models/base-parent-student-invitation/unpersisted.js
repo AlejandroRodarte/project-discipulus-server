@@ -7,7 +7,7 @@ const persistedUsers = persisted[user.modelName];
 
 const unpersisted = {
 
-    [parentStudent.modelName]: [
+    [parentStudentInvitation.modelName]: [
 
         // 0. same parent/student id combo against persisted one
         {
