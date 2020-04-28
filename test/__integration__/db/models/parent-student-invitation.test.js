@@ -108,7 +108,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const disabledStudentId = persistedUsers[1]._id;
 
             const parentStudentInvitationDoc = {
-                parent: studentId,
+                parent: parentId,
                 student: disabledStudentId
             };
 
