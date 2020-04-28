@@ -4,15 +4,68 @@ const { mongo, Types } = require('mongoose');
 
 const ParentStudent = require('../../../../src/db/models/parent-student');
 
-const { baseParentStudentContext } = require('../../../__fixtures__/models');
+const { baseParentStudentContext, uniqueParentStudentContext } = require('../../../__fixtures__/models');
 const db = require('../../../__fixtures__/functions/db');
 
-const { role, user, parentStudent } = require('../../../../src/db/names');
+const { user, parentStudent } = require('../../../../src/db/names');
 
 const baseParentStudentContextModelNames = Object.keys(baseParentStudentContext.persisted);
+const uniqueParentStudentContextModelNames = Object.keys(uniqueParentStudentContext.persisted);
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
+
+describe('[db/models/parent-student] - uniqueParentStudent context', () => {
+
+    beforeEach(db.init(uniqueParentStudentContext.persisted));
+
+    const unpersistedParentStudents = uniqueParentStudentContext.unpersisted[parentStudent.modelName];
+
+    describe('[db/models/parent-student] - Non-unique parent-students', async () => {
+
+        const nonUniqueParentStudentDoc = unpersistedParentStudents[3];
+
+        it('Should not persist a parent-student that has the same user/role composite _id', async () => {
+            const duplicateParentStudent = new ParentStudent(nonUniqueParentStudentDoc);
+            await expect(duplicateParentStudent.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+        });
+    
+    });
+    
+    describe('[db/modsls/parent-student] - Unique parent-students', () => {
+
+        it('Should persist a parent-student with same parent _id and different student _id', async () => {
+            
+            const uniqueParentStudentDoc = unpersistedParentStudents[0];
+            const parentStudent = new ParentStudent(uniqueParentStudentDoc);
+
+            await expect(parentStudent.save()).to.eventually.be.eql(parentStudent);
+
+        });
+    
+        it('Should persist a parent-student with same student _id and different parent _id', async () => {
+            
+            const uniqueParentStudentDoc = unpersistedParentStudents[1];
+            const parentStudent = new ParentStudent(uniqueParentStudentDoc);
+
+            await expect(parentStudent.save()).to.eventually.be.eql(parentStudent);
+
+        });
+    
+        it('Should persist a parent-student with different parent and student _id', async () => {
+
+            const uniqueParentStudentDoc = unpersistedParentStudents[2];
+            const parentStudent = new ParentStudent(uniqueParentStudentDoc);
+
+            await expect(parentStudent.save()).to.eventually.be.eql(parentStudent);
+
+        });
+
+    });
+        
+    afterEach(db.teardown(uniqueParentStudentContextModelNames));
+
+});
 
 describe('[db/models/parent-student] - baseParentStudent context', () => {
 
