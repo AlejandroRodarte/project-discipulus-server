@@ -4,23 +4,7 @@ const { role, user, userRole, parentStudent } = require('../../../../src/db/name
 
 const generateFakeUsers = require('../../functions/models/generate-fake-users');
 
-const roleTypes = require('../../../../src/util/roles');
-
-const roles = [
-
-    // 0: parent role
-    {
-        _id: new Types.ObjectId(),
-        name: roleTypes.ROLE_PARENT
-    },
-
-    // 1. student role
-    {
-        _id: new Types.ObjectId(),
-        name: roleTypes.ROLE_STUDENT
-    }
-
-];
+const { roles, ids } = require('../../shared/roles');
 
 // 0: enabled user
 // 1: disabled user
@@ -37,63 +21,63 @@ const usersRoles = [
     {
         _id: new Types.ObjectId(),
         user: users[0]._id,
-        role: roles[1]._id
+        role: ids.ROLE_STUDENT
     },
 
     // 1. user two (disabled) with parent role
     {
         _id: new Types.ObjectId(),
         user: users[1]._id,
-        role: roles[0]._id
+        role: ids.ROLE_PARENT
     },
 
     // 2. user three (enabled): with student role
     {
         _id: new Types.ObjectId(),
         user: users[2]._id,
-        role: roles[1]._id
+        role: ids.ROLE_STUDENT
     },
 
     // 3. user three (enabled): with parent role
     {
         _id: new Types.ObjectId(),
         user: users[2]._id,
-        role: roles[0]._id
+        role: ids.ROLE_PARENT
     },
 
     // 4. user four (enabled): with student role
     {
         _id: new Types.ObjectId(),
         user: users[3]._id,
-        role: roles[1]._id
+        role: ids.ROLE_STUDENT
     },
 
     // 5. user five (enabled) with parent role
     {
         _id: new Types.ObjectId(),
         user: users[4]._id,
-        role: roles[0]._id
+        role: ids.ROLE_PARENT
     },
 
     // 6. user five (enabled) with student role
     {
         _id: new Types.ObjectId(),
         user: users[4]._id,
-        role: roles[1]._id
+        role: ids.ROLE_STUDENT
     },
 
     // 7. user six (enabled) with parent role
     {
         _id: new Types.ObjectId(),
         user: users[5]._id,
-        role: roles[0]._id
+        role: ids.ROLE_PARENT
     },
 
     // 8. user seven (enabled) with student role
     {
         _id: new Types.ObjectId(),
         user: users[6]._id,
-        role: roles[1]._id
+        role: ids.ROLE_STUDENT
     }
 
 ];
