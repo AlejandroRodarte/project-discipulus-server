@@ -1,8 +1,8 @@
-const { parentStudent, user } = require('../../../../src/db/names');
+const { parentStudentInvitation, user } = require('../../../../src/db/names');
 
 const persisted = require('./persisted');
 
-const persistedParentStudents = persisted[parentStudent.modelName];
+const persistedParentStudentInvitations = persisted[parentStudentInvitation.modelName];
 const persistedUsers = persisted[user.modelName];
 
 const unpersisted = {
@@ -11,14 +11,14 @@ const unpersisted = {
 
         // 0. same parent/student id combo against persisted one
         {
-            parent: persistedParentStudents[0].parent,
-            student: persistedParentStudents[0].student
+            parent: persistedParentStudentInvitations[0].parent,
+            student: persistedParentStudentInvitations[0].student
         },
 
-        // 1. user three (parent, enabled) with user four (student)
+        // 1. user four (parent, enabled) with user three (student)
         {
-            parent: persistedUsers[2]._id,
-            student: persistedUsers[3]._id
+            parent: persistedUsers[3]._id,
+            student: persistedUsers[2]._id
         }
 
     ]

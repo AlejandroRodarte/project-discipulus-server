@@ -68,28 +68,28 @@ const usersRoles = [
         role: roles[1]._id
     },
 
-    // 5. user five with parent role
+    // 5. user five (enabled) with parent role
     {
         _id: new Types.ObjectId(),
         user: users[4]._id,
         role: roles[0]._id
     },
 
-    // 6. user five with student role
+    // 6. user five (enabled) with student role
     {
         _id: new Types.ObjectId(),
         user: users[4]._id,
         role: roles[1]._id
     },
 
-    // 7. user six with parent role
+    // 7. user six (enabled) with parent role
     {
         _id: new Types.ObjectId(),
         user: users[5]._id,
         role: roles[0]._id
     },
 
-    // 8. user seven with student role
+    // 8. user seven (enabled) with student role
     {
         _id: new Types.ObjectId(),
         user: users[6]._id,

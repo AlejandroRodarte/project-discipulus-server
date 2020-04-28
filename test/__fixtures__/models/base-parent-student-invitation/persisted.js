@@ -1,6 +1,6 @@
 const { Types } = require('mongoose');
 
-const { role, user, userRole, parentStudent } = require('../../../../src/db/names');
+const { role, user, userRole, parentStudentInvitation } = require('../../../../src/db/names');
 
 const generateFakeUsers = require('../../functions/models/generate-fake-users');
 
@@ -47,49 +47,49 @@ const usersRoles = [
         role: roles[1]._id
     },
 
-    // 2. user three (enabled): with student role
-    {
-        _id: new Types.ObjectId(),
-        user: users[2]._id,
-        role: roles[1]._id
-    },
-
-    // 3. user three (enabled): with parent role
+    // 2. user three (enabled): with parent role
     {
         _id: new Types.ObjectId(),
         user: users[2]._id,
         role: roles[0]._id
     },
 
-    // 4. user four (enabled): with student role
+    // 3. user three (enabled): with student role
+    {
+        _id: new Types.ObjectId(),
+        user: users[2]._id,
+        role: roles[1]._id
+    },
+
+    // 4. user four (enabled): with parent role
     {
         _id: new Types.ObjectId(),
         user: users[3]._id,
-        role: roles[1]._id
+        role: roles[0]._id
     },
 
-    // 5. user five with parent role
+    // 5. user five (enabled) with parent role
     {
         _id: new Types.ObjectId(),
         user: users[4]._id,
         role: roles[0]._id
     },
 
-    // 6. user five with student role
+    // 6. user five (enabled) with student role
     {
         _id: new Types.ObjectId(),
         user: users[4]._id,
         role: roles[1]._id
     },
 
-    // 7. user six with parent role
+    // 7. user (enabled) six with parent role
     {
         _id: new Types.ObjectId(),
         user: users[5]._id,
         role: roles[0]._id
     },
 
-    // 8. user seven with student role
+    // 8. user (enabled) seven with student role
     {
         _id: new Types.ObjectId(),
         user: users[6]._id,
@@ -98,13 +98,13 @@ const usersRoles = [
 
 ];
 
-const parentsStudents = [
+const parentsStudentsInvitations = [
 
-    // 0: user one (student) with user three (parent, enabled)
+    // 0: user one (parent) with user four (student, enabled)
     {
         _id: new Types.ObjectId(),
-        parent: users[2]._id,
-        student: users[0]._id
+        parent: users[0]._id,
+        student: users[2]._id
     },
 
     // 1. user five (parent) with user seven (student)
@@ -134,7 +134,7 @@ const persisted = {
     [role.modelName]: roles,
     [user.modelName]: users,
     [userRole.modelName]: usersRoles,
-    [parentStudent.modelName]: parentsStudents
+    [parentStudentInvitation.modelName]: parentsStudentsInvitations
 };
 
 module.exports = persisted;
