@@ -1,7 +1,7 @@
-const { filename, mimeType } = require('../../../util/regexp');
-const { badWordsFilter } = require('../../../util/filter/bad-words-filter');
+const { filename, mimeType } = require('../../../../util/regexp');
+const { badWordsFilter } = require('../../../../util/filter/bad-words-filter');
 
-const fileDefinition = {
+const sharedFileDefinition = {
 
     originalname: {
         type: String,
@@ -48,4 +48,4 @@ const fileDefinition = {
 
 };
 
-module.exports = fileDefinition;
+module.exports = sharedFileDefinition;

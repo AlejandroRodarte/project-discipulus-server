@@ -10,9 +10,9 @@ const names = {
         modelName: 'User'
     },
 
-    file: {
-        collectionName: 'files',
-        modelName: 'File'
+    sharedFile: {
+        collectionName: 'sharedfiles',
+        modelName: 'SharedFile'
     },
 
     userRole: {

@@ -9,10 +9,10 @@ const sampleFileContext = require('../../../__fixtures__/models/sample-file');
 
 const { getRolesPipeline } = require('../../../../src/db/aggregation/user-role');
 
-const { file, userRole } = require('../../../../src/db/names');
+const { sharedFile, userRole } = require('../../../../src/db/names');
 const roleTypes = require('../../../../src/util/roles');
 
-const [fileDoc] = sampleFileContext.persisted[file.modelName];
+const [fileDoc] = sampleFileContext.persisted[sharedFile.modelName];
 
 const userDoc = {
     name: 'Alejandro Rodarte',

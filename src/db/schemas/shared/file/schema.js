@@ -1,18 +1,18 @@
 const { Schema } = require('mongoose');
 const { v4 } = require('uuid');
 
-const fileDefinition = require('./definition');
-const { file } = require('../../names');
+const sharedFileDefinition = require('./definition');
+const { sharedFile } = require('../../../names');
 
 const uuidv4 = v4;
 
 const schemaOpts = {
-    collection: file.collectionName
+    collection: sharedFile.collectionName
 };
 
-const fileSchema = new Schema(fileDefinition, schemaOpts);
+const sharedFileSchema = new Schema(sharedFileDefinition, schemaOpts);
 
-fileSchema.pre('validate', function(next) {
+sharedFileSchema.pre('validate', function(next) {
 
     const file = this;
 
@@ -25,4 +25,4 @@ fileSchema.pre('validate', function(next) {
 
 });
 
-module.exports = fileSchema;
+module.exports = sharedFileSchema;

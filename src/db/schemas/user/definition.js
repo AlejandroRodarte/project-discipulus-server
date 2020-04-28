@@ -1,6 +1,6 @@
 const validator = require('validator').default;
 
-const { fileSchema } = require('../file');
+const { sharedFileSchema } = require('../shared/file');
 const { fullName, singleName, username, strongPassword } = require('../../../util/regexp');
 const { badWordsFilter } = require('../../../util/filter/bad-words-filter');
 const utilFunctions = require('../../../util/functions');
@@ -81,7 +81,7 @@ const userDefinition = {
     }],
 
     avatar: {
-        type: fileSchema,
+        type: sharedFileSchema,
         required: false
     },
 

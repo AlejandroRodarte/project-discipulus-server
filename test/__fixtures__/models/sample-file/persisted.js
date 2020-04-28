@@ -1,10 +1,10 @@
 const faker = require('faker');
 
-const { file } = require('../../../../src/db/names');
+const { sharedFile } = require('../../../../src/db/names');
 
 const persisted = {
 
-    [file.modelName]: [
+    [sharedFile.modelName]: [
 
         // 0: sample random file
         {

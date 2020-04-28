@@ -1,8 +1,8 @@
 const { roleDefinition, roleSchema } = require('./role');
 const { userDefinition, userSchema } = require('./user');
-const { fileDefinition, fileSchema } = require('./file');
 const { userRoleDefinition, userRoleSchema } = require('./user-role');
 const { parentStudentDefinition, parentStudentSchema } = require('./parent-student');
+const shared = require('./shared');
 
 module.exports = {
 
@@ -20,6 +20,8 @@ module.exports = {
         fileSchema,
         userRoleSchema,
         parentStudentSchema
-    }
+    },
+
+    shared
 
 };
