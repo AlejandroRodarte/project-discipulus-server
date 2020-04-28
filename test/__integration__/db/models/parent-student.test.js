@@ -119,7 +119,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
         it('Should throw an error if parent account, for any reason, does not own the parent role', async () => {
 
             const studentId = persistedUsers[0]._id;
-            const notAParentUserId = persistedUsers[1]._id;
+            const notAParentUserId = persistedUsers[3]._id;
 
             const parentStudentDoc = {
                 parent: notAParentUserId,
