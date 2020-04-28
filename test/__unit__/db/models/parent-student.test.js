@@ -18,7 +18,7 @@ const parentStudentDoc = {
     student: new Types.ObjectId()
 };
 
-const userDoc = generateFakeUsers(1, {
+const [userDoc] = generateFakeUsers(1, {
     fakeToken: true
 });
 
