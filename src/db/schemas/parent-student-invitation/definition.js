@@ -1,18 +1,5 @@
-const { Schema } = require('mongoose');
+const { sharedParentStudentDefinition } = require('../shared/parent-student');
 
-const { user } = require('../../names');
-
-const parentStudentInvitationDefinition = {
-    parent: {
-        type: Schema.Types.ObjectId,
-        required: [true, 'A parent _id is required'],
-        ref: user.modelName
-    },
-    student: {
-        type: Schema.Types.ObjectId,
-        required: [true, 'A parent _id is required'],
-        ref: user.modelName
-    }
-};
+const parentStudentInvitationDefinition = sharedParentStudentDefinition;
 
 module.exports = parentStudentInvitationDefinition;

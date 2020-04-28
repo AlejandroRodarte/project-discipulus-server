@@ -20,6 +20,11 @@ const names = {
         modelName: 'UserRole'
     },
 
+    sharedParentStudent: {
+        collectionName: 'sharedparentsstudents',
+        modelName: 'SharedParentStudent'
+    },
+
     parentStudent: {
         collectionName: 'parentsstudents',
         modelName: 'ParentStudent'

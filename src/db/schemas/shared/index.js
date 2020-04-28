@@ -1,10 +1,13 @@
 const { sharedFileDefinition, sharedFileSchema } = require('./file');
+const { sharedParentStudentDefinition, sharedParentStudentSchema } = require('./parent-student');
 
 module.exports = {
     definitions: {
-        sharedFileDefinition
+        sharedFileDefinition,
+        sharedParentStudentDefinition
     },
     schemas: {
-        sharedFileSchema
+        sharedFileSchema,
+        sharedParentStudentSchema
     }
 };
