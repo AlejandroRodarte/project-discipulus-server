@@ -38,7 +38,27 @@ const names = {
     sharedUserFile: {
         collectionName: 'sharedusersfiles',
         modelName: 'SharedUserFile'
-    }
+    },
+
+    userFile: {
+        collectionName: 'usersfiles',
+        modelName: 'UserFile'
+    },
+
+    studentFile: {
+        collectionName: 'studentsfiles',
+        modelName: 'StudentFile'
+    },
+
+    parentFile: {
+        collectionName: 'parentsfiles',
+        modelName: 'ParentFile'
+    },
+
+    teacherfile: {
+        collectionName: 'teachersfiles',
+        modelName: 'TeacherFile'
+    },
 
 };
 
