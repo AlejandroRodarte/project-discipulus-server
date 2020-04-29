@@ -20,13 +20,13 @@ describe('[db/models/parent-file] - baseParentFile context', () => {
 
     describe('[db/models/parent-file] - File keyname', () => {
 
-        const persistedParentFile = baseParentFileContext.persisted[parentFile.modelName];
-        const unpersistedParentFile = baseParentFileContext.unpersisted[parentFile.modelName]
+        const persistedParentFiles = baseParentFileContext.persisted[parentFile.modelName];
+        const unpersistedParentFiles = baseParentFileContext.unpersisted[parentFile.modelName]
 
         it('Should not persist a parent-file which has a non-unique file keyname', async () => {
 
-            const oldParentFile = await ParentFile.findOne({ _id: persistedParentFile[0]._id })
-            const unpersistedParentFileDoc = unpersistedParentFile[0];
+            const oldParentFile = await ParentFile.findOne({ _id: persistedParentFiles[0]._id })
+            const unpersistedParentFileDoc = unpersistedParentFiles[0];
 
             const newParentFile = new ParentFile(unpersistedParentFileDoc);
             newParentFile.file.keyname = oldParentFile.file.keyname;
@@ -37,7 +37,7 @@ describe('[db/models/parent-file] - baseParentFile context', () => {
 
         it('Should persist a unique parent-file', async () => {
 
-            const unpersistedParentFileDoc = unpersistedParentFile[0];
+            const unpersistedParentFileDoc = unpersistedParentFiles[0];
             const parentFile = new ParentFile(unpersistedParentFileDoc);
 
             await expect(parentFile.save()).to.eventually.be.eql(parentFile);
