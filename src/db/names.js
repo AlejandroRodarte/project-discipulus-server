@@ -33,6 +33,11 @@ const names = {
     parentStudentInvitation: {
         collectionName: 'parentsstudentsinvitations',
         modelName: 'ParentStudentInvitation'
+    },
+
+    sharedUserFile: {
+        collectionName: 'sharedusersfiles',
+        modelName: 'SharedUserFile'
     }
 
 };
