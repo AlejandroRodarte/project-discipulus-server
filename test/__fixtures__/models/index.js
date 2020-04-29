@@ -7,6 +7,10 @@ const baseParentStudentContext = require('./base-parent-student');
 const uniqueParentStudentContext = require('./unique-parent-student');
 const uniqueParentStudentInvitationContext = require('./unique-parent-student-invitation');
 const baseParentStudentInvitationContext = require('./base-parent-student-invitation');
+const baseUserFileContext = require('./base-user-file');
+const baseStudentFileContext = require('./base-student-file');
+const baseParentFileContext = require('./base-parent-file');
+const baseTeacherFileContext = require('./base-teacher-file');
 
 module.exports = {
     sampleFileContext,
@@ -17,5 +21,9 @@ module.exports = {
     baseParentStudentContext,
     uniqueParentStudentContext,
     uniqueParentStudentInvitationContext,
-    baseParentStudentInvitationContext
+    baseParentStudentInvitationContext,
+    baseUserFileContext,
+    baseStudentFileContext,
+    baseParentFileContext,
+    baseTeacherFileContext
 };

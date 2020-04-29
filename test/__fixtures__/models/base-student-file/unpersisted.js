@@ -1,14 +1,14 @@
 const { generateFakeFile } = require('../../functions/models');
 
-const { user, userFile } = require('../../../../src/db/names');
+const { user, studentFile } = require('../../../../src/db/names');
 
 const persisted = require('./persisted');
 
 const persistedUsers = persisted[user.modelName];
 
-const usersFiles = [
+const studentsFiles = [
     
-    // 0. persisted user[0] with another file
+    // 0. persisted user[0] (student) with another file
     {
         user: persistedUsers[0]._id,
         file: generateFakeFile()
@@ -17,5 +17,5 @@ const usersFiles = [
 ];
 
 module.exports = {
-    [userFile.modelName]: usersFiles
+    [studentFile.modelName]: studentsFiles
 };
