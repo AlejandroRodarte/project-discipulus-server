@@ -90,6 +90,10 @@ userSchema.pre('remove', async function(next) {
         user: user._id
     });
 
+    await user.model(userFile.modelName).deleteMany({
+        user: user._id
+    });
+
     for (const role in deletionUserRules) {
 
         if (roles.includes(role)) {
