@@ -1,15 +1,13 @@
 const { Types } = require('mongoose');
 
 const { sharedUserFileDefinition } = require('../../../../../src/db/schemas/shared/user-file');
-const { testForInvalidModelAsync, testForValidModelAsync, getNewModelInstance, generateFakeFiles } = require('../../../../__fixtures__/functions/models');
+const { testForInvalidModelAsync, testForValidModelAsync, getNewModelInstance, generateFakeFile } = require('../../../../__fixtures__/functions/models');
 
 const { UserFile } = require('../../../../../src/db/models/shared');
 
-const [fileDoc] = generateFakeFiles(1);
-
 const userFileDoc = {
     user: new Types.ObjectId(),
-    file: fileDoc
+    file: generateFakeFile()
 };
 
 let userFile = new UserFile(userFileDoc);

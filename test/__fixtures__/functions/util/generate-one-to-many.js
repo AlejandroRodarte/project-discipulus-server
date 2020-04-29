@@ -1,13 +1,11 @@
 const { Types } = require('mongoose');
 
-const generateOneToMany = (keys, parentId, childIds) => {
+const generateOneToMany = (parentKeyName, parentId, children) => {
 
-    const [parentKeyName, childKeyName] = keys;
-
-    return childIds.map(childId => ({
+    return children.map(child => ({
         _id: new Types.ObjectId(),
         [parentKeyName]: parentId,
-        [childKeyName]: childId
+        ...child
     }));
 
 };

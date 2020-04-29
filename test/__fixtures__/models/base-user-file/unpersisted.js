@@ -1,4 +1,4 @@
-const { generateFakeFiles } = require('../../functions/models');
+const { generateFakeFile } = require('../../functions/models');
 
 const { user, userFile } = require('../../../../src/db/names');
 
@@ -9,7 +9,7 @@ const persistedUsers = persisted[user.modelName];
 const usersFiles = [
     {
         user: persistedUsers[0]._id,
-        file: generateFakeFiles(1)[0]
+        file: generateFakeFile()
     }
 ];
 

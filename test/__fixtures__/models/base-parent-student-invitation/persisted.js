@@ -19,41 +19,41 @@ const users = [
 const usersRoles = [
 
     // 0. user one (enabled) with parent role
-    ...generateOneToMany(['user', 'role'], users[0]._id, [ids.ROLE_PARENT]),
+    ...generateOneToMany('user', users[0]._id, [{ role: ids.ROLE_PARENT }]),
 
     // 1. user two (disabled) with student role
-    ...generateOneToMany(['user', 'role'], users[1]._id, [ids.ROLE_STUDENT]),
+    ...generateOneToMany('user', users[1]._id, [{ role: ids.ROLE_STUDENT }]),
 
     // 2. user three (enabled): with parent role
     // 3. user three (enabled): with student role
-    ...generateOneToMany(['user', 'role'], users[2]._id, [ids.ROLE_PARENT, ids.ROLE_STUDENT]),
+    ...generateOneToMany('user', users[2]._id, [{ role: ids.ROLE_PARENT }, { role: ids.ROLE_STUDENT }]),
 
     // 4. user four (enabled): with parent role
-    ...generateOneToMany(['user', 'role'], users[3]._id, [ids.ROLE_PARENT]),
+    ...generateOneToMany('user', users[3]._id, [{ role: ids.ROLE_PARENT }]),
 
     // 5. user five (enabled) with parent role
     // 6. user five (enabled) with student role
-    ...generateOneToMany(['user', 'role'], users[4]._id, [ids.ROLE_PARENT, ids.ROLE_STUDENT]),
+    ...generateOneToMany('user', users[4]._id, [{ role: ids.ROLE_PARENT }, { role: ids.ROLE_STUDENT }]),
 
     // 7. user (enabled) six with parent role
-    ...generateOneToMany(['user', 'role'], users[5]._id, [ids.ROLE_PARENT]),
+    ...generateOneToMany('user', users[5]._id, [{ role: ids.ROLE_PARENT }]),
 
     // 8. user (enabled) seven with student role
-    ...generateOneToMany(['user', 'role'], users[6]._id, [ids.ROLE_STUDENT])
+    ...generateOneToMany('user', users[6]._id, [{ role: ids.ROLE_STUDENT }])
 
 ];
 
 const parentsStudentsInvitations = [
 
     // 0: user one (parent) with user four (student, enabled)
-    ...generateOneToMany(['parent', 'student'], users[0]._id, [users[2]._id]),
+    ...generateOneToMany('parent', users[0]._id, [{ student: users[2]._id }]),
 
     // 1. user five (parent) with user seven (student)
-    ...generateOneToMany(['parent', 'student'], users[4]._id, [users[6]._id]),
+    ...generateOneToMany('parent', users[4]._id, [{ student: users[6]._id }]),
 
     // 2. user six (parent) with user five (student)
     // 3. user six (parent) with user seven (student)
-    ...generateOneToMany(['parent', 'student'], users[5]._id, [users[4]._id, users[6]._id]),
+    ...generateOneToMany('parent', users[5]._id, [{ student: users[4]._id }, { student: users[6]._id }]),
 
 ];
 
