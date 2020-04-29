@@ -26,9 +26,9 @@ describe('[db/models/user-file] - baseUserFile context', () => {
         it('Should not persist a user-file which has a non-unique file keyname', async () => {
 
             const oldUserFile = await UserFile.findOne({ _id: persistedUserFiles[0]._id })
-            const unpersistedFileDoc = unpersistedUserFiles[0];
+            const unpersistedUserFileDoc = unpersistedUserFiles[0];
 
-            const newUserFile = new UserFile(unpersistedFileDoc);
+            const newUserFile = new UserFile(unpersistedUserFileDoc);
             newUserFile.file.keyname = oldUserFile.file.keyname;
 
             await expect(newUserFile.save()).to.eventually.be.rejectedWith(mongo.MongoError);
@@ -37,8 +37,8 @@ describe('[db/models/user-file] - baseUserFile context', () => {
 
         it('Should persist a unique user-file', async () => {
 
-            const unpersistedFileDoc = unpersistedUserFiles[0];
-            const userFile = new UserFile(unpersistedFileDoc);
+            const unpersistedUserFileDoc = unpersistedUserFiles[0];
+            const userFile = new UserFile(unpersistedUserFileDoc);
 
             await expect(userFile.save()).to.eventually.be.eql(userFile);
 
