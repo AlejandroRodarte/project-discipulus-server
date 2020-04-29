@@ -2,7 +2,7 @@ const { Schema } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userDefinition = require('./definition');
-const { user, userRole, parentStudent, parentStudentInvitation } = require('../../names');
+const { user, userRole, parentStudent, parentStudentInvitation, userFile, parentFile, studentFile, teacherFile } = require('../../names');
 
 const { getRolesPipeline } = require('../../aggregation/user-role');
 
@@ -42,6 +42,30 @@ userSchema.virtual('studentparentinvitations', {
     ref: parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'student'
+});
+
+userSchema.virtual('userfiles', {
+    ref: userFile.modelName,
+    localField: '_id',
+    foreignField: 'user'
+});
+
+userSchema.virtual('parentfiles', {
+    ref: parentFile.modelName,
+    localField: '_id',
+    foreignField: 'user'
+});
+
+userSchema.virtual('teacherfiles', {
+    ref: teacherFile.modelName,
+    localField: '_id',
+    foreignField: 'user'
+});
+
+userSchema.virtual('studentfiles', {
+    ref: studentFile.modelName,
+    localField: '_id',
+    foreignField: 'user'
 });
 
 userSchema.pre('save', async function(next) {

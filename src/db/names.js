@@ -55,7 +55,7 @@ const names = {
         modelName: 'ParentFile'
     },
 
-    teacherfile: {
+    teacherFile: {
         collectionName: 'teachersfiles',
         modelName: 'TeacherFile'
     },

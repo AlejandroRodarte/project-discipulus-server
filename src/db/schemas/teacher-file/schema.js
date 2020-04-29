@@ -1,10 +1,10 @@
 const { Schema } = require('mongoose');
 
 const teacherFileDefinition = require('./definition');
-const { teacherfile } = require('../../names');
+const { teacherFile } = require('../../names');
 
 const schemaOpts = {
-    collection: teacherfile.collectionName
+    collection: teacherFile.collectionName
 };
 
 const teacherFileSchema = new Schema(teacherFileDefinition, schemaOpts);
