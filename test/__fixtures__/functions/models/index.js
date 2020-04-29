@@ -5,6 +5,7 @@ const testForValidModelAsync = require('./test-for-valid-model-async');
 const getNewModelInstance = require('./get-new-model-instance');
 const validateAsync = require('./validate-async');
 const generateFakeUsers = require('./generate-fake-users');
+const generateFakeFiles = require('./generate-fake-files');
 
 module.exports = {
     testForInvalidModel,
@@ -13,5 +14,6 @@ module.exports = {
     testForValidModelAsync,
     getNewModelInstance,
     validateAsync,
-    generateFakeUsers
+    generateFakeUsers,
+    generateFakeFiles
 };

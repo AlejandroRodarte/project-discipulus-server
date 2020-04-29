@@ -14,7 +14,7 @@ const sharedUserFileDefinition = {
 
     file: {
         type: sharedFileSchema,
-        required: true
+        required: [true, 'A file object is required']
     }
 
 };
