@@ -16,7 +16,7 @@ const cancelMultipartObject = async (bucketName, itemName, uploadId) => {
 
 };
 
-const createMultipartObject = async (bucketName, { originalname, buffer, size, mimetype }) => {
+const createMultipartObject = async (bucketName, { keyname, buffer, size, mimetype }) => {
 
     let uploadId = null;
 
@@ -24,7 +24,7 @@ const createMultipartObject = async (bucketName, { originalname, buffer, size, m
 
         const data = await cos.createMultipartUpload({
             Bucket: bucketName,
-            Key: originalname,
+            Key: keyname,
             ContentType: mimetype
         }).promise();
     
@@ -43,7 +43,7 @@ const createMultipartObject = async (bucketName, { originalname, buffer, size, m
             const data = await cos.uploadPart({
                 Body: buffer.slice(startByte, endByte),
                 Bucket: bucketName,
-                Key: originalname,
+                Key: keyname,
                 PartNumber: partNumber + 1,
                 UploadId: uploadId
             }).promise();
@@ -57,7 +57,7 @@ const createMultipartObject = async (bucketName, { originalname, buffer, size, m
 
         await cos.completeMultipartUpload({
             Bucket: bucketName,
-            Key: originalname,
+            Key: keyname,
             MultipartUpload: {
                 Parts: chunks
             },

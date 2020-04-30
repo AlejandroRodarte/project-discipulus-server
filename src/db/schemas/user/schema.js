@@ -8,6 +8,9 @@ const { getRolesPipeline } = require('../../aggregation/user-role');
 
 const deletionUserRules = require('../../../util/models/user/deletion-user-rules');
 
+const storageApi = require('../../../api/storage');
+const bucketNames = require('../../../api/storage/config/bucket-names');
+
 const schemaOpts = {
     collection: user.collectionName
 };
@@ -137,6 +140,28 @@ userSchema.methods.hasRole = async function(role) {
     const roles = await user.getUserRoles();
 
     return roles.includes(role);
+
+};
+
+userSchema.methods.saveAvatar = async function(buffer) {
+
+    const userModel = this;
+
+    if (!userModel.file.keyname) {
+        throw new Error('Persist the file document first before saving the image');
+    }
+
+    try {
+
+        await storageApi.createMultipartObject(bucketNames[user.modelName], {
+            keyname: userModel.file.keyname,
+            buffer,
+            mimetype: userModel.file.mimetype
+        });
+
+    } catch (e) {
+        console.log(e);
+    }
 
 };
 
