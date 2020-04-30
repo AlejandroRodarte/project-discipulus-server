@@ -2,14 +2,20 @@ const cos = require('./config/cos');
 
 const getMultipartObject = async (bucketName, itemName) => {
 
-    const data = await cos.getObject({
-        Bucket: bucketName,
-        Key: itemName
-    }).promise();
+    try {
 
-    const { Body: buffer, ContentType: contentType } = data;
+        const data = await cos.getObject({
+            Bucket: bucketName,
+            Key: itemName
+        }).promise();
 
-    return { buffer, contentType };
+        const { Body: buffer, ContentType: contentType } = data;
+    
+        return { buffer, contentType };
+
+    } catch (e) {
+        throw e;
+    }
 
 };
 
