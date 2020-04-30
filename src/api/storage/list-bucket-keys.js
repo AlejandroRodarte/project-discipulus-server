@@ -2,12 +2,18 @@ const cos = require('./config/cos');
 
 const listBucketObjects = async (bucketName) => {
 
-    const data = await cos.listObjects({
-        Bucket: bucketName
-    }).promise();
+    try {
 
-    return data.Contents.map(item => item.Key);
+        const data = await cos.listObjects({
+            Bucket: bucketName
+        }).promise();
+    
+        return data.Contents.map(item => item.Key);
 
+    } catch (e) {
+        throw e;
+    }
+    
 };
 
 module.exports = listBucketObjects;
