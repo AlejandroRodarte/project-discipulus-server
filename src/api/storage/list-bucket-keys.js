@@ -1,4 +1,4 @@
-const cos = require('./cos/cos');
+const cos = require('./config/cos');
 
 const listBucketObjects = async (bucketName) => {
 
