@@ -2,16 +2,37 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo } = require('mongoose');
 
-const { User, UserRole, ParentStudent } = require('../../../../src/db/models');
+const { 
+    User, 
+    UserRole, 
+    ParentStudent,
+    UserFile,
+    ParentFile,
+    StudentFile,
+    TeacherFile
+} = require('../../../../src/db/models');
 
-const { uniqueUserContext, baseUserRoleContext, baseParentStudentContext } = require('../../../__fixtures__/models');
+const { 
+    uniqueUserContext, 
+    baseUserRoleContext, 
+    baseParentStudentContext,
+    baseUserFileContext,
+    baseStudentFileContext,
+    baseParentFileContext,
+    baseTeacherFileContext
+} = require('../../../__fixtures__/models');
+
 const db = require('../../../__fixtures__/functions/db');
 
-const { user, parentStudent } = require('../../../../src/db/names');
+const { user } = require('../../../../src/db/names');
 
 const uniqueUserContextModelNames = Object.keys(uniqueUserContext.persisted);
 const baseUserRoleContextModelNames = Object.keys(baseUserRoleContext.persisted);
 const baseParentStudentContextModelNames = Object.keys(baseParentStudentContext.persisted);
+const baseUserFileContextModelNames = Object.keys(baseUserFileContext.persisted);
+const baseStudentFileContextModelNames = Object.keys(baseStudentFileContext.persisted);
+const baseParentFileContextModelNames = Object.keys(baseParentFileContext.persisted);
+const baseTeacherFileContextModelNames = Object.keys(baseTeacherFileContext.persisted);
 
 const roleTypes = require('../../../../src/util/roles');
 
@@ -210,7 +231,6 @@ describe('[db/models/user] - baseParentStudent context', () => {
     describe('[db/models/user] - Pre remove hook', () => {
 
         const persistedUsers = persisted[user.modelName];
-        const persistedParentStudents = persisted[parentStudent.modelName];
 
         it('Should delete associated parentStudent records upon student user deletion', async () => {
             
@@ -265,5 +285,125 @@ describe('[db/models/user] - baseParentStudent context', () => {
     });
 
     afterEach(db.teardown(baseParentStudentContextModelNames));
+
+});
+
+describe('[db/models/user] - baseUserFile context', () => {
+
+    beforeEach(db.init(baseUserFileContext.persisted));
+
+    const persistedUsers = baseUserFileContext.persisted[user.modelName];
+
+    describe('[db/models/user] - Pre remove hook', () => {
+
+        const userId = persistedUsers[0]._id;
+
+        it('Should delete all associated user files upon user deletion', async () => {
+
+            const user = await User.findOne({ _id: userId });
+
+            await user.remove();
+
+            const docCount = await UserFile.countDocuments({
+                user: userId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+    });
+
+    afterEach(db.teardown(baseUserFileContextModelNames));
+
+});
+
+describe('[db/models/user] - baseParentFile context', () => {
+
+    beforeEach(db.init(baseParentFileContext.persisted));
+
+    const persistedUsers = baseParentFileContext.persisted[user.modelName];
+
+    describe('[db/models/user] - Pre remove hook', () => {
+
+        const parentId = persistedUsers[0]._id;
+
+        it('Should delete all associated parent files upon user deletion (with parent role)', async () => {
+
+            const parent = await User.findOne({ _id: parentId });
+
+            await parent.remove();
+
+            const docCount = await ParentFile.countDocuments({
+                user: parentId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+    });
+
+    afterEach(db.teardown(baseParentFileContextModelNames));
+
+});
+
+describe('[db/models/user] - baseStudentFile context', () => {
+
+    beforeEach(db.init(baseStudentFileContext.persisted));
+
+    const persistedUsers = baseStudentFileContext.persisted[user.modelName];
+
+    describe('[db/models/user] - Pre remove hook', () => {
+
+        const studentId = persistedUsers[0]._id;
+
+        it('Should delete all associated student files upon user deletion (with student role)', async () => {
+
+            const student = await User.findOne({ _id: studentId });
+
+            await student.remove();
+
+            const docCount = await StudentFile.countDocuments({
+                user: studentId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+    });
+
+    afterEach(db.teardown(baseStudentFileContextModelNames));
+
+});
+
+describe('[db/models/user] - baseTeacherFile context', () => {
+
+    beforeEach(db.init(baseTeacherFileContext.persisted));
+
+    const persistedUsers = baseTeacherFileContext.persisted[user.modelName];
+
+    describe('[db/models/user] - Pre remove hook', () => {
+
+        const teacherId = persistedUsers[0]._id;
+
+        it('Should delete all associated teacher files upon user deletion (with teacher role)', async () => {
+
+            const teacher = await User.findOne({ _id: teacherId });
+
+            await teacher.remove();
+
+            const docCount = await TeacherFile.countDocuments({
+                user: teacherId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+    });
+
+    afterEach(db.teardown(baseTeacherFileContextModelNames));
 
 });
