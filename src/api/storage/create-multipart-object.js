@@ -1,4 +1,4 @@
-const cos = require('./cos/cos');
+const cos = require('./config/cos');
 
 const cancelMultipartObject = async (bucketName, itemName, uploadId) => {
 
@@ -67,7 +67,11 @@ const createMultipartObject = async (bucketName, { keyname, buffer, size, mimety
     } catch (e) {
 
         try {
-            await cancelMultipartObject(bucketName, 'file', uploadId);
+
+            if (uploadId) {
+                await cancelMultipartObject(bucketName, 'file', uploadId);
+            }
+
         } catch {
             throw e;
         }
