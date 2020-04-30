@@ -30,7 +30,7 @@ const createMultipartObject = async (bucketName, { keyname, buffer, size, mimety
     
         uploadId = data.UploadId;
 
-        const partSize = +process.env.PART_SIZE * 1024 * 1024;
+        const partSize = (+process.env.PART_SIZE || 5) * 1024 * 1024;
         const parts = Math.ceil(size / partSize);
 
         const chunks = [];
@@ -69,7 +69,7 @@ const createMultipartObject = async (bucketName, { keyname, buffer, size, mimety
         try {
 
             if (uploadId) {
-                await cancelMultipartObject(bucketName, 'file', uploadId);
+                await cancelMultipartObject(bucketName, keyname, uploadId);
             }
 
         } catch {
