@@ -9,7 +9,8 @@ const {
     UserFile,
     ParentFile,
     StudentFile,
-    TeacherFile
+    TeacherFile,
+    ParentStudentInvitation
 } = require('../../../../src/db/models');
 
 const { 
@@ -19,7 +20,8 @@ const {
     baseUserFileContext,
     baseStudentFileContext,
     baseParentFileContext,
-    baseTeacherFileContext
+    baseTeacherFileContext,
+    baseParentStudentInvitationContext
 } = require('../../../__fixtures__/models');
 
 const db = require('../../../__fixtures__/functions/db');
@@ -33,6 +35,7 @@ const baseUserFileContextModelNames = Object.keys(baseUserFileContext.persisted)
 const baseStudentFileContextModelNames = Object.keys(baseStudentFileContext.persisted);
 const baseParentFileContextModelNames = Object.keys(baseParentFileContext.persisted);
 const baseTeacherFileContextModelNames = Object.keys(baseTeacherFileContext.persisted);
+const baseParentStudentInvitationContextModelNames = Object.keys(baseParentStudentInvitationContext.persisted);
 
 const roleTypes = require('../../../../src/util/roles');
 
@@ -256,6 +259,70 @@ describe('[db/models/user] - baseParentStudent context', () => {
     });
 
     afterEach(db.teardown(baseParentStudentContextModelNames));
+
+});
+
+describe('[db/models/user] - baseParentStudentInvitation context', () => {
+
+    beforeEach(db.init(baseParentStudentInvitationContext.persisted));
+
+    describe('[db/models/user] - Pre remove hook', () => {
+
+        const persistedUsers = baseParentStudentInvitationContext.persisted[user.modelName];
+
+        it('Should delete associated parentStudentInvitation records upon parent user deletion', async () => {
+
+            const userOneId = persistedUsers[0]._id;
+
+            const user = await User.findOne({ _id: userOneId });
+            await user.remove();
+
+            const docCount = await ParentStudentInvitation.countDocuments({
+                parent: userOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        it('Should delete associated parentStudentInvitation records upon student user deletion', async () => {
+
+            const userSevenId = persistedUsers[6]._id;
+
+            const user = await User.findOne({ _id: userSevenId });
+            await user.remove();
+
+            const docCount = await ParentStudentInvitation.countDocuments({
+                student: userSevenId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        it('Should delete associated parentStudentInvitation records upon user deletion that is both student and parent', async () => {
+
+            const userFiveId = persistedUsers[4]._id;
+
+            const user = await User.findOne({ _id: userFiveId });
+            await user.remove();
+
+            const parentDocCount = await ParentStudentInvitation.countDocuments({
+                parent: userFiveId
+            });
+
+            const studentDocCount = await ParentStudentInvitation.countDocuments({
+                student: userFiveId
+            });
+
+            expect(parentDocCount).to.equal(0);
+            expect(studentDocCount).to.equal(0);
+
+        });
+
+    });
+
+    afterEach(db.teardown(baseParentStudentInvitationContextModelNames));
 
 });
 
