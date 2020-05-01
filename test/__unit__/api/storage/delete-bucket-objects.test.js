@@ -1,8 +1,12 @@
-const expect = require('chai').expect;
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
 const { deleteBucketObjects } = require('../../../../src/api/storage');
 const cos = require('../../../../src/api/storage/config/cos');
+
+const expect = chai.expect;
+chai.use(chaiAsPromised);
 
 const bucketName = 'sample-bucket';
 const keynames = ['file-1.txt', 'sample-doc.docx', 'report.pdf'];

@@ -82,13 +82,13 @@ describe('[db/models/shared/file] - valid mimetype', () => {
 
     it('Should validate a file with a correct mimetype', () => {
         file.mimetype = 'audio/mp3';
-        modelFunctions.testForValidModelAsync(file);
+        modelFunctions.testForValidModel(file);
     });
 
     it('Should trim a valid mimetype', () => {
 
         file.mimetype = '    application/xml        ';
-        modelFunctions.testForValidModelAsync(file);
+        modelFunctions.testForValidModel(file);
 
         expect(file.mimetype).to.equal('application/xml');
 

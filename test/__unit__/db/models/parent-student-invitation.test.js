@@ -3,8 +3,7 @@ const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 
-const { parentStudentInvitationDefinition } = require('../../../../src/db/schemas/parent-student-invitation');
-const { testForInvalidModel, testForValidModel, generateFakeUsers, getNewModelInstance } = require('../../../__fixtures__/functions/models');
+const { generateFakeUsers, getNewModelInstance } = require('../../../__fixtures__/functions/models');
 
 const { User, ParentStudentInvitation } = require('../../../../src/db/models');
 

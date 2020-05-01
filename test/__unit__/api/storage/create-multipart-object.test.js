@@ -1,4 +1,5 @@
-const expect = require('chai').expect;
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
 const { createMultipartObject } = require('../../../../src/api/storage');
@@ -11,6 +12,9 @@ const uploadId = 'some-id';
 const eTag = 'some-tag';
 const bufferSize = 10;
 const buffer = Buffer.alloc(bufferSize);
+
+const expect = chai.expect;
+chai.use(chaiAsPromised);
 
 const data = {
     keyname: keyname,

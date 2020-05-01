@@ -1,8 +1,12 @@
-const expect = require('chai').expect;
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
 const { listBucketKeys } = require('../../../../src/api/storage');
 const cos = require('../../../../src/api/storage/config/cos');
+
+const expect = chai.expect;
+chai.use(chaiAsPromised);
 
 const bucketName = 'sample-bucket';
 

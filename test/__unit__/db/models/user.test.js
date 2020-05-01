@@ -1,4 +1,5 @@
-const expect = require('chai').expect;
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
 const User = require('../../../../src/db/models/user');
@@ -11,6 +12,15 @@ const { getRolesPipeline } = require('../../../../src/db/aggregation/user-role')
 
 const { sharedFile, userRole } = require('../../../../src/db/names');
 const roleTypes = require('../../../../src/util/roles');
+
+const storageApi = require('../../../../src/api/storage');
+const sampleFiles = require('../../../__fixtures__/shared/sample-files');
+
+const bucketNames = require('../../../../src/api/storage/config/bucket-names');
+const { user: userNames } = require('../../../../src/db/names');
+
+const expect = chai.expect;
+chai.use(chaiAsPromised);
 
 const [fileDoc] = sampleFileContext.persisted[sharedFile.modelName];
 
@@ -34,49 +44,49 @@ describe('[db/models/user] - invalid name', () => {
     const [userMinLength] = userDefinition.name.minlength;
     const [userMaxLength] = userDefinition.name.maxlength;
 
-    it('Should not validate a user without a name', async () => {
+    it('Should not validate a user without a name', () => {
         user.name = undefined;
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.name.required);
+        modelFunctions.testForInvalidModel(user, userDefinition.name.required);
     });
 
-    it('Should not validate a user with a name that does not match the fullName regexp pattern', async () => {
+    it('Should not validate a user with a name that does not match the fullName regexp pattern', () => {
         user.name = 'Max+ User!';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.name.validate);
+        modelFunctions.testForInvalidModel(user, userDefinition.name.validate);
     });
 
-    it('Should not validate a user with a name that does not match the singleName regexp pattern', async () => {
+    it('Should not validate a user with a name that does not match the singleName regexp pattern', () => {
         user.name = '.Peter';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.name.validate);
+        modelFunctions.testForInvalidModel(user, userDefinition.name.validate);
     });
 
-    it('Should not validate a user with an explicit profane name', async () => {
+    it('Should not validate a user with an explicit profane name', () => {
         user.name = 'Pussy Destroyer';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.name.validate);
+        modelFunctions.testForInvalidModel(user, userDefinition.name.validate);
     });
 
-    it(`Should not validate a user with a name shorter than ${ userMinLength } characters`, async () => {
+    it(`Should not validate a user with a name shorter than ${ userMinLength } characters`, () => {
         user.name = 'A';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.name.minlength);
+        modelFunctions.testForInvalidModel(user, userDefinition.name.minlength);
     });
 
-    it(`Should not validate a user with a name longer than ${ userMaxLength } characters`, async () => {
+    it(`Should not validate a user with a name longer than ${ userMaxLength } characters`, () => {
         user.name = 'Hey this is a reaaaaaaallllyyy looooong super name that should not enter into the database ever since its pretty long you now';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.name.maxlength);
+        modelFunctions.testForInvalidModel(user, userDefinition.name.maxlength);
     });
 
 });
 
 describe('[db/models/user] - valid name', () => {
 
-    it('Should validate a correct user name', async () => {
+    it('Should validate a correct user name', () => {
         user.name = 'Brian O\' Connor';
-        await modelFunctions.testForValidModelAsync(user);
+        modelFunctions.testForValidModel(user);
     });
 
-    it('Should trim a valid user name', async () => {
+    it('Should trim a valid user name', () => {
 
         user.name = '   John        Smith    ';
-        await modelFunctions.testForValidModelAsync(user);
+        modelFunctions.testForValidModel(user);
 
         expect(user.name).to.equal('John Smith');
 
@@ -89,44 +99,44 @@ describe('[db/models/user] - invalid username', () => {
     const [usernameMinLength] = userDefinition.username.minlength;
     const [usernameMaxLength] = userDefinition.username.maxlength;
 
-    it('Should not validate a user without a username', async () => {
+    it('Should not validate a user without a username', () => {
         user.username = undefined;
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.username.required);
+        modelFunctions.testForInvalidModel(user, userDefinition.username.required);
     });
 
-    it('Should not validate a user with a username that does not match the username regexp pattern', async () => {
+    it('Should not validate a user with a username that does not match the username regexp pattern', () => {
         user.username = 'max+!';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.username.validate);
+        modelFunctions.testForInvalidModel(user, userDefinition.username.validate);
     });
 
-    it('Should not validate a user with a profane username', async () => {
+    it('Should not validate a user with a profane username', () => {
         user.username = 'anus';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.username.validate);
+        modelFunctions.testForInvalidModel(user, userDefinition.username.validate);
     });
 
-    it(`Should not validate a user with a username shorter than ${ usernameMinLength } characters`, async () => {
+    it(`Should not validate a user with a username shorter than ${ usernameMinLength } characters`, () => {
         user.username = 'cz';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.username.minlength);
+        modelFunctions.testForInvalidModel(user, userDefinition.username.minlength);
     });
 
-    it(`Should not validate a user with a username longer than ${ usernameMaxLength } characters`, async () => {
+    it(`Should not validate a user with a username longer than ${ usernameMaxLength } characters`, () => {
         user.username = 'superlongusernamebruhohmygodsuperbadass';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.username.maxlength);
+        modelFunctions.testForInvalidModel(user, userDefinition.username.maxlength);
     });
 
 });
 
 describe('[db/models/user] - valid username', () => {
 
-    it('Should validate a correct username', async () => {
+    it('Should validate a correct username', () => {
         user.username = 'lion_delta42';
-        await modelFunctions.testForValidModelAsync(user);
+        modelFunctions.testForValidModel(user);
     });
 
-    it('Should trim a valid username', async () => {
+    it('Should trim a valid username', () => {
 
         user.username = '   magician.red_68     ';
-        await modelFunctions.testForValidModelAsync(user);
+        modelFunctions.testForValidModel(user);
 
         expect(user.username).to.equal('magician.red_68');
 
@@ -136,29 +146,29 @@ describe('[db/models/user] - valid username', () => {
 
 describe('[db/models/user] - invalid email', () => {
 
-    it('Should not validate a user without an email', async () => {
+    it('Should not validate a user without an email', () => {
         user.email = undefined;
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.email.required);
+        modelFunctions.testForInvalidModel(user, userDefinition.email.required);
     });
 
-    it('Should not validate a user with an invalid email', async () => {
+    it('Should not validate a user with an invalid email', () => {
         user.email = 'this-is@not-an@email.com';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.email.validate);
+        modelFunctions.testForInvalidModel(user, userDefinition.email.validate);
     });
 
 });
 
 describe('[db/models/user] - valid email', () => {
 
-    it('Should validate a correct email', async () => {
+    it('Should validate a correct email', () => {
         user.email = 'john_smith@hotmail.com';
-        await modelFunctions.testForValidModelAsync(user);
+        modelFunctions.testForValidModel(user);
     });
 
-    it('Should trim a valid email', async () => {
+    it('Should trim a valid email', () => {
 
         user.email = '   smith@something.org     ';
-        await modelFunctions.testForValidModelAsync(user);
+        modelFunctions.testForValidModel(user);
 
         expect(user.email).to.equal('smith@something.org');
 
@@ -170,48 +180,48 @@ describe('[db/models/user] - invalid password', () => {
 
     const [passwordMinLength] = userDefinition.password.minlength;
 
-    it('Should not validate a user without a password', async () => {
+    it('Should not validate a user without a password', () => {
         user.password = undefined;
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.password.required);
+        modelFunctions.testForInvalidModel(user, userDefinition.password.required);
     });
 
-    it('Should not validate a user with a password that does not match the strongPassword regexp', async () => {
+    it('Should not validate a user with a password that does not match the strongPassword regexp', () => {
         user.password = 'weak-shit';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.password.validate);
+        modelFunctions.testForInvalidModel(user, userDefinition.password.validate);
     });
 
-    it(`Should not validate a user with a password shorter than ${ passwordMinLength } characters (unhashed)`, async () => {
+    it(`Should not validate a user with a password shorter than ${ passwordMinLength } characters (unhashed)`, () => {
         user.password = '?sH1t.';
-        await modelFunctions.testForInvalidModelAsync(user, userDefinition.password.minlength);
+        modelFunctions.testForInvalidModel(user, userDefinition.password.minlength);
     });
 
 });
 
 describe('[db/models/user] - valid password', () => {
 
-    it('Should validate a correct password', async () => {
+    it('Should validate a correct password', () => {
         user.password = 'Str0ng?P4s$w0rd!';
-        await modelFunctions.testForValidModelAsync(user);
+        modelFunctions.testForValidModel(user);
     });
 
 });
 
 describe('[db/models/user] - avatar', () => {
 
-    it('Should validate a correctly defined file schema', async () => {
-        await modelFunctions.testForValidModelAsync(user);
+    it('Should validate a correctly defined file schema', () => {
+        modelFunctions.testForValidModel(user);
     });
 
-    it('Should validate a user without a defined file schema', async () => {
+    it('Should validate a user without a defined file schema', () => {
         user.avatar = undefined;
-        await modelFunctions.testForValidModelAsync(user);
+        modelFunctions.testForValidModel(user);
     });
 
 });
 
 describe('[db/models/user] - enabled', () => {
 
-    it('Should set enabled flag to true as default upon user model instance creation', async () => {
+    it('Should set enabled flag to true as default upon user model instance creation', () => {
         expect(user.enabled).to.equal(true);
     });
 
@@ -305,6 +315,34 @@ describe('[db/models/user] - methods.hasRole', () => {
 
 describe('[db/models/user] - methods.saveAvatar', () => {
 
-    
+    let deleteBucketObjectsStub;
+    let userSaveStub;
+
+    const avatarDoc = sampleFiles.pngImage;
+    const buffer = Buffer.alloc(10);
+
+    it('Should throw error if user.avatar is defined but storageApi.deleteBucketObjects rejects (with correct arguments)', async () => {
+
+        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').rejects();
+        await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(deleteBucketObjectsStub, bucketNames[userNames.modelName], [user.avatar.keyname]);
+
+    });
+
+    it('Should throw error if user.save fails', async () => {
+
+        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves([{
+            Key: user.avatar.keyname
+        }]);
+
+        userSaveStub = sinon.stub(user, 'save').rejects();
+        await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
+    })
 
 });
