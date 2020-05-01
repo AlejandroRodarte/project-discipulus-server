@@ -1,7 +1,7 @@
 const generateOneToMany = require('./generate-one-to-many');
-const attachKeynames = require('./attach-keynames');
+const getFileExtensions = require('./get-file-extensions');
 
 module.exports = {
     generateOneToMany,
-    attachKeynames
+    getFileExtensions
 };
