@@ -123,8 +123,8 @@ describe('[api/storage/create-multipart-object] - cos.completeMultipartUpload', 
     it('Should call cos.completeMultipartUpload with correct arguments and throw error if promise rejects, calling cos.abortMultipartUpload', async () => {
 
         completeMultipartUploadStub = sinon.stub(cos, 'completeMultipartUpload').returns({
-            promise: Promise.reject(new Error('Error while completing multipart upload'))
-        })
+            promise: () => Promise.reject(new Error('Error while completing multipart upload'))
+        });
 
         abortMultipartUploadStub = sinon.stub(cos, 'abortMultipartUpload').returns({
             promise: () => Promise.resolve()
