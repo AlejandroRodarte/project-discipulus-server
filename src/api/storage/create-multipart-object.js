@@ -30,7 +30,7 @@ const createMultipartObject = async (bucketName, { keyname, buffer, size, mimety
     
         uploadId = data.UploadId;
 
-        const partSize = (+process.env.PART_SIZE || 5) * 1024 * 1024;
+        const partSize = (+process.env.FILE_CHUNK_SIZE_MB || 5) * 1024 * 1024;
         const parts = Math.ceil(size / partSize);
 
         const chunks = [];
