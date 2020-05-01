@@ -18,6 +18,7 @@ const generateFakeUsers = (amount, config = {}) => {
             fakeToken ? 'some-token' : jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME })
         ],
         avatar: {
+            _id: new Types.ObjectId(),
             originalname: faker.system.fileName(),
             mimetype: faker.system.mimeType()
         },
