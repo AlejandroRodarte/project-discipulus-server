@@ -1,7 +1,7 @@
 {
   "name": "discipulus-server",
   "version": "1.0.0",
-  "description": "Node.js backend server API for a remote-class solution requested by the Call for Code 2020 challenge.",
+  "description": "Node.js backend server API for a remote-class solution requested by the Call for Code 2020 challenge!",
   "main": "index.js",
   "scripts": {
     "dev": "env-cmd -f config/.env.development nodemon src/index.js",
