@@ -81,40 +81,11 @@ describe('[db/models/user] - uniqueUser context', () => {
     
     });
     
-    describe('[db/models/user] - Non-unique avatar keynames', () => {
-
-        it('Should not persist a user with a non-unique avatar keyname', async () => {
-    
-            const persistedUser = await User.findOne({ _id: persistedUserId });
-    
-            const unpersistedUser = new User(uniqueUserDoc);
-            unpersistedUser.avatar.keyname = persistedUser.avatar.keyname;
-    
-            await expect(unpersistedUser.save()).to.eventually.be.rejectedWith(mongo.MongoError);
-    
-        });
-    
-    });
-    
-    describe('[db/models/user] - Unique username, email and avatar keyname', () => {
+    describe('[db/models/user] - Unique username and email', () => {
 
         it('Should persist a user with a required unique fields', async () => {
             const user = new User(uniqueUserDoc);
             await expect(user.save()).to.eventually.be.eql(user);
-        });
-    
-    });
-    
-    describe('[db/models/user] - Pre validate file hook', () => {
-
-        it('Should not regenerate a new file keyname upon user model update', async () => {
-    
-            const user = await User.findOne({ _id: persistedUserId });
-            const oldAvatarKeyname = user.avatar.keyname;
-    
-            const updatedUser = await user.save();
-            expect(updatedUser.avatar.keyname).to.equal(oldAvatarKeyname);
-    
         });
     
     });
