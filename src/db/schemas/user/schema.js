@@ -147,10 +147,6 @@ userSchema.methods.saveAvatar = async function(buffer) {
 
     const userModel = this;
 
-    if (!userModel.file.keyname) {
-        throw new Error('Persist the file document first before saving the image');
-    }
-
     try {
 
         await storageApi.createMultipartObject(bucketNames[user.modelName], {
