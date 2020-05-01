@@ -19,44 +19,44 @@ describe('[db/models/shared/file] - invalid originalname', () => {
     const [originalnameMinLength] = sharedFileDefinition.originalname.minlength;
     const [originalnameMaxLength] = sharedFileDefinition.originalname.maxlength;
 
-    it('Should not validate a file without an original filename', async () => {
+    it('Should not validate a file without an original filename', () => {
         file.originalname = undefined;
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.originalname.required);
+        modelFunctions.testForInvalidModel(file, sharedFileDefinition.originalname.required);
     });
 
-    it('Should not validate a file that does not match the filename regexp pattern', async () => {
+    it('Should not validate a file that does not match the filename regexp pattern', () => {
         file.originalname = ':bad_filename.csv';
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.originalname.validate);
+        modelFunctions.testForInvalidModel(file, sharedFileDefinition.originalname.validate);
     });
 
-    it('Should not validate a file with a profane original filename', async () => {
+    it('Should not validate a file with a profane original filename', () => {
         file.originalname = 'cock.gif';
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.originalname.validate);
+        modelFunctions.testForInvalidModel(file, sharedFileDefinition.originalname.validate);
     });
 
-    it(`Should not validate a file with an original filename shorter than ${ originalnameMinLength } characters`, async () => {
+    it(`Should not validate a file with an original filename shorter than ${ originalnameMinLength } characters`, () => {
         file.originalname = '.c';
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.originalname.minlength);
+        modelFunctions.testForInvalidModel(file, sharedFileDefinition.originalname.minlength);
     });
 
-    it(`Should not validate a file with an original filename longer than ${ originalnameMaxLength } characters`, async () => {
+    it(`Should not validate a file with an original filename longer than ${ originalnameMaxLength } characters`, () => {
         file.originalname = `${[...Array(originalnameMaxLength + 1)].map(_ => 'a').join('')}.txt`;
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.originalname.maxlength);
+        modelFunctions.testForInvalidModel(file, sharedFileDefinition.originalname.maxlength);
     });
 
 });
 
 describe('[db/models/shared/file] - valid originalname', () => {
 
-    it('Should validate a file with a correct originalname', async () => {
+    it('Should validate a file with a correct originalname', () => {
         file.originalname = 'my super exam document.txt';
-        await modelFunctions.testForValidModelAsync(file);
+        modelFunctions.testForValidModel(file);
     });
 
-    it('Should trim a valid originalname', async () => {
+    it('Should trim a valid originalname', () => {
 
         file.originalname = '    hey-man.csv     ';
-        await modelFunctions.testForValidModelAsync(file);
+        modelFunctions.testForValidModel(file);
 
         expect(file.originalname).to.equal('hey-man.csv');
 
@@ -66,29 +66,29 @@ describe('[db/models/shared/file] - valid originalname', () => {
 
 describe('[db/models/shared/file] - invalid mimetype', () => {
 
-    it('Should not validate a file without a mimetype', async () => {
+    it('Should not validate a file without a mimetype', () => {
         file.mimetype = undefined;
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.mimetype.required);
+        modelFunctions.testForInvalidModel(file, sharedFileDefinition.mimetype.required);
     });
 
-    it('Should not validate a file that does not match the mimeType regexp pattern', async () => {
+    it('Should not validate a file that does not match the mimeType regexp pattern', () => {
         file.mimetype = 'image_jpeg';
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.mimetype.validate);
+        modelFunctions.testForInvalidModel(file, sharedFileDefinition.mimetype.validate);
     });
 
 });
 
 describe('[db/models/shared/file] - valid mimetype', () => {
 
-    it('Should validate a file with a correct mimetype', async () => {
+    it('Should validate a file with a correct mimetype', () => {
         file.mimetype = 'audio/mp3';
-        await modelFunctions.testForValidModelAsync(file);
+        modelFunctions.testForValidModelAsync(file);
     });
 
-    it('Should trim a valid mimetype', async () => {
+    it('Should trim a valid mimetype', () => {
 
         file.mimetype = '    application/xml        ';
-        await modelFunctions.testForValidModelAsync(file);
+        modelFunctions.testForValidModelAsync(file);
 
         expect(file.mimetype).to.equal('application/xml');
 
@@ -96,34 +96,15 @@ describe('[db/models/shared/file] - valid mimetype', () => {
 
 });
 
-describe('[db/models/shared/file] - keyname', () => {
+describe('[db/models/shared/file] - virtuals.keyname', () => {
 
-    const [keynameMinLength] = sharedFileDefinition.keyname.minlength;
-    const [keynameMaxLength] = sharedFileDefinition.keyname.maxlength;
+    it('Should populate keyname virtual field', () => {
 
-    it('Should trigger pre validate hook and generate a unique file keyname, conserving the original extension', async () => {
+        const [, ...extensions] = file.originalname.split('.');
+        const keyname = `${file._id.toHexString()}.${extensions.join('.')}`;
 
-        const validationError = await modelFunctions.validateAsync(file);
+        expect(file.keyname).to.be.equal(keyname);
 
-        const [originalName, originalNameExtension] = file.originalname.split('.');
-        const [keyname, keynameExtension] = file.keyname.split('.');
-
-        expect(validationError).to.be.null;
-
-        expect(keynameExtension).to.equal(originalNameExtension);
-        expect(keyname.length).to.equal(36);
-        expect(originalName).to.not.equal(keyname);
-
-    });
-
-    it(`Should not validate a file with a keyname shorter than ${ keynameMinLength } characters`, async () => {
-        file.keyname = 'bad-keyname.txt';
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.keyname.minlength);
-    });
-
-    it(`Should not validate a file with a keyname longer than ${ keynameMaxLength } characters`, async () => {
-        file.originalname = 'some.superlongextensionnameman.with.somemore.c75bullshit.txt.whaaaat';
-        await modelFunctions.testForInvalidModelAsync(file, sharedFileDefinition.keyname.maxlength);
     });
 
 });

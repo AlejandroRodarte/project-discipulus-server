@@ -12,16 +12,12 @@ const schemaOpts = {
 
 const sharedFileSchema = new Schema(sharedFileDefinition, schemaOpts);
 
-sharedFileSchema.pre('validate', function(next) {
+sharedFileSchema.virtual('keyname').get(function() {
 
     const file = this;
+    const [, ...extensions] = file.originalname.split('.');
 
-    if (file.originalname && !file.keyname) {
-        const [, ...extensions] = file.originalname.split('.');
-        file.keyname = `${uuidv4()}.${extensions.join('.')}`;
-    }
-
-    next();
+    return `${file._id.toHexString()}.${extensions.join('.')}`;
 
 });
 
