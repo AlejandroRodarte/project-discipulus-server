@@ -4,7 +4,7 @@ const { createMultipartObject } = require('../../../../src/api/storage');
 
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 
-const basePath = 'test/__fixtures__/assets';
+const { BASE_ASSETS_PATH } = require('../../../__fixtures__/config/config');
 
 const init = (persistedContext) => async () => {
 
@@ -12,7 +12,7 @@ const init = (persistedContext) => async () => {
 
         for (const file of persistedContext[bucketKey]) {
 
-            const buffer = fs.readFileSync(`${basePath}/${file.originalname}`);
+            const buffer = fs.readFileSync(`${BASE_ASSETS_PATH}/${file.originalname}`);
 
             await createMultipartObject(bucketNames[bucketKey], {
                 keyname: file.keyname,
