@@ -302,3 +302,9 @@ describe('[db/models/user] - methods.hasRole', () => {
     });
 
 });
+
+describe('[db/models/user] - methods.saveAvatar', () => {
+
+    
+
+});

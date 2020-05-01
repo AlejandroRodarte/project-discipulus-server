@@ -143,20 +143,41 @@ userSchema.methods.hasRole = async function(role) {
 
 };
 
-userSchema.methods.saveAvatar = async function(buffer) {
+userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
 
     const userModel = this;
 
+    if (userModel.avatar) {
+
+        try {
+            await storageApi.deleteBucketObjects(bucketNames[user.modelName], [userModel.avatar.keyname]);
+        } catch (e) {
+            throw e;
+        }
+
+    }
+
+    userModel.avatar = avatarDoc;
+
     try {
-
-        await storageApi.createMultipartObject(bucketNames[user.modelName], {
-            keyname: userModel.file.keyname,
-            buffer,
-            mimetype: userModel.file.mimetype
-        });
-
+        await userModel.save();
     } catch (e) {
-        console.log(e);
+        throw e;
+    }
+
+    try {
+        await storageApi.createMultipartObject(bucketNames[user.modelName], {
+            keyname: userModel.avatar.keyname,
+            buffer,
+            mimetype: userModel.avatar.mimetype
+        });
+    } catch (e) {
+
+        userModel.avatar = undefined;
+        await userModel.save();
+
+        throw e;
+
     }
 
 };
