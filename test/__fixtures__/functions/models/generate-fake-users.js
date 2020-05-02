@@ -4,7 +4,11 @@ const { Types } = require('mongoose');
 
 const generateFakeUsers = (amount, config = {}) => {
 
-    const { enabled = true, fakeToken = false } = config;
+    const { 
+        enabled = true, 
+        fakeToken = false,
+        noAvatar = false
+    } = config;
 
     const userIds = [...new Array(amount)].map(_ => new Types.ObjectId());
 
@@ -17,7 +21,7 @@ const generateFakeUsers = (amount, config = {}) => {
         tokens: [
             fakeToken ? 'some-token' : jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME })
         ],
-        avatar: {
+        avatar: noAvatar ? undefined : {
             _id: new Types.ObjectId(),
             originalname: faker.system.fileName(),
             mimetype: faker.system.mimeType()
