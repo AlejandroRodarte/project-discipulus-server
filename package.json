@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "env-cmd -f config/.env.development nodemon src/index.js",
     "test:unit": "mocha \"test/__unit__/**/*.test.js\"",
-    "local:test:unit": "npm run test:unit -- --watch",
+    "local:test:unit": "cross-env NODE_ENV=test npm run test:unit -- --watch",
     "test:int": "mocha --file ./test/__fixtures__/functions/db/setup.js \"test/__integration__/**/*.test.js\"",
     "local:test:int": "env-cmd -f config/.env.test npm run test:int -- --watch"
   },
@@ -25,6 +25,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chalk": "^4.0.0",
+    "cross-env": "^7.0.2",
     "env-cmd": "^10.1.0",
     "faker": "^4.1.0",
     "mocha": "^7.1.1",
