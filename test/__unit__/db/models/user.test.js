@@ -19,6 +19,8 @@ const sampleFiles = require('../../../__fixtures__/shared/sample-files');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 const { user: userNames } = require('../../../../src/db/names');
 
+const regexp = require('../../../../src/util/regexp');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -317,6 +319,7 @@ describe('[db/models/user] - methods.saveAvatar', () => {
 
     let deleteBucketObjectsStub;
     let userSaveStub;
+    let createMultipartObjectStub;
 
     const avatarDoc = sampleFiles.pngImage;
     const buffer = Buffer.alloc(10);
@@ -330,14 +333,44 @@ describe('[db/models/user] - methods.saveAvatar', () => {
 
     });
 
-    it('Should throw error if user.save fails', async () => {
+    it('Should throw error if user.save fails (called once)', async () => {
 
-        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves([{
-            Key: user.avatar.keyname
-        }]);
+        user.avatar = undefined;
 
         userSaveStub = sinon.stub(user, 'save').rejects();
         await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnce(userSaveStub);
+
+    });
+
+    it('Should throw error and rollback avatar (user.save is called twice) if storageApi.createMultipartObject fails (with correct arguments)', async () => {
+
+        user.avatar = undefined;
+
+        userSaveStub = sinon.stub(user, 'save').resolvesThis();
+        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').rejects();
+
+        await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[userNames.modelName], sinon.match({
+            keyname: sinon.match(regexp.fileKeyname),
+            buffer,
+            mimetype: avatarDoc.mimetype
+        }));
+
+        sinon.assert.calledTwice(userSaveStub);
+
+    });
+
+    it('Should resolve with updated user model if all required promises resolve', async () => {
+
+        user.avatar = undefined;
+
+        userSaveStub = sinon.stub(user, 'save').resolvesThis();
+        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+
+        await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.eql(user);
 
     });
 

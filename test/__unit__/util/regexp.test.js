@@ -212,3 +212,31 @@ describe('[util/regexp] - strongPassword', () => {
     });
 
 });
+
+describe('[util/regexp] - fileKeyname', () => {
+    
+    it('Should return false on invalid file keynames', () => {
+
+        const keynames = [
+            '54759eb3c090d83494e2d804',
+            'some-id.txt',
+            '547B9Ab3cF90d8E494A2dB04.png'
+        ];
+
+        keynames.forEach(keyname => expect(regexp.fileKeyname.test(keyname)).to.equal(false));
+
+    });
+
+    it('Should return true on valid file keynames', () => {
+
+        const keynames = [
+            '54759eb3c090d83494e2d804.c',
+            '4ecbe7f9e8c1c9092c000027.env.test',
+            '4ecbe7f9e8c1c9092c000027.shit.what0'
+        ];
+
+        keynames.forEach(keyname => expect(regexp.fileKeyname.test(keyname)).to.equal(true));
+
+    });
+
+});

@@ -180,6 +180,8 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
 
     }
 
+    return userModel;
+
 };
 
 module.exports = userSchema;
