@@ -240,3 +240,57 @@ describe('[util/regexp] - fileKeyname', () => {
     });
 
 });
+
+describe('[util/regexp] - imageMimetype', () => {
+    
+    it('Should return false on invalid image mimetypes', () => {
+
+        const mimetypes = [
+            'application/json',
+            'audio/mp3'
+        ];
+
+        mimetypes.forEach(mimetype => expect(regexp.imageMimetype.test(mimetype)).to.equal(false));
+
+    });
+
+    it('Should return true on valid image mimetypes', () => {
+
+        const mimetypes = [
+            'image/jpeg',
+            'image/png',
+            'image/gif'
+        ];
+
+        mimetypes.forEach(mimetype => expect(regexp.imageMimetype.test(mimetype)).to.equal(true));
+
+    });
+
+});
+
+describe('[util/regexp] - imageExtension', () => {
+    
+    it('Should return false on invalid image extensions', () => {
+
+        const filenames = [
+            'super-bad-image-file.docx',
+            'wrong.pdf'
+        ];
+
+        filenames.forEach(filename => expect(regexp.imageExtension.test(filename)).to.equal(false));
+
+    });
+
+    it('Should return true on valid image extensions', () => {
+
+        const filenames = [
+            'avatar.png',
+            'profile-pic.me.jpg',
+            'my-dog.jpeg'
+        ];
+
+        filenames.forEach(filename => expect(regexp.imageExtension.test(filename)).to.equal(true));
+
+    });
+
+});

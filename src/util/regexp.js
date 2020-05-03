@@ -10,5 +10,7 @@ module.exports = {
     trimCornerSpaces: /^\s+|\s+$/g,
     reduceMiddleSpaces: /\s+/g,
     strongPassword: /^((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
-    fileKeyname: /^([0-9a-f]{24})(\.[A-Za-z0-9_]{1,})+$/
+    fileKeyname: /^([0-9a-f]{24})(\.[A-Za-z0-9_]{1,})+$/,
+    imageMimetype: /^image\/(gif|jpe?g|png|bmp)$/,
+    imageExtension: /^(.+)(\.)(gif|jpe?g|png|bmp)$/
 };
