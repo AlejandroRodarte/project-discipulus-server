@@ -1,8 +1,9 @@
 const db = require('../db');
 const storage = require('../storage');
 
-const storage = (context) => async () => {
-
+const teardown = (persistedContext) => async () => {
+    await db.teardown(persistedContext.db)();
+    await storage.teardown(persistedContext.storage)();
 };
 
-module.exports = storage;
+module.exports = teardown;

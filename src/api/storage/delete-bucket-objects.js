@@ -2,6 +2,10 @@ const cos = require('./config/cos');
 
 const deleteBucketObjects = async (bucketName, keynames) => {
 
+    if (!keynames.length) {
+        return [];
+    }
+
     const objects = keynames.map(keyname => ({ Key: keyname }));
 
     try {
