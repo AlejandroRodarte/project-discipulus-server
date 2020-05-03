@@ -29,7 +29,7 @@ describe('[db/models/parent-student] - uniqueParentStudent context', () => {
     
     });
     
-    describe('[db/modsls/parent-student] - Unique parent-students', () => {
+    describe('[db/models/parent-student] - Unique parent-students', () => {
 
         it('Should persist a parent-student with same parent _id and different student _id', async () => {
             
@@ -71,7 +71,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
     const persistedUsers = baseParentStudentContext.persisted[user.modelName];
     const unpersistedParentStudents = baseParentStudentContext.unpersisted[parentStudent.modelName];
 
-    describe('[db/models/parent-student] - statics.add', () => {
+    describe('[db/models/parent-student] - methods.checkAndSave', () => {
 
         it('Should throw an error if parent and student id match', async () => {
 
@@ -82,7 +82,9 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
                 student: userId
             };
 
-            await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.rejectedWith(Error);
+            const parentStudent = new ParentStudent(parentStudentDoc);
+
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
@@ -95,7 +97,9 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
                 student: studentId
             };
 
-            await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.rejectedWith(Error);
+            const parentStudent = new ParentStudent(parentStudentDoc);
+
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
@@ -109,7 +113,9 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
                 student: studentId
             };
 
-            await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.rejectedWith(Error);
+            const parentStudent = new ParentStudent(parentStudentDoc);
+
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
@@ -123,19 +129,27 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
                 student: studentId
             };
 
-            await expect(ParentStudent.add(parentStudentDoc)).to.eventually.be.rejectedWith(Error);
+            const parentStudent = new ParentStudent(parentStudentDoc);
+
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
         it('Should throw an error on save if document is invalid', async () => {
+
             const nonUniqueParentStudentDoc = unpersistedParentStudents[0];
-            await expect(ParentStudent.add(nonUniqueParentStudentDoc)).to.eventually.be.rejectedWith(mongo.MongoError);
+            const nonUniqueParentStudent = new ParentStudent(nonUniqueParentStudentDoc);
+
+            await expect(nonUniqueParentStudent.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
+
         });
 
         it('Should persist correct parentStudent doc', async () => {
 
             const uniqueParentStudentDoc = unpersistedParentStudents[1];
-            const parentStudent = await ParentStudent.add(uniqueParentStudentDoc);
+            const uniqueParentStudent = new ParentStudent(uniqueParentStudentDoc);
+
+            const parentStudent = await uniqueParentStudent.checkAndSave();
 
             expect(parentStudent.parent).to.eql(uniqueParentStudentDoc.parent);
             expect(parentStudent.student).to.eql(uniqueParentStudentDoc.student);

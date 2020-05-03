@@ -27,7 +27,7 @@ describe('[db/models/user-role] - uniqueUserRole context', () => {
     
     });
     
-    describe('[db/modsls/user-role] - Unique user-roles', () => {
+    describe('[db/models/user-role] - Unique user-roles', () => {
     
         const uniqueUserRoles = uniqueUserRoleContext.unpersisted[userRole.modelName];
 

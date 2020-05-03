@@ -13,33 +13,31 @@ const parentStudentSchema = new Schema(parentStudentDefinition, schemaOpts);
 
 parentStudentSchema.index({ parent: 1, student: 1 }, { unique: true });
 
-parentStudentSchema.statics.add = async function(parentStudentDoc) {
+parentStudentSchema.methods.checkAndSave = async function() {
 
-    const ParentStudent = this;
+    const parentStudent = this;
     const User = model(user.modelName);
 
-    const { parent: parentId, student: studentId } = parentStudentDoc;
+    const { parent, student } = parentStudent;
 
-    if (parentId.toString() === studentId.toString()) {
+    if (parent.toHexString() === student.toHexString()) {
         throw new Error('Self-association is denied');
     }
 
-    const parent = await User.findOne({
-        _id: parentId,
+    const parentUser = await User.findOne({
+        _id: parent,
         enabled: true
     });
 
-    if (!parent) {
+    if (!parentUser) {
         throw new Error('The parent deleted/disabled his/her account');
     }
 
-    const isParent = await parent.hasRole(roleTypes.ROLE_PARENT);
+    const isParent = await parentUser.hasRole(roleTypes.ROLE_PARENT);
 
     if (!isParent) {
         throw new Error('The user is not a parent');
     }
-
-    const parentStudent = new ParentStudent(parentStudentDoc);
 
     try {
         await parentStudent.save();

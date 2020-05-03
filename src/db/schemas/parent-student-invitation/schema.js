@@ -15,33 +15,31 @@ const parentStudentInvitationSchema = new Schema(parentStudentInvitationDefiniti
 
 parentStudentInvitationSchema.index({ parent: 1, student: 1 }, { unique: true });
 
-parentStudentInvitationSchema.statics.add = async function(parentStudentInvitationDoc) {
+parentStudentInvitationSchema.methods.checkAndSave = async function() {
 
-    const ParentStudentInvitation = this;
+    const parentStudentInvitation = this;
     const User = model(user.modelName);
 
-    const { parent: parentId, student: studentId } = parentStudentInvitationDoc;
+    const { parent, student } = parentStudentInvitation;
 
-    if (parentId.toString() === studentId.toString()) {
+    if (parent.toHexString() === student.toHexString()) {
         throw new Error('Self-association is denied');
     }
 
-    const student = await User.findOne({
-        _id: studentId,
+    const studentUser = await User.findOne({
+        _id: student,
         enabled: true
     });
 
-    if (!student) {
+    if (!studentUser) {
         throw new Error('The student deleted/disabled his/her account');
     }
 
-    const isStudent = await student.hasRole(roleTypes.ROLE_STUDENT);
+    const isStudent = await studentUser.hasRole(roleTypes.ROLE_STUDENT);
 
     if (!isStudent) {
         throw new Error('The user is not a parent');
     }
-
-    const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
     try {
         await parentStudentInvitation.save();

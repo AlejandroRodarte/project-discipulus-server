@@ -29,7 +29,7 @@ beforeEach(() => {
     user = getNewModelInstance(User, userDoc);
 });
 
-describe('[db/models/parent-student-invitation] - statics.add', () => {
+describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
     let sandbox;
 
@@ -48,7 +48,9 @@ describe('[db/models/parent-student-invitation] - statics.add', () => {
             student: parentStudentInvitation.student
         };
 
-        await expect(ParentStudentInvitation.add(sameIdParentStudentInvitationDoc)).to.eventually.be.rejectedWith(Error);
+        const sameIdParentStudentInvitation = new ParentStudentInvitation(sameIdParentStudentInvitationDoc);
+
+        await expect(sameIdParentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
     });
 
@@ -56,7 +58,7 @@ describe('[db/models/parent-student-invitation] - statics.add', () => {
 
         userFindOneStub = sandbox.stub(User, 'findOne').resolves(null);
         
-        await expect(ParentStudentInvitation.add(parentStudentInvitationDoc)).to.eventually.be.rejectedWith(Error);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
     
         sinon.assert.calledOnceWithExactly(userFindOneStub, {
             _id: parentStudentInvitation.student,
@@ -70,7 +72,7 @@ describe('[db/models/parent-student-invitation] - statics.add', () => {
         userFindOneStub = sandbox.stub(User, 'findOne').resolves(user);
         userHasRoleStub = sandbox.stub(user, 'hasRole').resolves(false);
 
-        await expect(ParentStudentInvitation.add(parentStudentInvitationDoc)).to.eventually.be.rejectedWith(Error);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_STUDENT);
 
@@ -82,7 +84,7 @@ describe('[db/models/parent-student-invitation] - statics.add', () => {
         userHasRoleStub = sandbox.stub(user, 'hasRole').resolves(true);
         userSaveStub = sandbox.stub(ParentStudentInvitation.prototype, 'save').rejects();
 
-        await expect(ParentStudentInvitation.add(parentStudentInvitationDoc)).to.eventually.be.rejectedWith(Error);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         sinon.assert.calledOnce(userSaveStub);
 
@@ -94,7 +96,7 @@ describe('[db/models/parent-student-invitation] - statics.add', () => {
         userHasRoleStub = sandbox.stub(user, 'hasRole').resolves(true);
         userSaveStub = sandbox.stub(ParentStudentInvitation.prototype, 'save').resolves();
 
-        await expect(ParentStudentInvitation.add(parentStudentInvitationDoc)).to.eventually.be.instanceof(ParentStudentInvitation);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.eql(parentStudentInvitation);
 
     });
 

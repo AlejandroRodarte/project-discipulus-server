@@ -30,7 +30,7 @@ describe('[db/models/parent-student-invitation] - uniqueParentStudentInvitation 
     
     });
     
-    describe('[db/modsls/parent-student-invitation] - Unique parent-students', () => {
+    describe('[db/models/parent-student-invitation] - Unique parent-students', () => {
 
         it('Should persist a parent-student-invitation with same parent _id and different student _id', async () => {
             
@@ -72,7 +72,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
     const persistedUsers = baseParentStudentInvitationContext.persisted[user.modelName];
     const unpersistedParentUserInvitations = baseParentStudentInvitationContext.unpersisted[parentStudentInvitation.modelName];
 
-    describe('[db/models/parent-student-invitation] - statics.add', () => {
+    describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
         it('Should throw an error if parent and student id match', async () => {
 
@@ -83,7 +83,9 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
                 student: userId
             };
 
-            await expect(ParentStudentInvitation.add(parentStudentInvitationDoc)).to.eventually.be.rejectedWith(Error);
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
@@ -96,7 +98,9 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
                 student: new Types.ObjectId()
             };
 
-            await expect(ParentStudentInvitation.add(parentStudentInvitationDoc)).to.eventually.be.rejectedWith(Error);
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
@@ -110,7 +114,9 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
                 student: disabledStudentId
             };
 
-            await expect(ParentStudentInvitation.add(parentStudentInvitationDoc)).to.eventually.be.rejectedWith(Error);
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
@@ -124,19 +130,27 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
                 student: notAStudentId
             };
 
-            await expect(ParentStudentInvitation.add(parentStudentInvitationDoc)).to.eventually.be.rejectedWith(Error);
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
         it('Should throw an error on save if document is invalid', async () => {
-            const nonUniqueParentStudentInvitation = unpersistedParentUserInvitations[0];
-            await expect(ParentStudentInvitation.add(nonUniqueParentStudentInvitation)).to.eventually.be.rejectedWith(mongo.MongoError);
+
+            const nonUniqueParentStudentInvitationDoc = unpersistedParentUserInvitations[0];
+            const nonUniqueParentStudentInvitation = new ParentStudentInvitation(nonUniqueParentStudentInvitationDoc);
+
+            await expect(nonUniqueParentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
+
         });
 
         it('Should persist correct parentStudentInvitation doc', async () => {
 
             const uniqueParentStudentInvitationDoc = unpersistedParentUserInvitations[1];
-            const parentStudentInvitation = await ParentStudentInvitation.add(uniqueParentStudentInvitationDoc);
+            const uniqueParentStudentInvitation = new ParentStudentInvitation(uniqueParentStudentInvitationDoc);
+
+            const parentStudentInvitation = await uniqueParentStudentInvitation.checkAndSave();
 
             expect(parentStudentInvitation.parent).to.eql(uniqueParentStudentInvitationDoc.parent);
             expect(parentStudentInvitation.student).to.eql(uniqueParentStudentInvitationDoc.student);
