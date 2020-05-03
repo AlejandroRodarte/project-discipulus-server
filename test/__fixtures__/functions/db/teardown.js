@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
-const teardown = (modelNames) => async () => {
+const teardown = (persistedContext) => async () => {
+
+    const modelNames = Object.keys(persistedContext);
 
     for (const modelName of modelNames) {
         const Model = mongoose.model(modelName);

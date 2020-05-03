@@ -28,15 +28,6 @@ const db = require('../../../__fixtures__/functions/db');
 
 const { user } = require('../../../../src/db/names');
 
-const uniqueUserContextModelNames = Object.keys(uniqueUserContext.persisted);
-const baseUserRoleContextModelNames = Object.keys(baseUserRoleContext.persisted);
-const baseParentStudentContextModelNames = Object.keys(baseParentStudentContext.persisted);
-const baseUserFileContextModelNames = Object.keys(baseUserFileContext.persisted);
-const baseStudentFileContextModelNames = Object.keys(baseStudentFileContext.persisted);
-const baseParentFileContextModelNames = Object.keys(baseParentFileContext.persisted);
-const baseTeacherFileContextModelNames = Object.keys(baseTeacherFileContext.persisted);
-const baseParentStudentInvitationContextModelNames = Object.keys(baseParentStudentInvitationContext.persisted);
-
 const roleTypes = require('../../../../src/util/roles');
 
 const expect = chai.expect;
@@ -106,7 +97,7 @@ describe('[db/models/user] - uniqueUser context', () => {
     
     });
 
-    afterEach(db.teardown(uniqueUserContextModelNames));
+    afterEach(db.teardown(uniqueUserContext.persisted));
 
 });
 
@@ -192,7 +183,7 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     });
 
-    afterEach(db.teardown(baseUserRoleContextModelNames));
+    afterEach(db.teardown(baseUserRoleContext.persisted));
 
 });
 
@@ -258,7 +249,7 @@ describe('[db/models/user] - baseParentStudent context', () => {
 
     });
 
-    afterEach(db.teardown(baseParentStudentContextModelNames));
+    afterEach(db.teardown(baseParentStudentContext.persisted));
 
 });
 
@@ -322,7 +313,7 @@ describe('[db/models/user] - baseParentStudentInvitation context', () => {
 
     });
 
-    afterEach(db.teardown(baseParentStudentInvitationContextModelNames));
+    afterEach(db.teardown(baseParentStudentInvitationContext.persisted));
 
 });
 
@@ -352,7 +343,7 @@ describe('[db/models/user] - baseUserFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseUserFileContextModelNames));
+    afterEach(db.teardown(baseUserFileContext.persisted));
 
 });
 
@@ -382,7 +373,7 @@ describe('[db/models/user] - baseParentFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseParentFileContextModelNames));
+    afterEach(db.teardown(baseParentFileContext.persisted));
 
 });
 
@@ -412,7 +403,7 @@ describe('[db/models/user] - baseStudentFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseStudentFileContextModelNames));
+    afterEach(db.teardown(baseStudentFileContext.persisted));
 
 });
 
@@ -442,6 +433,6 @@ describe('[db/models/user] - baseTeacherFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseTeacherFileContextModelNames));
+    afterEach(db.teardown(baseTeacherFileContext.persisted));
 
 });

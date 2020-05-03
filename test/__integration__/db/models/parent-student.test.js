@@ -9,9 +9,6 @@ const db = require('../../../__fixtures__/functions/db');
 
 const { user, parentStudent } = require('../../../../src/db/names');
 
-const baseParentStudentContextModelNames = Object.keys(baseParentStudentContext.persisted);
-const uniqueParentStudentContextModelNames = Object.keys(uniqueParentStudentContext.persisted);
-
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -63,7 +60,7 @@ describe('[db/models/parent-student] - uniqueParentStudent context', () => {
 
     });
         
-    afterEach(db.teardown(uniqueParentStudentContextModelNames));
+    afterEach(db.teardown(uniqueParentStudentContext.persisted));
 
 });
 
@@ -147,6 +144,6 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
 
     });
 
-    afterEach(db.teardown(baseParentStudentContextModelNames));
+    afterEach(db.teardown(baseParentStudentContext.persisted));
 
 });

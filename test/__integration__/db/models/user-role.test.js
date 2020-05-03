@@ -9,8 +9,6 @@ const db = require('../../../__fixtures__/functions/db');
 
 const { userRole } = require('../../../../src/db/names');
 
-const uniqueUserRoleContexttModelNames = Object.keys(uniqueUserRoleContext.persisted);
-
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -50,6 +48,6 @@ describe('[db/models/user-role] - uniqueUserRole context', () => {
     
     });
     
-    afterEach(db.teardown(uniqueUserRoleContexttModelNames));
+    afterEach(db.teardown(uniqueUserRoleContext.persisted));
 
 });
