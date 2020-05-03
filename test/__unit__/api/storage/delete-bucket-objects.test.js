@@ -11,6 +11,14 @@ chai.use(chaiAsPromised);
 const bucketName = 'sample-bucket';
 const keynames = ['file-1.txt', 'sample-doc.docx', 'report.pdf'];
 
+describe('[api/storage/delete-bucket-objects] - no keynames', () => {
+
+    it('Should return an empty array if no keynames are provided', async () => {
+        await expect(deleteBucketObjects(bucketName, [])).to.eventually.eql([]);
+    });
+
+});
+
 describe('[api/storage/delete-bucket-objects] - cos.deleteObjects', () => {
 
     let deleteObjectsStub;
