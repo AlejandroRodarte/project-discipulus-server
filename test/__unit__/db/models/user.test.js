@@ -373,6 +373,7 @@ describe('[db/models/user] - methods.saveAvatar', () => {
         sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[userNames.modelName], sinon.match({
             keyname: sinon.match(regexp.fileKeyname),
             buffer,
+            size: buffer.length,
             mimetype: avatarDoc.mimetype
         }));
 

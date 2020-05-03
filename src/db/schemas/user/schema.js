@@ -169,6 +169,7 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
         await storageApi.createMultipartObject(bucketNames[user.modelName], {
             keyname: userModel.avatar.keyname,
             buffer,
+            size: buffer.length,
             mimetype: userModel.avatar.mimetype
         });
     } catch (e) {

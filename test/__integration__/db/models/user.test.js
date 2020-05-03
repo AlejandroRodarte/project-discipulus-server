@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo } = require('mongoose');
+const { mongo, Error } = require('mongoose');
 
 const { 
     User, 
@@ -24,9 +24,17 @@ const {
     baseParentStudentInvitationContext
 } = require('../../../__fixtures__/models');
 
+const { userAvatarContext } = require('../../../__fixtures__/models-storage');
+
 const db = require('../../../__fixtures__/functions/db');
+const dbStorage = require('../../../__fixtures__/functions/db-storage');
+
+const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
 
 const { user } = require('../../../../src/db/names');
+
+const storageApi = require('../../../../src/api/storage');
+const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 
 const roleTypes = require('../../../../src/util/roles');
 
@@ -434,5 +442,77 @@ describe('[db/models/user] - baseTeacherFile context', () => {
     });
 
     afterEach(db.teardown(baseTeacherFileContext.persisted));
+
+});
+
+describe('[db/models/user] - userAvatar context', function() {
+
+    this.timeout(20000);
+
+    this.beforeEach(dbStorage.init(userAvatarContext.persisted));
+
+    const persistedUsers = userAvatarContext.persisted.db[user.modelName];
+    const persistedAvatars = userAvatarContext.persisted.storage[user.modelName];
+
+    const unpersistedAvatars = userAvatarContext.unpersisted.storage[user.modelName];
+
+    describe('[db/models/user] - methods.saveAvatar', () => {
+
+        it('Should throw error if a user attempt to save an avatar that is not a valid image', async () => {
+
+            const documentFile = unpersistedAvatars[0];
+            const buffer = getAssetBuffer(documentFile.originalname);
+
+            const userOneId = persistedUsers[0]._id;
+            const userOne = await User.findOne({ _id: userOneId });
+
+            await expect(userOne.saveAvatar(documentFile, buffer)).to.eventually.be.rejectedWith(Error.ValidationError);
+
+        });
+
+        it('Should allow a user with no avatar to save an avatar properly if its of the correct type', async () => {
+
+            const avatarFile = unpersistedAvatars[1];
+            const buffer = getAssetBuffer(avatarFile.originalname);
+
+            const userOneId = persistedUsers[0]._id;
+            const userOne = await User.findOne({ _id: userOneId });
+
+            await expect(userOne.saveAvatar(avatarFile, buffer)).to.eventually.be.eql(userOne);
+
+            const res = await storageApi.getMultipartObject(bucketNames[user.modelName], userOne.avatar.keyname);
+
+            expect(res.buffer).to.be.eql(buffer);
+            expect(res.contentType).to.be.equal(userOne.avatar.mimetype);
+
+        });
+
+        it('Should allow a user with avatar to replace it with another one', async () => {
+
+            const avatarFile = unpersistedAvatars[1];
+            const buffer = getAssetBuffer(avatarFile.originalname);
+
+            const userTwoId = persistedUsers[1]._id;
+            const userTwo = await User.findOne({ _id: userTwoId });
+
+            await expect(userTwo.saveAvatar(avatarFile, buffer)).to.eventually.be.eql(userTwo);
+
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[user.modelName]);
+
+            const oldAvatarKeyname = persistedAvatars[0].keyname;
+
+            expect(bucketKeys.length).to.equal(1);
+            expect(bucketKeys).to.not.include(oldAvatarKeyname);
+
+            const res = await storageApi.getMultipartObject(bucketNames[user.modelName], userTwo.avatar.keyname);
+
+            expect(res.buffer).to.be.eql(buffer);
+            expect(res.contentType).to.be.equal(userTwo.avatar.mimetype);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(userAvatarContext.persisted));
 
 });
