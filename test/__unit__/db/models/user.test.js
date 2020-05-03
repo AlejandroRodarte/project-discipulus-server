@@ -6,11 +6,9 @@ const User = require('../../../../src/db/models/user');
 const { userDefinition } = require('../../../../src/db/schemas/user');
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
-const sampleFileContext = require('../../../__fixtures__/models/sample-file');
-
 const { getRolesPipeline } = require('../../../../src/db/aggregation/user-role');
 
-const { sharedFile, userRole } = require('../../../../src/db/names');
+const { userRole } = require('../../../../src/db/names');
 const roleTypes = require('../../../../src/util/roles');
 
 const storageApi = require('../../../../src/api/storage');
@@ -21,21 +19,12 @@ const { user: userNames } = require('../../../../src/db/names');
 
 const regexp = require('../../../../src/util/regexp');
 
+const generateFakeUsers = require('../../../__fixtures__/functions/models/generate-fake-users');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const [fileDoc] = sampleFileContext.persisted[sharedFile.modelName];
-
-const userDoc = {
-    name: 'Alejandro Rodarte',
-    username: 'rodarte8850',
-    email: 'alejandrorodarte1@gmail.com',
-    password: 'Sup3rpa$Sword!-',
-    tokens: [
-        'my-super-token'
-    ],
-    avatar: fileDoc
-};
+const [userDoc] = generateFakeUsers(1, { fakeToken: true });
 
 let user = new User(userDoc);
 
@@ -208,7 +197,35 @@ describe('[db/models/user] - valid password', () => {
 
 });
 
-describe('[db/models/user] - avatar', () => {
+describe('[db/models/user] - invalid avatar', () => {
+
+    beforeEach(() => user.avatar = undefined);
+
+    it('Should not validate a user avatar that does not match the imageExtension regexp', () => {
+
+        user.avatar = {
+            originalname: 'exam.docx',
+            mimetype: 'image/jpeg'
+        };
+
+        modelFunctions.testForInvalidModel(user, userDefinition.avatar.validate);
+
+    });
+
+    it('Should not validate a user avatar that does not match the imageMimetype regexp', () => {
+
+        user.avatar = {
+            originalname: 'avatar.png',
+            mimetype: 'application/xml'
+        };
+
+        modelFunctions.testForInvalidModel(user, userDefinition.avatar.validate);
+
+    });
+
+});
+
+describe('[db/models/user] - valid avatar', () => {
 
     it('Should validate a correctly defined file schema', () => {
         modelFunctions.testForValidModel(user);

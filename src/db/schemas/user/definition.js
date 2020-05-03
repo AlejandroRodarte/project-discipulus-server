@@ -1,7 +1,7 @@
 const validator = require('validator').default;
 
 const { sharedFileSchema } = require('../shared/file');
-const { fullName, singleName, username, strongPassword } = require('../../../util/regexp');
+const { fullName, singleName, username, strongPassword, imageMimetype, imageExtension } = require('../../../util/regexp');
 const { badWordsFilter } = require('../../../util/filter/bad-words-filter');
 const utilFunctions = require('../../../util/functions');
 
@@ -82,7 +82,22 @@ const userDefinition = {
 
     avatar: {
         type: sharedFileSchema,
-        required: false
+        required: false,
+        validate: [
+            (file) => {
+
+                if (!imageExtension.test(file.originalname)) {
+                    return false;
+                }
+                if (!imageMimetype.test(file.mimetype)) {
+                    return false;
+                }
+
+                return true;
+
+            },
+            'Please provide an avatar with a proper filetype (png, jpg, jpeg, gif, bmp)'
+        ]
     },
 
     enabled: {

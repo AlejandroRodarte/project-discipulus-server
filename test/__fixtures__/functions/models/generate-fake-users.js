@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const faker = require('faker');
 const { Types } = require('mongoose');
 
+const generateFakeImageFile = require('./generate-fake-image-file');
+
 const generateFakeUsers = (amount, config = {}) => {
 
     const { 
@@ -21,11 +23,7 @@ const generateFakeUsers = (amount, config = {}) => {
         tokens: [
             fakeToken ? 'some-token' : jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME })
         ],
-        avatar: noAvatar ? undefined : {
-            _id: new Types.ObjectId(),
-            originalname: faker.system.fileName(),
-            mimetype: faker.system.mimeType()
-        },
+        avatar: noAvatar ? undefined : generateFakeImageFile(),
         enabled
     }));
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "env-cmd -f config/.env.development nodemon src/index.js",
-    "test:unit": "mocha \"test/__unit__/**/*.test.js\"",
+    "test:unit": "mocha --file ./test/__fixtures__/functions/models/setup.js \"test/__unit__/**/*.test.js\"",
     "local:test:unit": "cross-env NODE_ENV=test npm run test:unit -- --watch",
     "test:int": "mocha --file ./test/__fixtures__/functions/db/setup.js \"test/__integration__/**/*.test.js\"",
     "local:test:int": "env-cmd -f config/.env.test npm run test:int -- --watch"
