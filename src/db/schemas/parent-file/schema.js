@@ -6,6 +6,8 @@ const { user, parentFile } = require('../../names');
 const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
+const generatePreRemoveHook = require('../../../util/models/user-file/generate-pre-remove-hook');
+
 const roleTypes = require('../../../util/roles');
 
 const schemaOpts = {
@@ -16,18 +18,7 @@ const parentFileSchema = new Schema(parentFileDefinition, schemaOpts);
 
 parentFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-parentFileSchema.pre('remove', async function(next) {
-
-    const parentFileDoc = this;
-
-    try {
-        await storageApi.deleteBucketObjects(bucketNames[parentFile.modelName], [parentFileDoc.file.keyname]);
-        next();
-    } catch (e) {
-        next(new Error('File could not be deleted'));
-    }
-
-});
+parentFileSchema.pre('remove', generatePreRemoveHook(parentFile.modelName));
 
 parentFileSchema.methods.saveFileAndDoc = async function(buffer) {
 

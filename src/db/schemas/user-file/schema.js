@@ -6,6 +6,8 @@ const { user, userFile } = require('../../names');
 const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
+const generatePreRemoveHook = require('../../../util/models/user-file/generate-pre-remove-hook');
+
 const schemaOpts = {
     collection: userFile.collectionName
 };
@@ -14,18 +16,7 @@ const userFileSchema = new Schema(userFileDefinition, schemaOpts);
 
 userFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-userFileSchema.pre('remove', async function(next) {
-
-    const userFileDoc = this;
-
-    try {
-        await storageApi.deleteBucketObjects(bucketNames[userFile.modelName], [userFileDoc.file.keyname]);
-        next();
-    } catch (e) {
-        next(new Error('File could not be deleted'));
-    }
-
-});
+userFileSchema.pre('remove', generatePreRemoveHook(userFile.modelName));
 
 userFileSchema.methods.saveFileAndDoc = async function(buffer) {
 
