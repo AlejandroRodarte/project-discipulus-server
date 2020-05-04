@@ -1,26 +1,17 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
-const { Types } = require('mongoose');
 
 const { User, UserFile } = require('../../../../src/db/models');
-const { userFileDefinition } = require('../../../../src/db/schemas/user-file');
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
-const { getRolesPipeline } = require('../../../../src/db/aggregation/user-role');
-
 const { userFile: userFileNames } = require('../../../../src/db/names');
-const roleTypes = require('../../../../src/util/roles');
 
 const storageApi = require('../../../../src/api/storage');
 const sampleFiles = require('../../../__fixtures__/shared/sample-files');
 
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const regexp = require('../../../../src/util/regexp');
-
 const generateFakeUsers = require('../../../__fixtures__/functions/models/generate-fake-users');
-const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
