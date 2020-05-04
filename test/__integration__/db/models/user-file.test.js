@@ -1,20 +1,22 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo, Types } = require('mongoose');
+const { mongo, Error: MongooseError } = require('mongoose');
 
 const UserFile = require('../../../../src/db/models/user-file');
 
 const { uniqueUserFileContext } = require('../../../__fixtures__/models');
-const { removeUserFileContext } = require('../../../__fixtures__/models-storage');
+const { removeUserFileContext, saveUserFileContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
-const { userFile: userFileNames } = require('../../../../src/db/names');
+const { user: userNames, userFile: userFileNames } = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
+
+const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -79,5 +81,65 @@ describe('[db/models/user-file] - removeUserFileContext', function() {
     });
 
     this.afterEach(dbStorage.teardown(removeUserFileContext.persisted));
+
+});
+
+describe('[db/models/user-file] - saveUserFile context', function() {
+
+    this.timeout(20000);
+
+    this.beforeEach(dbStorage.init(saveUserFileContext.persisted));
+
+    const unpersistedDb = saveUserFileContext.unpersisted.db;
+
+    describe('[db/models/user-file] - methods.saveFileAndDoc', async () => {
+
+        const unpersistedUserFiles = unpersistedDb[userFileNames.modelName];
+
+        it('Should throw error if a file is persisted to an unknown user', async () => {
+
+            const unknownUserFileDoc = unpersistedUserFiles[0];
+            const unknownUserFile = new UserFile(unknownUserFileDoc);
+
+            await expect(unknownUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw error if a file is persisted to a disabled user', async () => {
+
+            const disabledUserFileDoc = unpersistedUserFiles[1];
+            const disabledUserFile = new UserFile(disabledUserFileDoc);
+
+            await expect(disabledUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw error is userFile.save fails validation/uniqueness', async () => {
+
+            const nonUniqueUserFileDoc = unpersistedUserFiles[2];
+            const nonUniqueUserFile = new UserFile(nonUniqueUserFileDoc);
+
+            await expect(nonUniqueUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(mongo.MongoError);
+
+        });
+
+        it('Should persist properly a user file that meets the requirements', async () => {
+
+            const userFileDoc = unpersistedUserFiles[3];
+            const userFile = new UserFile(userFileDoc);
+
+            const buffer = getAssetBuffer(userFile.file.originalname);
+
+            await expect(userFile.saveFileAndDoc(buffer)).to.eventually.eql(userFile);
+
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[userFileNames.modelName]);
+
+            expect(bucketKeys).to.include(userFile.file.keyname);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(saveUserFileContext.persisted));
 
 });

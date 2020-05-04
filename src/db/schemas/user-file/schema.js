@@ -40,7 +40,7 @@ userFileSchema.methods.saveFileAndDoc = async function(buffer) {
     });
 
     if (!userDoc) {
-        throw new Error('Your account is currently disabled');
+        throw new Error('Your account is currently disabled or has been deleted');
     }
 
     try {
