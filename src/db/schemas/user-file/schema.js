@@ -61,6 +61,8 @@ userFileSchema.methods.saveFileAndDoc = async function(buffer) {
         throw e;
     }
 
+    return userFileDoc;
+
 };
 
 module.exports = userFileSchema;
