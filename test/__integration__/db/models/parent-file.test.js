@@ -3,10 +3,10 @@ const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo } = require('mongoose');
 
-const UserFile = require('../../../../src/db/models/parent-file');
+const ParentFile = require('../../../../src/db/models/parent-file');
 
 const { uniqueParentFileContext } = require('../../../__fixtures__/models');
-const { removeUserFileContext, saveUserFileContext } = require('../../../__fixtures__/models-storage');
+const { saveParentFileContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
@@ -30,17 +30,86 @@ describe('[db/models/parent-file] - uniqueParentFile context', () => {
         const unpersistedParentFiles = uniqueParentFileContext.unpersisted[parentFileNames.modelName];
 
         it('Should fail on duplicate user/file.originalname index', async () => {
-            const parentFileDoc = new UserFile(unpersistedParentFiles[0]);
+            const parentFileDoc = new ParentFile(unpersistedParentFiles[0]);
             await expect(parentFileDoc.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
 
         it('Should persist on unique user/file.originalname index', async () => {
-            const parentFileDoc = new UserFile(unpersistedParentFiles[1]);
+            const parentFileDoc = new ParentFile(unpersistedParentFiles[1]);
             await expect(parentFileDoc.save()).to.eventually.be.eql(parentFileDoc);
         });
 
     });
 
     afterEach(db.teardown(uniqueParentFileContext.persisted));
+
+});
+
+describe('[db/models/parent-file] - saveParentFile context', function() {
+
+    this.timeout(20000);
+
+    this.beforeEach(dbStorage.init(saveParentFileContext.persisted));
+
+    const unpersistedDb = saveParentFileContext.unpersisted.db;
+
+    describe('[db/models/parent-file] - methods.saveFileAndDoc', async () => {
+
+        const unpersistedParentFiles = unpersistedDb[parentFileNames.modelName];
+
+        it('Should throw error if a file is persisted to an unknown user', async () => {
+
+            const unknownParentFileDoc = unpersistedParentFiles[0];
+            const unknownParentFile = new ParentFile(unknownParentFileDoc);
+
+            await expect(unknownParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw error if a file is persisted to a disabled user', async () => {
+
+            const disabledParentFileDoc = unpersistedParentFiles[1];
+            const disabledParentFile = new ParentFile(disabledParentFileDoc);
+
+            await expect(disabledParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw error if a file is persisted to a user that is not a parent', async () => {
+
+            const notAParentFileDoc = unpersistedParentFiles[2];
+            const notAParentFile = new ParentFile(notAParentFileDoc);
+
+            await expect(notAParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw error is parentFile.save fails validation/uniqueness', async () => {
+
+            const nonUniqueParentFileDoc = unpersistedParentFiles[3];
+            const nonUniqueParentFile = new ParentFile(nonUniqueParentFileDoc);
+
+            await expect(nonUniqueParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(mongo.MongoError);
+
+        });
+
+        it('Should persist properly a parent file that meets the requirements', async () => {
+
+            const parentFileDoc = unpersistedParentFiles[4];
+            const parentFile = new ParentFile(parentFileDoc);
+
+            const buffer = getAssetBuffer(parentFile.file.originalname);
+
+            await expect(parentFile.saveFileAndDoc(buffer)).to.eventually.eql(parentFile);
+
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[parentFileNames.modelName]);
+
+            expect(bucketKeys).to.include(parentFile.file.keyname);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(saveParentFileContext.persisted));
 
 });
