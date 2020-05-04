@@ -3,5 +3,5 @@ const attachKeynames = require('./attach-keynames');
 
 module.exports = {
     generateOneToMany,
-    attachFileExtensions
+    attachKeynames
 };

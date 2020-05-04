@@ -21,7 +21,7 @@ const generateFakeUsers = (amount, config = {}) => {
         email: faker.internet.email(),
         password: '$s4tic!paSsw0rd',
         tokens: [
-            fakeToken ? 'some-token' : jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME })
+            fakeToken ? 'some-token' : jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET || 'mock-secret', { expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME || '1m' })
         ],
         avatar: noAvatar ? undefined : generateFakeImageFile(),
         enabled
