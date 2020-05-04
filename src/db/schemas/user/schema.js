@@ -2,7 +2,7 @@ const { Schema } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userDefinition = require('./definition');
-const { user, userRole, parentStudent, parentStudentInvitation, userFile, parentFile, studentFile, teacherFile } = require('../../names');
+const { user: userNames, userRole, parentStudent, parentStudentInvitation, userFile, parentFile, studentFile, teacherFile } = require('../../names');
 
 const { getRolesPipeline } = require('../../aggregation/user-role');
 
@@ -97,11 +97,25 @@ userSchema.pre('remove', async function(next) {
         user: user._id
     });
 
+    await storageApi.deleteBucketObjects(bucketNames[userNames.modelName], [user.avatar.keyname]);
+
     for (const role in deletionUserRules) {
 
         if (roles.includes(role)) {
 
             for (const rule of deletionUserRules[role]) {
+
+                if (rule.deleteFiles) {
+
+                    const userFiles = await user.model(rule.modelName).find({
+                        [rule.fieldName]: user._id
+                    });
+
+                    const keynames = userFiles.map(userFile => userFile.file.keyname);
+
+                    await storageApi.deleteBucketObjects(bucketNames[rule.modelName], keynames);
+
+                }
 
                 await user.model(rule.modelName).deleteMany({
                     [rule.fieldName]: user._id
@@ -150,7 +164,7 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     if (userModel.avatar) {
 
         try {
-            await storageApi.deleteBucketObjects(bucketNames[user.modelName], [userModel.avatar.keyname]);
+            await storageApi.deleteBucketObjects(bucketNames[userNames.modelName], [userModel.avatar.keyname]);
         } catch (e) {
             throw e;
         }
@@ -166,7 +180,7 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     }
 
     try {
-        await storageApi.createMultipartObject(bucketNames[user.modelName], {
+        await storageApi.createMultipartObject(bucketNames[userNames.modelName], {
             keyname: userModel.avatar.keyname,
             buffer,
             size: buffer.length,

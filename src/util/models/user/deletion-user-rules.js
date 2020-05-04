@@ -7,37 +7,44 @@ const deletionUserRules = {
     [roles.ROLE_PARENT]: [
         {
             modelName: names.parentStudent.modelName,
-            fieldName: 'parent'
+            fieldName: 'parent',
+            deleteFiles: false
         },
         {
             modelName: names.parentStudentInvitation.modelName,
-            fieldName: 'parent'
+            fieldName: 'parent',
+            deleteFiles: false
         },
         {
             modelName: names.parentFile.modelName,
-            fieldName: 'user'
+            fieldName: 'user',
+            deleteFiles: true
         }
     ],
 
     [roles.ROLE_STUDENT]: [
         {
             modelName: names.parentStudent.modelName,
-            fieldName: 'student'
+            fieldName: 'student',
+            deleteFiles: false
         },
         {
             modelName: names.parentStudentInvitation.modelName,
-            fieldName: 'student'
+            fieldName: 'student',
+            deleteFiles: false
         },
         {
             modelName: names.studentFile.modelName,
-            fieldName: 'user'
+            fieldName: 'user',
+            deleteFiles: true
         }
     ],
 
     [roles.ROLE_TEACHER]: [
         {
             modelName: names.teacherFile.modelName,
-            fieldName: 'user'
+            fieldName: 'user',
+            deleteFiles: true
         }
     ]
 
