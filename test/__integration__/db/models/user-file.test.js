@@ -45,7 +45,7 @@ describe('[db/models/user-file] - uniqueUserFile context', () => {
 
 });
 
-describe('[db/models/user-file] - removeUserFileContext', function() {
+describe('[db/models/user-file] - removeUserFile context', function() {
 
     this.timeout(20000);
 

@@ -6,7 +6,7 @@ const { mongo } = require('mongoose');
 const ParentFile = require('../../../../src/db/models/parent-file');
 
 const { uniqueParentFileContext } = require('../../../__fixtures__/models');
-const { saveParentFileContext } = require('../../../__fixtures__/models-storage');
+const { saveParentFileContext, removeParentFileContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
@@ -42,6 +42,45 @@ describe('[db/models/parent-file] - uniqueParentFile context', () => {
     });
 
     afterEach(db.teardown(uniqueParentFileContext.persisted));
+
+});
+
+describe('[db/models/parent-file] - removeParentFile context', function() {
+
+    this.timeout(20000);
+
+    this.beforeEach(dbStorage.init(removeParentFileContext.persisted));
+
+    describe('[db/models/parent-file] - pre remove hook', function() {
+
+        let deleteBucketObjectsSpy;
+
+        const persistedParentFiles = removeParentFileContext.persisted.db[parentFileNames.modelName];
+
+        it('Should remove multipart file before deleting model instance', async () => {
+
+            deleteBucketObjectsSpy = sinon.spy(storageApi, 'deleteBucketObjects');
+
+            const parentFileOneId = persistedParentFiles[0]._id;
+            const parentFile = await ParentFile.findOne({ _id: parentFileOneId });
+
+            await expect(parentFile.remove()).to.eventually.be.fulfilled;
+
+            sinon.assert.calledOnceWithExactly(deleteBucketObjectsSpy, bucketNames[parentFileNames.modelName], [parentFile.file.keyname]);
+
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[parentFileNames.modelName]);
+
+            expect(bucketKeys).to.not.include(parentFile.file.keyname);
+
+        });
+
+        this.afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(removeParentFileContext.persisted));
 
 });
 
