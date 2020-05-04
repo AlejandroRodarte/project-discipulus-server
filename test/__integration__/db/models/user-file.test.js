@@ -1,7 +1,7 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo, Error: MongooseError } = require('mongoose');
+const { mongo } = require('mongoose');
 
 const UserFile = require('../../../../src/db/models/user-file');
 
@@ -11,7 +11,7 @@ const { removeUserFileContext, saveUserFileContext } = require('../../../__fixtu
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
-const { user: userNames, userFile: userFileNames } = require('../../../../src/db/names');
+const { userFile: userFileNames } = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
