@@ -24,14 +24,14 @@ const {
     baseParentStudentInvitationContext
 } = require('../../../__fixtures__/models');
 
-const { userAvatarContext } = require('../../../__fixtures__/models-storage');
+const { userAvatarContext, removeAllUserFilesContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
 const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
 
-const { user } = require('../../../../src/db/names');
+const { user, userFile, parentFile, teacherFile, studentFile } = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
@@ -514,5 +514,42 @@ describe('[db/models/user] - userAvatar context', function() {
     });
 
     this.afterEach(dbStorage.teardown(userAvatarContext.persisted));
+
+});
+
+describe('[db/models/user] - removeAllUserFiles context', function() {
+
+    this.timeout(20000);
+
+    this.beforeEach(dbStorage.init(removeAllUserFilesContext.persisted));
+
+    const persistedUsers = removeAllUserFilesContext.persisted.db[user.modelName];
+
+    describe('[db/models/user] - pre remove hook', () => {
+
+        it('Should remove all associated files on user removal', async () => {
+
+            const userId = persistedUsers[0]._id;
+            const userToDelete = await User.findOne({ _id: userId });
+
+            await expect(userToDelete.remove()).to.eventually.be.fulfilled;
+
+            const avatarKeys = await storageApi.listBucketKeys(bucketNames[user.modelName]);
+            const userFileKeys = await storageApi.listBucketKeys(bucketNames[userFile.modelName]);
+            const parentFileKeys = await storageApi.listBucketKeys(bucketNames[parentFile.modelName]);
+            const studentFileKeys = await storageApi.listBucketKeys(bucketNames[studentFile.modelName]);
+            const teacherFileKeys = await storageApi.listBucketKeys(bucketNames[teacherFile.modelName]);
+
+            expect(avatarKeys.length).to.equal(0);
+            expect(userFileKeys.length).to.equal(0);
+            expect(parentFileKeys.length).to.equal(0);
+            expect(studentFileKeys.length).to.equal(0);
+            expect(teacherFileKeys.length).to.equal(0);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(removeAllUserFilesContext.persisted));
 
 });

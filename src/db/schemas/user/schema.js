@@ -12,7 +12,7 @@ const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
 const schemaOpts = {
-    collection: user.collectionName
+    collection: userNames.collectionName
 };
 
 const userSchema = new Schema(userDefinition, schemaOpts);
@@ -89,15 +89,23 @@ userSchema.pre('remove', async function(next) {
 
     const roles = await this.getUserRoles();
 
+    await storageApi.deleteBucketObjects(bucketNames[userNames.modelName], [user.avatar.keyname]);
+
     await user.model(userRole.modelName).deleteMany({
         user: user._id
     });
 
-    await user.model(userFile.modelName).deleteMany({
+    const userFiles = await user.model(userFile.modelName).find({
         user: user._id
     });
 
-    await storageApi.deleteBucketObjects(bucketNames[userNames.modelName], [user.avatar.keyname]);
+    const keynames = userFiles.map(userFile => userFile.file.keyname);
+
+    await storageApi.deleteBucketObjects(bucketNames[userFile.modelName], keynames);
+
+    await user.model(userFile.modelName).deleteMany({
+        user: user._id
+    });
 
     for (const role in deletionUserRules) {
 
