@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema } = require('mongoose');
 
 const { user } = require('../../names');
 
@@ -18,7 +18,7 @@ parentStudentInvitationSchema.index({ parent: 1, student: 1 }, { unique: true })
 parentStudentInvitationSchema.methods.checkAndSave = async function() {
 
     const parentStudentInvitation = this;
-    const User = model(user.modelName);
+    const User = parentStudentInvitation.model(user.modelName);
 
     const { parent, student } = parentStudentInvitation;
 

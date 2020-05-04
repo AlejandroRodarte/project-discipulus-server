@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema } = require('mongoose');
 
 const userFileDefinition = require('./definition');
 const { user, userFile } = require('../../names');
@@ -30,7 +30,7 @@ userFileSchema.pre('remove', async function(next) {
 userFileSchema.methods.saveFileAndDoc = async function(buffer) {
 
     const userFileDoc = this;
-    const User = model(user.modelName);
+    const User = userFileDoc.model(user.modelName);
 
     const { user: userId } = userFileDoc;
 

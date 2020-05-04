@@ -87,7 +87,7 @@ userSchema.pre('remove', async function(next) {
 
     const user = this;
 
-    const roles = await this.getUserRoles();
+    const roles = await user.getUserRoles();
 
     await storageApi.deleteBucketObjects(bucketNames[userNames.modelName], [user.avatar.keyname]);
 
