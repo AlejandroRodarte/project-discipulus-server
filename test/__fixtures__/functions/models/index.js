@@ -7,6 +7,7 @@ const validateAsync = require('./validate-async');
 const generateFakeUsers = require('./generate-fake-users');
 const generateFakeFile = require('./generate-fake-file');
 const generateFakeEvent = require('./generate-fake-event');
+const generateFakeClass = require('./generate-fake-class');
 
 module.exports = {
     testForInvalidModel,
@@ -17,5 +18,6 @@ module.exports = {
     validateAsync,
     generateFakeUsers,
     generateFakeFile,
-    generateFakeEvent
+    generateFakeEvent,
+    generateFakeClass
 };

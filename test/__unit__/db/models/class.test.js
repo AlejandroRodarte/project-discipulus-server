@@ -4,7 +4,7 @@ const { Types } = require('mongoose');
 const lorem = require('../../../__fixtures__/util/lorem');
 
 const { classDefinition } = require('../../../../src/db/schemas/class');
-const { testForInvalidModel, testForValidModel, getNewModelInstance } = require('../../../__fixtures__/functions/models');
+const { testForInvalidModel, testForValidModel, getNewModelInstance, generateFakeClass } = require('../../../__fixtures__/functions/models');
 
 const { Class } = require('../../../../src/db/models');
 
@@ -12,23 +12,11 @@ const sampleFiles = require('../../../__fixtures__/shared/sample-files');
 
 const classDoc = {
     user: new Types.ObjectId(),
-    title: lorem.generateWords(5),
-    description: lorem.generateWords(20),
-    avatar: sampleFiles.pngImage,
-    sessions: [
-        {
-            start: 0,
-            end: 20
-        },
-        {
-            start: 30,
-            end: 40
-        },
-        {
-            start: 50,
-            end: 60
-        }
-    ]
+    ...generateFakeClass({
+        titleWords: 5,
+        descriptionWords: 20,
+        sessions: [[0, 20], [30, 40], [70, 90]]
+    })
 };
 
 let clazz = new Class(classDoc);
