@@ -63,6 +63,11 @@ const names = {
     sharedTimeRange: {
         collectionName: 'sharedtimeranges',
         modelName: 'SharedTimeRange'
+    },
+
+    userEvent: {
+        collectionName: 'userevents',
+        modelName: 'UserEvent'
     }
 
 };
