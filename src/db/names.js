@@ -68,6 +68,11 @@ const names = {
     userEvent: {
         collectionName: 'userevents',
         modelName: 'UserEvent'
+    },
+
+    class: {
+        collectionName: 'classes',
+        modelName: 'Classes'
     }
 
 };
