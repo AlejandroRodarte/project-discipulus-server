@@ -16,6 +16,7 @@ const uniqueParentFileContext = require('./unique-parent-file');
 const uniqueStudentFileContext = require('./unique-student-file');
 const uniqueTeacherFileContext = require('./unique-teacher-file');
 const baseUserEventContext = require('./base-user-event');
+const uniqueClassContext = require('./unique-class');
 
 module.exports = {
     sampleFileContext,
@@ -35,5 +36,6 @@ module.exports = {
     uniqueParentFileContext,
     uniqueStudentFileContext,
     uniqueTeacherFileContext,
-    baseUserEventContext
+    baseUserEventContext,
+    uniqueClassContext
 };
