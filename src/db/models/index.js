@@ -22,6 +22,6 @@ module.exports = {
     StudentFile,
     UserFile,
     UserEvent,
-    Class
+    Class,
     Shared
 };
