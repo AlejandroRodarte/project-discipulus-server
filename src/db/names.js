@@ -60,6 +60,11 @@ const names = {
         modelName: 'TeacherFile'
     },
 
+    sharedTimeRange: {
+        collectionName: 'sharedtimeranges',
+        modelName: 'SharedTimeRange'
+    }
+
 };
 
 module.exports = names;
