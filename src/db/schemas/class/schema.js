@@ -9,4 +9,6 @@ const schemaOpts = {
 
 const classSchema = new Schema(classDefinition, schemaOpts);
 
+classSchema.index({ user: 1, title: 1 }, { unique: true });
+
 module.exports = classSchema;
