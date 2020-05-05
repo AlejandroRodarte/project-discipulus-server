@@ -5,8 +5,7 @@ const sharedTimeRangeDefinition = {
     start: {
         type: Number,
         required: false,
-        default: moment().utc().unix(),
-        min: [0, 'Please provide a valid starting date']
+        default: moment().utc().unix()
     },
 
     end: {
