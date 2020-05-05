@@ -71,6 +71,12 @@ userSchema.virtual('studentfiles', {
     foreignField: 'user'
 });
 
+userSchema.virtual('events', {
+    ref: names.userEvent.modelName,
+    localField: '_id',
+    foreignField: 'user'
+});
+
 userSchema.pre('save', async function() {
 
     const user = this;
@@ -104,6 +110,10 @@ userSchema.pre('remove', async function() {
         await storageApi.deleteBucketObjects(bucketNames[names.userFile.modelName], keynames);
 
         await user.model(names.userFile.modelName).deleteMany({
+            user: user._id
+        });
+
+        await user.model(names.userEvent.modelName).deleteMany({
             user: user._id
         });
 
