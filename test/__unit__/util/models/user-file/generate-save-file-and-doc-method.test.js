@@ -41,7 +41,7 @@ beforeEach(() => {
     user = getNewModelInstance(User, userDoc);
 });
 
-describe('[util/models/user-file/generate-save-file-and-doc-method] - general testing', () => {
+describe('[util/models/user-file/generate-save-file-and-doc-method] - general flow', () => {
 
     let userFindOneStub;
     let userHasRoleStub;

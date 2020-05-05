@@ -15,15 +15,13 @@ roleSchema.virtual('roleusers', {
     foreignField: 'role'
 });
 
-roleSchema.pre('remove', async function(next) {
+roleSchema.pre('remove', async function() {
 
     const role = this;
 
     await role.model(userRole.modelName).deleteMany({
         role: role._id
     });
-
-    next();
 
 });
 

@@ -71,7 +71,7 @@ userSchema.virtual('studentfiles', {
     foreignField: 'user'
 });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function() {
 
     const user = this;
 
@@ -79,63 +79,65 @@ userSchema.pre('save', async function(next) {
         user.password = await bcrypt.hash(user.password, +process.env.BCRYPT_ROUNDS || 8);
     }
 
-    next();
-
 });
 
-userSchema.pre('remove', async function(next) {
+userSchema.pre('remove', async function() {
 
     const user = this;
 
-    const roles = await user.getUserRoles();
+    try {
 
-    await storageApi.deleteBucketObjects(bucketNames[names.user.modelName], [user.avatar.keyname]);
+        const roles = await user.getUserRoles();
 
-    await user.model(names.userRole.modelName).deleteMany({
-        user: user._id
-    });
+        await storageApi.deleteBucketObjects(bucketNames[names.user.modelName], [user.avatar.keyname]);
 
-    const userFiles = await user.model(names.userFile.modelName).find({
-        user: user._id
-    });
+        await user.model(names.userRole.modelName).deleteMany({
+            user: user._id
+        });
 
-    const keynames = userFiles.map(userFile => userFile.file.keyname);
+        const userFiles = await user.model(names.userFile.modelName).find({
+            user: user._id
+        });
 
-    await storageApi.deleteBucketObjects(bucketNames[names.userFile.modelName], keynames);
+        const keynames = userFiles.map(userFile => userFile.file.keyname);
 
-    await user.model(names.userFile.modelName).deleteMany({
-        user: user._id
-    });
+        await storageApi.deleteBucketObjects(bucketNames[names.userFile.modelName], keynames);
 
-    for (const role in deletionUserRules) {
+        await user.model(names.userFile.modelName).deleteMany({
+            user: user._id
+        });
 
-        if (roles.includes(role)) {
+        for (const role in deletionUserRules) {
 
-            for (const rule of deletionUserRules[role]) {
+            if (roles.includes(role)) {
 
-                if (rule.deleteFiles) {
+                for (const rule of deletionUserRules[role]) {
 
-                    const userFiles = await user.model(rule.modelName).find({
+                    if (rule.deleteFiles) {
+
+                        const userFiles = await user.model(rule.modelName).find({
+                            [rule.fieldName]: user._id
+                        });
+
+                        const keynames = userFiles.map(userFile => userFile.file.keyname);
+
+                        await storageApi.deleteBucketObjects(bucketNames[rule.modelName], keynames);
+
+                    }
+
+                    await user.model(rule.modelName).deleteMany({
                         [rule.fieldName]: user._id
                     });
 
-                    const keynames = userFiles.map(userFile => userFile.file.keyname);
-
-                    await storageApi.deleteBucketObjects(bucketNames[rule.modelName], keynames);
-
                 }
-
-                await user.model(rule.modelName).deleteMany({
-                    [rule.fieldName]: user._id
-                });
 
             }
 
         }
 
+    } catch (e) {
+        throw e;
     }
-
-    next();
 
 });
 
