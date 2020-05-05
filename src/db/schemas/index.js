@@ -6,6 +6,7 @@ const { userFileDefinition, userFileSchema } = require('./user-file');
 const { parentFileDefinition, parentFileSchema } = require('./parent-file');
 const { studentFileDefinition, studentFileSchema } = require('./student-file');
 const { teacherFileDefinition, teacherFileSchema } = require('./teacher-file');
+const { userEventDefinition, userEventSchema } = require('./user-event');
 const shared = require('./shared');
 
 module.exports = {
@@ -19,7 +20,8 @@ module.exports = {
         userFileDefinition,
         parentFileDefinition,
         studentFileDefinition,
-        teacherFileDefinition
+        teacherFileDefinition,
+        userEventDefinition
     },
 
     schemas: {
@@ -31,7 +33,8 @@ module.exports = {
         userFileSchema,
         parentFileSchema,
         studentFileSchema,
-        teacherFileSchema
+        teacherFileSchema,
+        userEventSchema
     },
 
     shared

@@ -7,6 +7,7 @@ const ParentFile = require('./parent-file');
 const TeacherFile = require('./teacher-file');
 const StudentFile = require('./student-file');
 const UserFile = require('./user-file');
+const UserEvent = require('./user-event');
 const Shared = require('./shared');
 
 module.exports = {
@@ -19,5 +20,6 @@ module.exports = {
     TeacherFile,
     StudentFile,
     UserFile,
+    UserEvent,
     Shared
 };
