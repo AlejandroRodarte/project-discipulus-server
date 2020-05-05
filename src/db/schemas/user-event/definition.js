@@ -28,7 +28,7 @@ const userEventDefinition = {
     description: {
         type: String,
         required: false,
-        maxlength: [200, 'Event title must be shorter than 50 characters'],
+        maxlength: [200, 'Event description must be shorter than 200 characters'],
         set: (value) => {
             if (value) {
                 return utilFunctions.trimRedundantSpaces(value);
