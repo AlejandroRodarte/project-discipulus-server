@@ -10,7 +10,8 @@ const {
     ParentFile,
     StudentFile,
     TeacherFile,
-    ParentStudentInvitation
+    ParentStudentInvitation,
+    UserEvent
 } = require('../../../../src/db/models');
 
 const { 
@@ -21,7 +22,8 @@ const {
     baseStudentFileContext,
     baseParentFileContext,
     baseTeacherFileContext,
-    baseParentStudentInvitationContext
+    baseParentStudentInvitationContext,
+    baseUserEventContext
 } = require('../../../__fixtures__/models');
 
 const { userAvatarContext, removeAllUserFilesContext } = require('../../../__fixtures__/models-storage');
@@ -551,5 +553,34 @@ describe('[db/models/user] - removeAllUserFiles context', function() {
     });
 
     this.afterEach(dbStorage.teardown(removeAllUserFilesContext.persisted));
+
+});
+
+describe('[db/models/user] - baseUserEvent context', () => {
+
+    beforeEach(db.init(baseUserEventContext.persisted));
+
+    describe('[db/models/user] - pre remove hook', () => {
+
+        const persistedUsers = baseUserEventContext.persisted[user.modelName];
+
+        it('Should delete all associated user events upon user deletion', async () => {
+
+            const userId = persistedUsers[0]._id;
+            const user = await User.findOne({ _id: userId });
+
+            await user.remove();
+            
+            const docCount = await UserEvent.countDocuments({
+                user: userId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+    });
+
+    afterEach(db.teardown(baseUserEventContext.persisted));
 
 });

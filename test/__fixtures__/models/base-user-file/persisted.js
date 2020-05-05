@@ -3,7 +3,7 @@ const generateOneToMany = require('../../functions/util/generate-one-to-many');
 
 const { user, userFile } = require('../../../../src/db/names');
 
-// 1: generate 1 enabled user
+// 0: generate 1 enabled user
 const users = generateFakeUsers(1, { fakeToken: true });
 
 const usersFiles = [
