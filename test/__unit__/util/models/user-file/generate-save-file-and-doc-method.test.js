@@ -31,20 +31,20 @@ beforeEach(() => {
     parentFile = getNewModelInstance(ParentFile, parentFileDoc);
 });
 
-describe('[util/models/user-file/generate-save-file-and-doc-method] - general testing', () => {
+// describe('[util/models/user-file/generate-save-file-and-doc-method] - general testing', () => {
 
-    let userFindOneStub;
+//     let userFindOneStub;
 
-    it('Returned function call should throw error if User.findOne (with correct args) returns null', async () => {
+//     it('Returned function call should throw error if User.findOne (with correct args) returns null', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+//         userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
 
-        const saveFileAndDoc = generateSaveFileAndDocMethod()
+//         const saveFileAndDoc = generateSaveFileAndDocMethod()
 
-    });
+//     });
 
-    afterEach(() => {
-        sinon.restore();
-    });
+//     afterEach(() => {
+//         sinon.restore();
+//     });
 
-});
+// });

@@ -3,9 +3,9 @@ const { user } = require('../../../db/names');
 const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
-const generateSaveFileAndDocMethod = (modelName, roleConfig) => async function(buffer) {
+const generateSaveFileAndDocMethod = ({ modelName, roleOpts }) => async function(buffer) {
 
-    const { check, role } = roleConfig;
+    const { check, role } = roleOpts;
 
     const fileDoc = this;
     const User = fileDoc.model(user.modelName);

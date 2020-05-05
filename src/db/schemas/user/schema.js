@@ -2,7 +2,7 @@ const { Schema } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userDefinition = require('./definition');
-const { user: userNames, userRole, parentStudent, parentStudentInvitation, userFile, parentFile, studentFile, teacherFile } = require('../../names');
+const names = require('../../names');
 
 const { getRolesPipeline } = require('../../aggregation/user-role');
 
@@ -12,61 +12,61 @@ const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
 const schemaOpts = {
-    collection: userNames.collectionName
+    collection: names.user.collectionName
 };
 
 const userSchema = new Schema(userDefinition, schemaOpts);
 
 userSchema.virtual('userroles', {
-    ref: userRole.modelName,
+    ref: names.userRole.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('parentstudents', {
-    ref: parentStudent.modelName,
+    ref: names.parentStudent.modelName,
     localField: '_id',
     foreignField: 'parent'
 });
 
 userSchema.virtual('studentparents', {
-    ref: parentStudent.modelName,
+    ref: names.parentStudent.modelName,
     localField: '_id',
     foreignField: 'student'
 });
 
 userSchema.virtual('parentstudentinvitations', {
-    ref: parentStudentInvitation.modelName,
+    ref: names.parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'parent'
 });
 
 userSchema.virtual('studentparentinvitations', {
-    ref: parentStudentInvitation.modelName,
+    ref: names.parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'student'
 });
 
 userSchema.virtual('userfiles', {
-    ref: userFile.modelName,
+    ref: names.userFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('parentfiles', {
-    ref: parentFile.modelName,
+    ref: names.parentFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('teacherfiles', {
-    ref: teacherFile.modelName,
+    ref: names.teacherFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('studentfiles', {
-    ref: studentFile.modelName,
+    ref: names.studentFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
@@ -89,21 +89,21 @@ userSchema.pre('remove', async function(next) {
 
     const roles = await user.getUserRoles();
 
-    await storageApi.deleteBucketObjects(bucketNames[userNames.modelName], [user.avatar.keyname]);
+    await storageApi.deleteBucketObjects(bucketNames[names.user.modelName], [user.avatar.keyname]);
 
-    await user.model(userRole.modelName).deleteMany({
+    await user.model(names.userRole.modelName).deleteMany({
         user: user._id
     });
 
-    const userFiles = await user.model(userFile.modelName).find({
+    const userFiles = await user.model(names.userFile.modelName).find({
         user: user._id
     });
 
     const keynames = userFiles.map(userFile => userFile.file.keyname);
 
-    await storageApi.deleteBucketObjects(bucketNames[userFile.modelName], keynames);
+    await storageApi.deleteBucketObjects(bucketNames[names.userFile.modelName], keynames);
 
-    await user.model(userFile.modelName).deleteMany({
+    await user.model(names.userFile.modelName).deleteMany({
         user: user._id
     });
 
@@ -144,7 +144,7 @@ userSchema.methods.getUserRoles = async function() {
     const user = this;
     
     const pipeline = getRolesPipeline(user._id);
-    const docs = await user.model(userRole.modelName).aggregate(pipeline);
+    const docs = await user.model(names.userRole.modelName).aggregate(pipeline);
 
     if (!docs.length) {
         return [];
@@ -172,7 +172,7 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     if (userModel.avatar) {
 
         try {
-            await storageApi.deleteBucketObjects(bucketNames[userNames.modelName], [userModel.avatar.keyname]);
+            await storageApi.deleteBucketObjects(bucketNames[names.user.modelName], [userModel.avatar.keyname]);
         } catch (e) {
             throw e;
         }
@@ -188,7 +188,7 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     }
 
     try {
-        await storageApi.createMultipartObject(bucketNames[userNames.modelName], {
+        await storageApi.createMultipartObject(bucketNames[names.user.modelName], {
             keyname: userModel.avatar.keyname,
             buffer,
             size: buffer.length,

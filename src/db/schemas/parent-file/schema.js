@@ -15,11 +15,16 @@ const parentFileSchema = new Schema(parentFileDefinition, schemaOpts);
 
 parentFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-parentFileSchema.pre('remove', generatePreRemoveHook(parentFile.modelName));
+parentFileSchema.pre('remove', generatePreRemoveHook({
+    modelName: parentFile.modelName
+}));
 
-parentFileSchema.methods.saveFileAndDoc = generateSaveFileAndDocMethod(parentFile.modelName, {
-    check: true,
-    role: roleTypes.ROLE_PARENT
+parentFileSchema.methods.saveFileAndDoc = generateSaveFileAndDocMethod({
+    modelName: parentFile.modelName,
+    roleOpts: {
+        check: true,
+        role: roleTypes.ROLE_PARENT
+    }
 });
 
 module.exports = parentFileSchema;

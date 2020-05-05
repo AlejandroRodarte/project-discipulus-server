@@ -11,7 +11,7 @@ const { removeUserFileContext, saveUserFileContext } = require('../../../__fixtu
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
-const { userFile: userFileNames } = require('../../../../src/db/names');
+const names = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
@@ -27,7 +27,7 @@ describe('[db/models/user-file] - uniqueUserFile context', () => {
 
     describe('[db/models/user-file] - user/file.originalname index', () => {
 
-        const unpersistedUsersFiles = uniqueUserFileContext.unpersisted[userFileNames.modelName];
+        const unpersistedUsersFiles = uniqueUserFileContext.unpersisted[names.userFile.modelName];
 
         it('Should fail on duplicate user/file.originalname index', async () => {
             const userFileDoc = new UserFile(unpersistedUsersFiles[0]);
@@ -55,7 +55,7 @@ describe('[db/models/user-file] - removeUserFile context', function() {
 
         let deleteBucketObjectsSpy;
 
-        const persistedUserFiles = removeUserFileContext.persisted.db[userFileNames.modelName];
+        const persistedUserFiles = removeUserFileContext.persisted.db[names.userFile.modelName];
 
         it('Should remove multipart file before deleting model instance', async () => {
 
@@ -66,9 +66,9 @@ describe('[db/models/user-file] - removeUserFile context', function() {
 
             await expect(userFile.remove()).to.eventually.be.fulfilled;
 
-            sinon.assert.calledOnceWithExactly(deleteBucketObjectsSpy, bucketNames[userFileNames.modelName], [userFile.file.keyname]);
+            sinon.assert.calledOnceWithExactly(deleteBucketObjectsSpy, bucketNames[names.userFile.modelName], [userFile.file.keyname]);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[userFileNames.modelName]);
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.userFile.modelName]);
 
             expect(bucketKeys).to.not.include(userFile.file.keyname);
 
@@ -94,7 +94,7 @@ describe('[db/models/user-file] - saveUserFile context', function() {
 
     describe('[db/models/user-file] - methods.saveFileAndDoc', async () => {
 
-        const unpersistedUserFiles = unpersistedDb[userFileNames.modelName];
+        const unpersistedUserFiles = unpersistedDb[names.userFile.modelName];
 
         it('Should throw error if a file is persisted to an unknown user', async () => {
 
@@ -132,7 +132,7 @@ describe('[db/models/user-file] - saveUserFile context', function() {
 
             await expect(userFile.saveFileAndDoc(buffer)).to.eventually.eql(userFile);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[userFileNames.modelName]);
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.userFile.modelName]);
 
             expect(bucketKeys).to.include(userFile.file.keyname);
 

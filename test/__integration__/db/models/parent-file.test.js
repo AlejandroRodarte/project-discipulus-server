@@ -11,7 +11,7 @@ const { saveParentFileContext, removeParentFileContext } = require('../../../__f
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
-const { parentFile: parentFileNames } = require('../../../../src/db/names');
+const names = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
@@ -27,7 +27,7 @@ describe('[db/models/parent-file] - uniqueParentFile context', () => {
 
     describe('[db/models/parent-file] - user/file.originalname index', () => {
 
-        const unpersistedParentFiles = uniqueParentFileContext.unpersisted[parentFileNames.modelName];
+        const unpersistedParentFiles = uniqueParentFileContext.unpersisted[names.parentFile.modelName];
 
         it('Should fail on duplicate user/file.originalname index', async () => {
             const parentFileDoc = new ParentFile(unpersistedParentFiles[0]);
@@ -55,7 +55,7 @@ describe('[db/models/parent-file] - removeParentFile context', function() {
 
         let deleteBucketObjectsSpy;
 
-        const persistedParentFiles = removeParentFileContext.persisted.db[parentFileNames.modelName];
+        const persistedParentFiles = removeParentFileContext.persisted.db[names.parentFile.modelName];
 
         it('Should remove multipart file before deleting model instance', async () => {
 
@@ -66,9 +66,9 @@ describe('[db/models/parent-file] - removeParentFile context', function() {
 
             await expect(parentFile.remove()).to.eventually.be.fulfilled;
 
-            sinon.assert.calledOnceWithExactly(deleteBucketObjectsSpy, bucketNames[parentFileNames.modelName], [parentFile.file.keyname]);
+            sinon.assert.calledOnceWithExactly(deleteBucketObjectsSpy, bucketNames[names.parentFile.modelName], [parentFile.file.keyname]);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[parentFileNames.modelName]);
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.parentFile.modelName]);
 
             expect(bucketKeys).to.not.include(parentFile.file.keyname);
 
@@ -94,7 +94,7 @@ describe('[db/models/parent-file] - saveParentFile context', function() {
 
     describe('[db/models/parent-file] - methods.saveFileAndDoc', async () => {
 
-        const unpersistedParentFiles = unpersistedDb[parentFileNames.modelName];
+        const unpersistedParentFiles = unpersistedDb[names.parentFile.modelName];
 
         it('Should throw error if a file is persisted to an unknown user', async () => {
 
@@ -141,7 +141,7 @@ describe('[db/models/parent-file] - saveParentFile context', function() {
 
             await expect(parentFile.saveFileAndDoc(buffer)).to.eventually.eql(parentFile);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[parentFileNames.modelName]);
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.parentFile.modelName]);
 
             expect(bucketKeys).to.include(parentFile.file.keyname);
 

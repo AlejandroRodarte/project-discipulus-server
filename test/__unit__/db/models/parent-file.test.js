@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const { User, ParentFile } = require('../../../../src/db/models');
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
-const { parentFile: parentFileNames } = require('../../../../src/db/names');
+const names = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const sampleFiles = require('../../../__fixtures__/shared/sample-files');
@@ -88,7 +88,7 @@ describe('[db/models/parent-file] - methods.saveFileAndDoc', () => {
 
         await expect(parentFile.saveFileAndDoc(buffer)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[parentFileNames.modelName], {
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[names.parentFile.modelName], {
             keyname: parentFile.file.keyname,
             buffer,
             size: buffer.length,

@@ -13,11 +13,16 @@ const userFileSchema = new Schema(userFileDefinition, schemaOpts);
 
 userFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-userFileSchema.pre('remove', generatePreRemoveHook(userFile.modelName));
+userFileSchema.pre('remove', generatePreRemoveHook({
+    modelName: userFile.modelName
+}));
 
-userFileSchema.methods.saveFileAndDoc = generateSaveFileAndDocMethod(userFile.modelName, {
-    check: false,
-    role: null
+userFileSchema.methods.saveFileAndDoc = generateSaveFileAndDocMethod({
+    modelName: userFile.modelName,
+    roleOpts: {
+        check: false,
+        role: null
+    }
 });
 
 module.exports = userFileSchema;

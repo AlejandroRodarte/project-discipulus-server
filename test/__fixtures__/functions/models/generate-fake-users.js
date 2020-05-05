@@ -4,13 +4,7 @@ const { Types } = require('mongoose');
 
 const generateFakeImageFile = require('./generate-fake-image-file');
 
-const generateFakeUsers = (amount, config = {}) => {
-
-    const { 
-        enabled = true, 
-        fakeToken = false,
-        noAvatar = false
-    } = config;
+const generateFakeUsers = (amount, { enabled = true, fakeToken = false, noAvatar = false } = {}) => {
 
     const userIds = [...new Array(amount)].map(_ => new Types.ObjectId());
 

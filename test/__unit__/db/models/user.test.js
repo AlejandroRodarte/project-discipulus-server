@@ -15,7 +15,7 @@ const storageApi = require('../../../../src/api/storage');
 const sampleFiles = require('../../../__fixtures__/shared/sample-files');
 
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-const { user: userNames } = require('../../../../src/db/names');
+const names = require('../../../../src/db/names');
 
 const regexp = require('../../../../src/util/regexp');
 
@@ -346,7 +346,7 @@ describe('[db/models/user] - methods.saveAvatar', () => {
         deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').rejects();
         await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(deleteBucketObjectsStub, bucketNames[userNames.modelName], [user.avatar.keyname]);
+        sinon.assert.calledOnceWithExactly(deleteBucketObjectsStub, bucketNames[names.user.modelName], [user.avatar.keyname]);
 
     });
 
@@ -370,7 +370,7 @@ describe('[db/models/user] - methods.saveAvatar', () => {
 
         await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[userNames.modelName], sinon.match({
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[names.user.modelName], sinon.match({
             keyname: sinon.match(regexp.fileKeyname),
             buffer,
             size: buffer.length,

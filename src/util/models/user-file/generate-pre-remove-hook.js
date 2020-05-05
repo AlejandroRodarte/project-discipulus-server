@@ -1,7 +1,7 @@
 const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
-const generatePreRemoveHook = (modelName) => async function(next) {
+const generatePreRemoveHook = ({ modelName }) => async function(next) {
 
     const fileDoc = this;
 
