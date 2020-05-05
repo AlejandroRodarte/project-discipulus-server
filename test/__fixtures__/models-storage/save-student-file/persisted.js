@@ -37,7 +37,7 @@ const userRoles = [
 
 ];
 
-const studentFile = [
+const studentFiles = [
     // 0. user[2] (enabled student) will have associated a sample pptx student file
     ...generateOneToMany('user', users[2]._id, [{ file: sampleFiles.sheetFile }])
 ];
@@ -53,7 +53,7 @@ module.exports = {
         [user.modelName]: users,
         [role.modelName]: roles,
         [userRole.modelName]: userRoles,
-        [studentFile.modelName]: studentFile
+        [studentFile.modelName]: studentFiles
     },
 
     storage: {

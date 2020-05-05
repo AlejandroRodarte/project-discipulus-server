@@ -13,13 +13,13 @@ const schemaOpts = {
 
 const teacherFileSchema = new Schema(teacherFileDefinition, schemaOpts);
 
-teacherFile.index({ user: 1, 'file.originalname': 1 }, { unique: true });
+teacherFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-teacherFile.pre('remove', generatePreRemoveHook({
+teacherFileSchema.pre('remove', generatePreRemoveHook({
     modelName: teacherFile.modelName
 }));
 
-teacherFile.methods.saveFileAndDoc = generateSaveFileAndDocMethod({
+teacherFileSchema.methods.saveFileAndDoc = generateSaveFileAndDocMethod({
     modelName: teacherFile.modelName,
     roleOpts: {
         check: true,
