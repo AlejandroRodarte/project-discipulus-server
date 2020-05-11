@@ -16,6 +16,22 @@ const classSchema = new Schema(classDefinition, schemaOpts);
 
 classSchema.index({ user: 1, title: 1 }, { unique: true });
 
+classSchema.pre('remove', async function() {
+
+    const clazz = this;
+
+    if (clazz.avatar) {
+
+        try {
+            await storageApi.deleteBucketObjects(bucketNames[names.class.modelName], [clazz.avatar.keyname]);
+        } catch (e) {
+            throw e;
+        }
+
+    }
+
+});
+
 classSchema.methods.checkAndSave = async function() {
 
     const clazz = this;
