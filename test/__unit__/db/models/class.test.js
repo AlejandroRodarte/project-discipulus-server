@@ -2,7 +2,6 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { Types } = require('mongoose');
 const lorem = require('../../../__fixtures__/util/lorem');
 
 const { classDefinition } = require('../../../../src/db/schemas/class');
@@ -12,6 +11,13 @@ const { User, Class } = require('../../../../src/db/models');
 
 const sampleFiles = require('../../../__fixtures__/shared/sample-files');
 const roleTypes = require('../../../../src/util/roles');
+
+const storageApi = require('../../../../src/api/storage');
+const bucketNames = require('../../../../src/api/storage/config/bucket-names');
+
+const names = require('../../../../src/db/names');
+
+const regexp = require('../../../../src/util/regexp');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -213,6 +219,72 @@ describe('[db/models/class] - methods.checkAndSave', () => {
         classSaveStub = sinon.stub(clazz, 'save').resolves(clazz);
 
         await expect(clazz.checkAndSave()).to.eventually.be.eql(clazz);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
+    });
+
+});
+
+describe('[db/models/class] - methods.saveAvatar', () => {
+
+    let deleteBucketObjectsStub;
+    let classSaveStub;
+    let createMultipartObjectStub;
+
+    const pngImage = sampleFiles.pngImage;
+    const buffer = Buffer.alloc(10);
+
+    it('Should throw error if class avatar is defined but storageApi.deleteBucketObjects (called with correct args) fails', async () => {
+
+        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').rejects();
+        await expect(clazz.saveAvatar(pngImage, buffer)).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(deleteBucketObjectsStub, bucketNames[names.class.modelName], [clazz.avatar.keyname]);
+
+    });
+
+    it('Should throw error if class.save fails', async () => {
+
+        clazz.avatar = undefined;
+        classSaveStub = sinon.stub(clazz, 'save').rejects();
+
+        await expect(clazz.saveAvatar(pngImage, buffer)).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnce(classSaveStub);
+
+    });
+
+    it('Should throw error if storageApi.createMultipartObject (called with correct args) fails; class avatar should be undefined', async () => {
+
+        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        classSaveStub = sinon.stub(clazz, 'save').resolves(clazz);
+        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').rejects();
+
+        await expect(clazz.saveAvatar(pngImage, buffer)).to.eventually.be.rejectedWith(Error);
+
+        expect(clazz.avatar).to.be.undefined;
+
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[names.class.modelName], {
+            keyname: sinon.match(regexp.fileKeyname),
+            buffer,
+            size: buffer.length,
+            mimetype: pngImage.mimetype
+        });
+
+        sinon.assert.calledTwice(classSaveStub);
+
+    });
+
+    it('Should return class model instance if all required promises resolve properly', async () => {
+
+        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        classSaveStub = sinon.stub(clazz, 'save').resolves(clazz);
+        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+
+        await expect(clazz.saveAvatar(pngImage, buffer)).to.eventually.eql(clazz);
 
     });
 
