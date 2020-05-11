@@ -11,6 +11,8 @@ const deletionUserRules = require('../../../util/models/user/deletion-user-rules
 const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
+const deleteModes = require('../../../util/delete-modes');
+
 const schemaOpts = {
     collection: names.user.collectionName
 };
@@ -137,9 +139,32 @@ userSchema.pre('remove', async function() {
 
                     }
 
-                    await user.model(rule.modelName).deleteMany({
-                        [rule.fieldName]: user._id
-                    });
+                    switch (rule.deleteMode) {
+
+                        case deleteModes.DELETE_MANY:
+
+                            await user.model(rule.modelName).deleteMany({
+                                [rule.fieldName]: user._id
+                            });
+
+                            break;
+
+                        case deleteModes.REMOVE:
+
+                            const docs = await user.model(rule.modelName).find({
+                                [rule.fieldName]: user._id
+                            });
+
+                            for (const doc of docs) {
+                                await doc.remove();
+                            }
+
+                            break;
+
+                        default:
+                            break;
+
+                    }
 
                 }
 
