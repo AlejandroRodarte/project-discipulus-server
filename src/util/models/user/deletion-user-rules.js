@@ -2,23 +2,28 @@ const roles = require('../../roles');
 
 const names = require('../../../db/names');
 
+const deleteModes = require('../../delete-modes');
+
 const deletionUserRules = {
 
     [roles.ROLE_PARENT]: [
         {
             modelName: names.parentStudent.modelName,
             fieldName: 'parent',
-            deleteFiles: false
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
         },
         {
             modelName: names.parentStudentInvitation.modelName,
             fieldName: 'parent',
-            deleteFiles: false
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
         },
         {
             modelName: names.parentFile.modelName,
             fieldName: 'user',
-            deleteFiles: true
+            deleteFiles: true,
+            deleteMode: deleteModes.DELETE_MANY
         }
     ],
 
@@ -26,17 +31,20 @@ const deletionUserRules = {
         {
             modelName: names.parentStudent.modelName,
             fieldName: 'student',
-            deleteFiles: false
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
         },
         {
             modelName: names.parentStudentInvitation.modelName,
             fieldName: 'student',
-            deleteFiles: false
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
         },
         {
             modelName: names.studentFile.modelName,
             fieldName: 'user',
-            deleteFiles: true
+            deleteFiles: true,
+            deleteMode: deleteModes.DELETE_MANY
         }
     ],
 
@@ -44,7 +52,14 @@ const deletionUserRules = {
         {
             modelName: names.teacherFile.modelName,
             fieldName: 'user',
-            deleteFiles: true
+            deleteFiles: true,
+            deleteMode: deleteModes.DELETE_MANY
+        },
+        {
+            modelName: names.class.modelName,
+            fieldName: 'user',
+            deleteFiles: false,
+            deleteMode: deleteModes.REMOVE
         }
     ]
 
