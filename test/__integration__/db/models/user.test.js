@@ -1,4 +1,5 @@
 const chai = require('chai');
+const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo, Error } = require('mongoose');
 
@@ -11,7 +12,8 @@ const {
     StudentFile,
     TeacherFile,
     ParentStudentInvitation,
-    UserEvent
+    UserEvent,
+    Class
 } = require('../../../../src/db/models');
 
 const { 
@@ -23,7 +25,8 @@ const {
     baseParentFileContext,
     baseTeacherFileContext,
     baseParentStudentInvitationContext,
-    baseUserEventContext
+    baseUserEventContext,
+    baseClassContext
 } = require('../../../__fixtures__/models');
 
 const { userAvatarContext, removeAllUserFilesContext } = require('../../../__fixtures__/models-storage');
@@ -119,6 +122,12 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     describe('[db/models/user] - Pre remove hook', () => {
 
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
         it('Should remove user-role association upon user deletion', async () => {
 
             const user = await User.findOne({ _id: persistedUserId });
@@ -130,6 +139,10 @@ describe('[db/models/user] - baseUserRole context', () => {
 
             expect(userRoleDocCount).to.equal(0);
 
+        });
+
+        afterEach(() => {
+            sinon.restore();
         });
 
     });
@@ -205,6 +218,12 @@ describe('[db/models/user] - baseParentStudent context', () => {
 
     describe('[db/models/user] - Pre remove hook', () => {
 
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
         const persistedUsers = persisted[user.modelName];
 
         it('Should delete associated parentStudent records upon student user deletion', async () => {
@@ -257,6 +276,10 @@ describe('[db/models/user] - baseParentStudent context', () => {
 
         });
 
+        afterEach(() => {
+            sinon.restore();
+        });
+
     });
 
     afterEach(db.teardown(baseParentStudentContext.persisted));
@@ -268,6 +291,12 @@ describe('[db/models/user] - baseParentStudentInvitation context', () => {
     beforeEach(db.init(baseParentStudentInvitationContext.persisted));
 
     describe('[db/models/user] - Pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
 
         const persistedUsers = baseParentStudentInvitationContext.persisted[user.modelName];
 
@@ -321,6 +350,10 @@ describe('[db/models/user] - baseParentStudentInvitation context', () => {
 
         });
 
+        afterEach(() => {
+            sinon.restore();
+        });
+
     });
 
     afterEach(db.teardown(baseParentStudentInvitationContext.persisted));
@@ -334,6 +367,12 @@ describe('[db/models/user] - baseUserFile context', () => {
     const persistedUsers = baseUserFileContext.persisted[user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
 
         const userId = persistedUsers[0]._id;
 
@@ -351,6 +390,10 @@ describe('[db/models/user] - baseUserFile context', () => {
 
         });
 
+        afterEach(() => {
+            sinon.restore();
+        });
+
     });
 
     afterEach(db.teardown(baseUserFileContext.persisted));
@@ -364,6 +407,12 @@ describe('[db/models/user] - baseParentFile context', () => {
     const persistedUsers = baseParentFileContext.persisted[user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
 
         const parentId = persistedUsers[0]._id;
 
@@ -381,6 +430,10 @@ describe('[db/models/user] - baseParentFile context', () => {
 
         });
 
+        afterEach(() => {
+            sinon.restore();
+        });
+
     });
 
     afterEach(db.teardown(baseParentFileContext.persisted));
@@ -394,6 +447,12 @@ describe('[db/models/user] - baseStudentFile context', () => {
     const persistedUsers = baseStudentFileContext.persisted[user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
 
         const studentId = persistedUsers[0]._id;
 
@@ -411,6 +470,10 @@ describe('[db/models/user] - baseStudentFile context', () => {
 
         });
 
+        afterEach(() => {
+            sinon.restore();
+        });
+
     });
 
     afterEach(db.teardown(baseStudentFileContext.persisted));
@@ -424,6 +487,12 @@ describe('[db/models/user] - baseTeacherFile context', () => {
     const persistedUsers = baseTeacherFileContext.persisted[user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
 
         const teacherId = persistedUsers[0]._id;
 
@@ -439,6 +508,10 @@ describe('[db/models/user] - baseTeacherFile context', () => {
 
             expect(docCount).to.equal(0);
 
+        });
+
+        afterEach(() => {
+            sinon.restore();
         });
 
     });
@@ -562,6 +635,12 @@ describe('[db/models/user] - baseUserEvent context', () => {
 
     describe('[db/models/user] - pre remove hook', () => {
 
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
         const persistedUsers = baseUserEventContext.persisted[user.modelName];
 
         it('Should delete all associated user events upon user deletion', async () => {
@@ -577,6 +656,49 @@ describe('[db/models/user] - baseUserEvent context', () => {
 
             expect(docCount).to.equal(0);
 
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseUserEventContext.persisted));
+
+});
+
+describe('[db/models/user] - baseClass context', () => {
+
+    beforeEach(db.init(baseClassContext.persisted));
+
+    describe('[db/models/user] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
+        const persistedUsers = baseClassContext.persisted[user.modelName];
+
+        it('Should delete all associated classes upon user deletion', async () => {
+
+            const userId = persistedUsers[2]._id;
+            const user = await User.findOne({ _id: userId });
+
+            await user.remove();
+            
+            const docCount = await Class.countDocuments({
+                user: userId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
         });
 
     });
