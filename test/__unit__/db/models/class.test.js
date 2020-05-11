@@ -1,17 +1,25 @@
-const expect = require('chai').expect;
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+const sinon = require('sinon');
 
 const { Types } = require('mongoose');
 const lorem = require('../../../__fixtures__/util/lorem');
 
 const { classDefinition } = require('../../../../src/db/schemas/class');
-const { testForInvalidModel, testForValidModel, getNewModelInstance, generateFakeClass } = require('../../../__fixtures__/functions/models');
+const { testForInvalidModel, testForValidModel, getNewModelInstance, generateFakeClass, generateFakeUsers } = require('../../../__fixtures__/functions/models');
 
-const { Class } = require('../../../../src/db/models');
+const { User, Class } = require('../../../../src/db/models');
 
 const sampleFiles = require('../../../__fixtures__/shared/sample-files');
+const roleTypes = require('../../../../src/util/roles');
+
+const expect = chai.expect;
+chai.use(chaiAsPromised);
+
+const [userDoc] = generateFakeUsers(1, { fakeToken: true });
 
 const classDoc = {
-    user: new Types.ObjectId(),
+    user: userDoc._id,
     ...generateFakeClass({
         titleWords: 5,
         descriptionWords: 20,
@@ -20,8 +28,12 @@ const classDoc = {
 };
 
 let clazz = new Class(classDoc);
+let user = new User(userDoc);
 
-beforeEach(() => clazz = getNewModelInstance(Class, classDoc));
+beforeEach(() => {
+    clazz = getNewModelInstance(Class, classDoc);
+    user = getNewModelInstance(User, userDoc);
+});
 
 describe('[db/models/class] - Invalid user', () => {
 
@@ -153,3 +165,59 @@ describe('[db/models/class] - Valid class', () => {
 
 });
 
+describe('[db/models/class] - methods.checkAndSave', () => {
+
+    let userFindOneStub;
+    let userHasRoleStub;
+    let classSaveStub;
+
+    it('Should throw error if User.findOne (called with correct args) resolved to null', async () => {
+
+        userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(userFindOneStub, {
+            _id: clazz.user,
+            enabled: true
+        });
+
+    });
+
+    it('Should throw error if user.hasRole resolved to false', async () => {
+
+        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
+        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(false);
+
+        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_TEACHER);
+
+    });
+
+    it('Should throw error if class.save happens to fail', async () => {
+
+        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
+        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
+        classSaveStub = sinon.stub(clazz, 'save').rejects();
+
+        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnce(classSaveStub);
+
+    });
+
+    it('Should return class model instance if all promises resolve properly', async () => {
+
+        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
+        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
+        classSaveStub = sinon.stub(clazz, 'save').resolves(clazz);
+
+        await expect(clazz.checkAndSave()).to.eventually.be.eql(clazz);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
+    });
+
+});
