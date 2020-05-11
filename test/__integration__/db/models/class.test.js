@@ -115,7 +115,7 @@ describe('[db/models/class] - baseClass context', () => {
 
 });
 
-describe('[db/models/class] - methods.saveAvatar', function() {
+describe('[db/models/class] - classAvatar context', function() {
 
     this.timeout(20000);
 
@@ -178,6 +178,24 @@ describe('[db/models/class] - methods.saveAvatar', function() {
 
             expect(res.buffer).to.eql(buffer);
             expect(res.contentType).to.eql(classOne.avatar.mimetype);
+
+        });
+
+    });
+
+    describe('[db/models/class] - pre remove hook', () => {
+
+        it('Should delete class avatar upon class removal', async () => {
+
+            const classOneId = persistedClasses[0]._id;
+            const classOne = await Class.findOne({ _id: classOneId });
+
+            const classOneAvatarKeyname = classOne.avatar.keyname;
+
+            await classOne.remove();
+
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[clazz.modelName]);
+            expect(bucketKeys).to.not.include(classOneAvatarKeyname);
 
         });
 
