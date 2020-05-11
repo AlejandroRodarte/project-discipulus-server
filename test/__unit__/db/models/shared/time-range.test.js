@@ -24,7 +24,7 @@ describe('[db/models/shared/time-range] - Default start', () => {
         const end = moment().add(1, 'second').utc().unix();
         timeRange = new TimeRange({ end });
 
-        expect(timeRange.start).to.equal(end - 1);
+        expect(timeRange.start).to.not.be.an('integer');
 
     });
 
