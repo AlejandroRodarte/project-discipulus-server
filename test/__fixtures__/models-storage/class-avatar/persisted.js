@@ -1,26 +1,36 @@
+const { Types } = require('mongoose');
+
 const { generateFakeClass } = require('../../functions/models');
+const generateOneToMany = require('../../../__fixtures__/functions/util/generate-one-to-many');
+
 const attachKeynames = require('../../functions/util/attach-keynames');
 
 const sampleFiles = require('../../shared/sample-files');
 const { class: clazz } = require('../../../../src/db/names');
 
+const userId = new Types.ObjectId();
+
 const classes = [
 
     // 0. sample class
-    generateFakeClass({
-        titleWords: 5,
-        descriptionWords: 12,
-        noAvatar: true,
-        sessions: [[0, 20]]
-    }),
+    ...generateOneToMany('user', userId, [
+        generateFakeClass({
+            titleWords: 5,
+            descriptionWords: 12,
+            noAvatar: true,
+            sessions: [[0, 20]]
+        })
+    ]),
 
     // 1. sample class
-    generateFakeClass({
-        titleWords: 8,
-        descriptionWords: 15,
-        noAvatar: true,
-        sessions: [[10, 40]]
-    }),
+    ...generateOneToMany('user', userId, [
+        generateFakeClass({
+            titleWords: 8,
+            descriptionWords: 15,
+            noAvatar: true,
+            sessions: [[10, 40]]
+        })
+    ])
 
 ];
 

@@ -103,7 +103,7 @@ describe('[db/models/shared/file] - virtuals.keyname', () => {
         const [, ...extensions] = file.originalname.split('.');
         const keyname = `${file._id.toHexString()}.${extensions.join('.')}`;
 
-        expect(file.keyname).to.be.equal(keyname);
+        expect(file.keyname).to.equal(keyname);
 
     });
 

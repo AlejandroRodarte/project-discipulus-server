@@ -484,8 +484,8 @@ describe('[db/models/user] - userAvatar context', function() {
 
             const res = await storageApi.getMultipartObject(bucketNames[user.modelName], userOne.avatar.keyname);
 
-            expect(res.buffer).to.be.eql(buffer);
-            expect(res.contentType).to.be.equal(userOne.avatar.mimetype);
+            expect(res.buffer).to.eql(buffer);
+            expect(res.contentType).to.equal(userOne.avatar.mimetype);
 
         });
 
@@ -508,8 +508,8 @@ describe('[db/models/user] - userAvatar context', function() {
 
             const res = await storageApi.getMultipartObject(bucketNames[user.modelName], userTwo.avatar.keyname);
 
-            expect(res.buffer).to.be.eql(buffer);
-            expect(res.contentType).to.be.equal(userTwo.avatar.mimetype);
+            expect(res.buffer).to.eql(buffer);
+            expect(res.contentType).to.equal(userTwo.avatar.mimetype);
 
         });
 
