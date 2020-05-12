@@ -65,8 +65,8 @@ parentStudentSchema.methods.checkAndSave = async function() {
     }
 
     try {
-        await invitation.remove();
         await parentStudent.save();
+        await invitation.remove();
     } catch (e) {
         throw e;
     }
