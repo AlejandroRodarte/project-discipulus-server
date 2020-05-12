@@ -49,7 +49,7 @@ parentStudentInvitationSchema.methods.checkAndSave = async function() {
         throw new Error('The parent deleted/disabled his/her account');
     }
 
-    const isParent = await parentUser.hasRole(roleTypes.ROLE_STUDENT);
+    const isParent = await parentUser.hasRole(roleTypes.ROLE_PARENT);
 
     if (!isParent) {
         throw new Error('The user is not a parent');
