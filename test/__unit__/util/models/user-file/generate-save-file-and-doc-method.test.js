@@ -14,6 +14,8 @@ const roleTypes = require('../../../../../src/util/roles');
 const storageApi = require('../../../../../src/api/storage');
 const bucketNames = require('../../../../../src/api/storage/config/bucket-names');
 
+const { modelErrorMessages } = require('../../../../../src/util/errors');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -61,7 +63,7 @@ describe('[util/models/user-file/generate-save-file-and-doc-method] - general fl
             }
         }).bind(userFile);
 
-        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         sinon.assert.calledOnceWithExactly(userFindOneStub, {
             _id: userFile.user,
@@ -83,7 +85,7 @@ describe('[util/models/user-file/generate-save-file-and-doc-method] - general fl
             }
         }).bind(parentFile);
 
-        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.fileStorePermissionDenied);
 
         sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_PARENT);
 

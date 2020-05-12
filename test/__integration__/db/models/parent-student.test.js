@@ -9,6 +9,8 @@ const db = require('../../../__fixtures__/functions/db');
 
 const { parentStudent } = require('../../../../src/db/names');
 
+const { modelErrorMessages } = require('../../../../src/util/errors');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -77,7 +79,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
             const parentStudentDoc = unpersistedParentStudents[0];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfAssociation);
 
         });
 
@@ -86,7 +88,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
             const parentStudentDoc = unpersistedParentStudents[1];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentNotFound);
 
         });
 
@@ -95,7 +97,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
             const parentStudentDoc = unpersistedParentStudents[2];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentNotFound);
 
         });
 
@@ -104,7 +106,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
             const parentStudentDoc = unpersistedParentStudents[3];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAParent);
 
         });
 
@@ -113,7 +115,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
             const parentStudentDoc = unpersistedParentStudents[4];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
 
         });
 
@@ -122,7 +124,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
             const parentStudentDoc = unpersistedParentStudents[5];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
 
         });
 
@@ -131,7 +133,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
             const parentStudentDoc = unpersistedParentStudents[6];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAStudent);
 
         });
 
@@ -140,7 +142,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
             const parentStudentDoc = unpersistedParentStudents[7];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentStudentInvitationRequired);
 
         });
 

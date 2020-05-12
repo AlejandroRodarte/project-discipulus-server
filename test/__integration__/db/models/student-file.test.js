@@ -18,6 +18,8 @@ const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 
 const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
 
+const { modelErrorMessages } = require('../../../../src/util/errors');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -101,7 +103,7 @@ describe('[db/models/student-file] - saveStudentFile context', function() {
             const unknownStudentFileDoc = unpersistedStudentFiles[0];
             const unknownStudentFile = new StudentFile(unknownStudentFileDoc);
 
-            await expect(unknownStudentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+            await expect(unknownStudentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
@@ -110,7 +112,7 @@ describe('[db/models/student-file] - saveStudentFile context', function() {
             const disabledStudentFileDoc = unpersistedStudentFiles[1];
             const disabledStudentFile = new StudentFile(disabledStudentFileDoc);
 
-            await expect(disabledStudentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+            await expect(disabledStudentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
@@ -119,7 +121,7 @@ describe('[db/models/student-file] - saveStudentFile context', function() {
             const notAStudentFileDoc = unpersistedStudentFiles[2];
             const notAStudentFile = new StudentFile(notAStudentFileDoc);
 
-            await expect(notAStudentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+            await expect(notAStudentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.fileStorePermissionDenied);
 
         });
 

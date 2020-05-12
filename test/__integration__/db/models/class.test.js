@@ -10,12 +10,14 @@ const { classAvatarContext } = require('../../../__fixtures__/models-storage');
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
-const { user, class: clazz } = require('../../../../src/db/names');
+const { class: clazz } = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 
 const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
+
+const { modelErrorMessages } = require('../../../../src/util/errors');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -69,7 +71,7 @@ describe('[db/models/class] - baseClass context', () => {
             const unknownUserClassDoc = unpersistedClasses[0];
             const unknownUserClass = new Class(unknownUserClassDoc);
 
-            await expect(unknownUserClass.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(unknownUserClass.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.teacherNotFound);
 
         });
 
@@ -78,7 +80,7 @@ describe('[db/models/class] - baseClass context', () => {
             const disabledUserClassDoc = unpersistedClasses[1];
             const disabledUserClass = new Class(disabledUserClassDoc);
 
-            await expect(disabledUserClass.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(disabledUserClass.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.teacherNotFound);
 
         });
 
@@ -87,7 +89,7 @@ describe('[db/models/class] - baseClass context', () => {
             const notATeacherClassDoc = unpersistedClasses[2];
             const notATeacherClass = new Class(notATeacherClassDoc);
 
-            await expect(notATeacherClass.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(notATeacherClass.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notATeacher);
 
         });
 

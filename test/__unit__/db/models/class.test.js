@@ -19,6 +19,8 @@ const names = require('../../../../src/db/names');
 
 const regexp = require('../../../../src/util/regexp');
 
+const { modelErrorMessages } = require('../../../../src/util/errors');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -180,7 +182,7 @@ describe('[db/models/class] - methods.checkAndSave', () => {
     it('Should throw error if User.findOne (called with correct args) resolved to null', async () => {
 
         userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
-        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
+        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.teacherNotFound);
 
         sinon.assert.calledOnceWithExactly(userFindOneStub, {
             _id: clazz.user,
@@ -194,7 +196,7 @@ describe('[db/models/class] - methods.checkAndSave', () => {
         userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
         userHasRoleStub = sinon.stub(user, 'hasRole').resolves(false);
 
-        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
+        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notATeacher);
 
         sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_TEACHER);
 

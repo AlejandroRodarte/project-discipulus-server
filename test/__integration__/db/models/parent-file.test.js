@@ -18,6 +18,8 @@ const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 
 const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
 
+const { modelErrorMessages } = require('../../../../src/util/errors');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -101,7 +103,7 @@ describe('[db/models/parent-file] - saveParentFile context', function() {
             const unknownParentFileDoc = unpersistedParentFiles[0];
             const unknownParentFile = new ParentFile(unknownParentFileDoc);
 
-            await expect(unknownParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+            await expect(unknownParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
@@ -110,7 +112,7 @@ describe('[db/models/parent-file] - saveParentFile context', function() {
             const disabledParentFileDoc = unpersistedParentFiles[1];
             const disabledParentFile = new ParentFile(disabledParentFileDoc);
 
-            await expect(disabledParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+            await expect(disabledParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
@@ -119,7 +121,7 @@ describe('[db/models/parent-file] - saveParentFile context', function() {
             const notAParentFileDoc = unpersistedParentFiles[2];
             const notAParentFile = new ParentFile(notAParentFileDoc);
 
-            await expect(notAParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+            await expect(notAParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.fileStorePermissionDenied);
 
         });
 

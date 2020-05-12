@@ -18,6 +18,8 @@ const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 
 const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
 
+const { modelErrorMessages } = require('../../../../src/util/errors');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -101,7 +103,7 @@ describe('[db/models/user-file] - saveUserFile context', function() {
             const unknownUserFileDoc = unpersistedUserFiles[0];
             const unknownUserFile = new UserFile(unknownUserFileDoc);
 
-            await expect(unknownUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+            await expect(unknownUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
@@ -110,7 +112,7 @@ describe('[db/models/user-file] - saveUserFile context', function() {
             const disabledUserFileDoc = unpersistedUserFiles[1];
             const disabledUserFile = new UserFile(disabledUserFileDoc);
 
-            await expect(disabledUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+            await expect(disabledUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 

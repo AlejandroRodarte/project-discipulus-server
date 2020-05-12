@@ -9,6 +9,8 @@ const db = require('../../../__fixtures__/functions/db');
 
 const { user, parentStudentInvitation } = require('../../../../src/db/names');
 
+const { modelErrorMessages } = require('../../../../src/util/errors');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -68,7 +70,6 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
 
     beforeEach(db.init(baseParentStudentInvitationContext.persisted));
 
-    const persistedUsers = baseParentStudentInvitationContext.persisted[user.modelName];
     const unpersistedParentUserInvitations = baseParentStudentInvitationContext.unpersisted[parentStudentInvitation.modelName];
 
     describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
@@ -78,7 +79,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const parentStudentInvitationDoc = unpersistedParentUserInvitations[0];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfAssociation);
 
         });
 
@@ -87,7 +88,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const parentStudentInvitationDoc = unpersistedParentUserInvitations[1];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
 
         });
 
@@ -96,7 +97,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const parentStudentInvitationDoc = unpersistedParentUserInvitations[2];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
 
         });
 
@@ -105,7 +106,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const parentStudentInvitationDoc = unpersistedParentUserInvitations[3];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAStudent);
 
         });
 
@@ -114,7 +115,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const parentStudentInvitationDoc = unpersistedParentUserInvitations[4];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentNotFound);
 
         });
 
@@ -123,7 +124,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const parentStudentInvitationDoc = unpersistedParentUserInvitations[5];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentNotFound);
 
         });
 
@@ -132,7 +133,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const parentStudentInvitationDoc = unpersistedParentUserInvitations[6];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAParent);
 
         });
 
@@ -141,7 +142,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
             const parentStudentInvitationDoc = unpersistedParentUserInvitations[7];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentStudentAlreadyExists);
 
         });
 

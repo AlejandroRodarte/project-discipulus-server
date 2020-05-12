@@ -9,6 +9,8 @@ const { User, ParentStudentInvitation, ParentStudent } = require('../../../../sr
 
 const roleTypes = require('../../../../src/util/roles');
 
+const { modelErrorMessages } = require('../../../../src/util/errors');
+
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -48,7 +50,7 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
         const sameIdParentStudentInvitation = new ParentStudentInvitation(sameIdParentStudentInvitationDoc);
 
-        await expect(sameIdParentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+        await expect(sameIdParentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfAssociation);
 
     });
 
@@ -56,7 +58,7 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
         userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
         
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
     
         sinon.assert.calledOnceWithExactly(userFindOneStub, {
             _id: parentStudentInvitation.student,
@@ -70,7 +72,7 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
         userFindOneStub = sinon.stub(User, 'findOne').resolves(student);
         studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(false);
 
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAStudent);
 
         sinon.assert.calledOnceWithExactly(studentHasRoleStub, roleTypes.ROLE_STUDENT);
 
@@ -85,7 +87,7 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
         studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(true);    
 
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentNotFound);
 
         sinon.assert.calledWith(userFindOneStub.secondCall, {
             _id: parentStudentInvitation.parent,
@@ -104,7 +106,7 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
         studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(true);
         parentHasRoleStub = sinon.stub(parent, 'hasRole').resolves(false);
 
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAParent);
 
         sinon.assert.calledOnceWithExactly(parentHasRoleStub, roleTypes.ROLE_PARENT);
 
@@ -122,7 +124,7 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
         parentStudentExistsStub = sinon.stub(ParentStudent, 'exists').resolves(true);
 
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentStudentAlreadyExists);
 
         sinon.assert.calledOnceWithExactly(parentStudentExistsStub, {
             parent: parentStudentInvitation.parent,
