@@ -5,6 +5,8 @@ const { parentStudent, user, parentStudentInvitation } = require('../../names');
 
 const roleTypes = require('../../../util/roles');
 
+const { modelErrorMessages } = require('../../../util/errors');
+
 const schemaOpts = {
     collection: parentStudent.collectionName
 };
@@ -22,7 +24,7 @@ parentStudentSchema.methods.checkAndSave = async function() {
     const { parent, student } = parentStudent;
 
     if (parent.toHexString() === student.toHexString()) {
-        throw new Error('Self-association is denied');
+        throw new Error(modelErrorMessages.selfAssociation);
     }
 
     const parentUser = await User.findOne({
@@ -31,13 +33,13 @@ parentStudentSchema.methods.checkAndSave = async function() {
     });
 
     if (!parentUser) {
-        throw new Error('The parent deleted/disabled his/her account');
+        throw new Error(modelErrorMessages.parentNotFound);
     }
 
     const isParent = await parentUser.hasRole(roleTypes.ROLE_PARENT);
 
     if (!isParent) {
-        throw new Error('The user is not a parent');
+        throw new Error(modelErrorMessages.notAParent);
     }
 
     const studentUser = await User.findOne({
@@ -46,13 +48,13 @@ parentStudentSchema.methods.checkAndSave = async function() {
     });
 
     if (!studentUser) {
-        throw new Error('The student deleted/disabled his/her account');
+        throw new Error(modelErrorMessages.studentNotFound);
     }
 
     const isStudent = await studentUser.hasRole(roleTypes.ROLE_STUDENT);
 
     if (!isStudent) {
-        throw new Error('The user is not a student');
+        throw new Error(modelErrorMessages.notAStudent);
     }
 
     const invitation = await ParentStudentInvitation.findOne({
@@ -61,7 +63,7 @@ parentStudentSchema.methods.checkAndSave = async function() {
     });
 
     if (!invitation) {
-        throw new Error('An invitation is required before performing a parent/student association');
+        throw new Error(modelErrorMessages.parentStudentInvitationRequired);
     }
 
     try {

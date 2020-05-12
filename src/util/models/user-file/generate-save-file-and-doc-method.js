@@ -3,6 +3,8 @@ const { user } = require('../../../db/names');
 const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
+const { modelErrorMessages } = require('../../errors');
+
 const generateSaveFileAndDocMethod = ({ modelName, roleOpts }) => async function(buffer) {
 
     const { check, role } = roleOpts;
@@ -18,7 +20,7 @@ const generateSaveFileAndDocMethod = ({ modelName, roleOpts }) => async function
     });
 
     if (!userDoc) {
-        throw new Error('Your account is currently disabled or has been deleted');
+        throw new Error(modelErrorMessages.userNotFoundOrDisabled);
     }
 
     if (check) {
@@ -26,7 +28,7 @@ const generateSaveFileAndDocMethod = ({ modelName, roleOpts }) => async function
         const hasRole = await userDoc.hasRole(role);
 
         if (!hasRole) {
-            throw new Error('You do not have enough permissions to store a file here');
+            throw new Error(modelErrorMessages.fileStorePermissionDenied);
         }
 
     }

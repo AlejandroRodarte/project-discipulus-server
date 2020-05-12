@@ -8,6 +8,8 @@ const roleTypes = require('../../../util/roles');
 const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
+const { modelErrorMessages } = require('../../../util/errors');
+
 const schemaOpts = {
     collection: names.class.collectionName
 };
@@ -43,13 +45,13 @@ classSchema.methods.checkAndSave = async function() {
     });
 
     if (!teacher) {
-        throw new Error('The user has its account deleted/disabled');
+        throw new Error(modelErrorMessages.teacherNotFound);
     }
 
     const isTeacher = await teacher.hasRole(roleTypes.ROLE_TEACHER);
 
     if (!isTeacher) {
-        throw new Error('The owner for this class should be a teacher');
+        throw new Error(modelErrorMessages.notATeacher);
     }
 
     try {
