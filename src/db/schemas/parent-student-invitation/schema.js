@@ -1,11 +1,9 @@
 const { Schema } = require('mongoose');
 
-const { user } = require('../../names');
-
 const roleTypes = require('../../../util/roles');
 
 const parentStudentInvitationDefinition = require('./definition');
-const { parentStudentInvitation } = require('../../names');
+const { parentStudentInvitation, parentStudent, user } = require('../../names');
 
 const schemaOpts = {
     collection: parentStudentInvitation.collectionName
@@ -19,6 +17,7 @@ parentStudentInvitationSchema.methods.checkAndSave = async function() {
 
     const parentStudentInvitation = this;
     const User = parentStudentInvitation.model(user.modelName);
+    const ParentStudent = parentStudentInvitation.model(parentStudent.modelName);
 
     const { parent, student } = parentStudentInvitation;
 
@@ -38,7 +37,31 @@ parentStudentInvitationSchema.methods.checkAndSave = async function() {
     const isStudent = await studentUser.hasRole(roleTypes.ROLE_STUDENT);
 
     if (!isStudent) {
+        throw new Error('The user is not a student');
+    }
+
+    const parentUser = await User.findOne({
+        _id: parent,
+        enabled: true
+    });
+
+    if (!parentUser) {
+        throw new Error('The parent deleted/disabled his/her account');
+    }
+
+    const isParent = await parentUser.hasRole(roleTypes.ROLE_STUDENT);
+
+    if (!isParent) {
         throw new Error('The user is not a parent');
+    }
+
+    const parentStudentExists = await ParentStudent.exists({
+        parent,
+        student
+    });
+
+    if (parentStudentExists) {
+        throw new Error('An association already has been established');
     }
 
     try {

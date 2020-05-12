@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema } = require('mongoose');
 
 const classDefinition = require('./definition');
 const names = require('../../names');
@@ -35,7 +35,7 @@ classSchema.pre('remove', async function() {
 classSchema.methods.checkAndSave = async function() {
 
     const clazz = this;
-    const User = model(names.user.modelName);
+    const User = clazz.model(names.user.modelName);
 
     const teacher = await User.findOne({
         _id: clazz.user,
