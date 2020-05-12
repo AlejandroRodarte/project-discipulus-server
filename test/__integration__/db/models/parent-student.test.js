@@ -1,13 +1,13 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo, Types } = require('mongoose');
+const { mongo } = require('mongoose');
 
-const ParentStudent = require('../../../../src/db/models/parent-student');
+const { ParentStudent, ParentStudentInvitation } = require('../../../../src/db/models');
 
 const { baseParentStudentContext, uniqueParentStudentContext } = require('../../../__fixtures__/models');
 const db = require('../../../__fixtures__/functions/db');
 
-const { user, parentStudent } = require('../../../../src/db/names');
+const { parentStudent } = require('../../../../src/db/names');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -68,20 +68,13 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
 
     beforeEach(db.init(baseParentStudentContext.persisted));
 
-    const persistedUsers = baseParentStudentContext.persisted[user.modelName];
     const unpersistedParentStudents = baseParentStudentContext.unpersisted[parentStudent.modelName];
 
     describe('[db/models/parent-student] - methods.checkAndSave', () => {
 
         it('Should throw an error if parent and student id match', async () => {
 
-            const userId = persistedUsers[0]._id;
-
-            const parentStudentDoc = {
-                parent: userId,
-                student: userId
-            };
-
+            const parentStudentDoc = unpersistedParentStudents[0];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
             await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -90,13 +83,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
 
         it('Should throw an error if a parent account is deleted', async () => {
 
-            const studentId = persistedUsers[0]._id;
-
-            const parentStudentDoc = {
-                parent: new Types.ObjectId(),
-                student: studentId
-            };
-
+            const parentStudentDoc = unpersistedParentStudents[1];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
             await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -105,54 +92,71 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
 
         it('Should throw an error if a parent account is disabled', async () => {
 
-            const studentId = persistedUsers[0]._id;
-            const disabledParentId = persistedUsers[1]._id;
-
-            const parentStudentDoc = {
-                parent: disabledParentId,
-                student: studentId
-            };
-
+            const parentStudentDoc = unpersistedParentStudents[2];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
             await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
-        it('Should throw an error if parent account, for any reason, does not own the parent role', async () => {
+        it('Should throw an error if parent user id is does not correspond to a parent role', async () => {
 
-            const studentId = persistedUsers[0]._id;
-            const notAParentUserId = persistedUsers[3]._id;
-
-            const parentStudentDoc = {
-                parent: notAParentUserId,
-                student: studentId
-            };
-
+            const parentStudentDoc = unpersistedParentStudents[3];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
             await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
-        it('Should throw an error on save if document is invalid', async () => {
+        it('Should throw error if a student account is deleted', async () => {
 
-            const nonUniqueParentStudentDoc = unpersistedParentStudents[0];
-            const nonUniqueParentStudent = new ParentStudent(nonUniqueParentStudentDoc);
+            const parentStudentDoc = unpersistedParentStudents[4];
+            const parentStudent = new ParentStudent(parentStudentDoc);
 
-            await expect(nonUniqueParentStudent.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
-        it('Should persist correct parentStudent doc', async () => {
+        it('Should throw error if a student account is disabled', async () => {
 
-            const uniqueParentStudentDoc = unpersistedParentStudents[1];
-            const uniqueParentStudent = new ParentStudent(uniqueParentStudentDoc);
+            const parentStudentDoc = unpersistedParentStudents[5];
+            const parentStudent = new ParentStudent(parentStudentDoc);
 
-            const parentStudent = await uniqueParentStudent.checkAndSave();
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-            expect(parentStudent.parent).to.eql(uniqueParentStudentDoc.parent);
-            expect(parentStudent.student).to.eql(uniqueParentStudentDoc.student);
+        });
+
+        it('Should throw error if student user id does not correspond to the user role', async () => {
+
+            const parentStudentDoc = unpersistedParentStudents[6];
+            const parentStudent = new ParentStudent(parentStudentDoc);
+
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw an error if there is no associated parent-student-invitation', async () => {
+
+            const parentStudentDoc = unpersistedParentStudents[7];
+            const parentStudent = new ParentStudent(parentStudentDoc);
+
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should persist correct parentStudent doc and delete associated invitation', async () => {
+
+            const parentStudentDoc = unpersistedParentStudents[8];
+            const parentStudent = new ParentStudent(parentStudentDoc);
+
+            await expect(parentStudent.checkAndSave()).to.eventually.eql(parentStudent);
+
+            const invitationExists = await ParentStudentInvitation.exists({
+                parent: parentStudent.parent,
+                student: parentStudent.student
+            });
+
+            expect(invitationExists).to.equal(false);
 
         });
 
