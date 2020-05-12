@@ -9,7 +9,6 @@ const db = require('../../../__fixtures__/functions/db');
 
 const { user, parentStudentInvitation } = require('../../../../src/db/names');
 
-
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
@@ -76,13 +75,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
 
         it('Should throw an error if parent and student id match', async () => {
 
-            const userId = persistedUsers[0]._id;
-
-            const parentStudentInvitationDoc = {
-                parent: userId,
-                student: userId
-            };
-
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[0];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
             await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -91,13 +84,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
 
         it('Should throw an error if a student account is deleted', async () => {
 
-            const parentId = persistedUsers[0]._id;
-
-            const parentStudentInvitationDoc = {
-                parent: parentId,
-                student: new Types.ObjectId()
-            };
-
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[1];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
             await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -106,30 +93,52 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
 
         it('Should throw an error if a student account is disabled', async () => {
 
-            const parentId = persistedUsers[0]._id;
-            const disabledStudentId = persistedUsers[1]._id;
-
-            const parentStudentInvitationDoc = {
-                parent: parentId,
-                student: disabledStudentId
-            };
-
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[2];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
             await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         });
 
-        it('Should throw an error if student account, for any reason, does not own the student role', async () => {
+        it('Should throw an error if student user id does not correspond to the user role', async () => {
 
-            const parentId = persistedUsers[0]._id;
-            const notAStudentId = persistedUsers[3]._id;
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[3];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            const parentStudentInvitationDoc = {
-                parent: parentId,
-                student: notAStudentId
-            };
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
+        });
+
+        it('Should throw an error if a parent account is deleted', async () => {
+
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[4];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw an error if a parent account is disabled', async () => {
+
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[5];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw an error if parent user id does not correspond to the parent role', async () => {
+
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[6];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        });
+
+        it('Should throw an error if there is already a parent-student association', async () => {
+
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[7];
             const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
             await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -138,22 +147,19 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
 
         it('Should throw an error on save if document is invalid', async () => {
 
-            const nonUniqueParentStudentInvitationDoc = unpersistedParentUserInvitations[0];
-            const nonUniqueParentStudentInvitation = new ParentStudentInvitation(nonUniqueParentStudentInvitationDoc);
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[8];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            await expect(nonUniqueParentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
 
         });
 
         it('Should persist correct parentStudentInvitation doc', async () => {
 
-            const uniqueParentStudentInvitationDoc = unpersistedParentUserInvitations[1];
-            const uniqueParentStudentInvitation = new ParentStudentInvitation(uniqueParentStudentInvitationDoc);
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[9];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
-            const parentStudentInvitation = await uniqueParentStudentInvitation.checkAndSave();
-
-            expect(parentStudentInvitation.parent).to.eql(uniqueParentStudentInvitationDoc.parent);
-            expect(parentStudentInvitation.student).to.eql(uniqueParentStudentInvitationDoc.student);
+            await expect(parentStudentInvitation.checkAndSave()).to.eventually.eql(parentStudentInvitation);
 
         });
 
