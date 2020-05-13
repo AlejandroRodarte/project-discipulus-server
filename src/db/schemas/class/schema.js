@@ -39,23 +39,15 @@ classSchema.methods.checkAndSave = async function() {
     const clazz = this;
     const User = clazz.model(names.user.modelName);
 
-    const teacher = await User.findOne({
-        _id: clazz.user,
-        enabled: true
-    });
-
-    if (!teacher) {
-        throw new Error(modelErrorMessages.teacherNotFound);
-    }
-
-    const isTeacher = await teacher.hasRole(roleTypes.ROLE_TEACHER);
-
-    if (!isTeacher) {
-        throw new Error(modelErrorMessages.notATeacher);
-    }
-
     try {
+
+        await User.findByIdAndValidateRole(clazz.user, roleTypes.ROLE_TEACHER, {
+            notFoundErrorMessage: modelErrorMessages.teacherNotFound,
+            invalidRoleErrorMessage: modelErrorMessages.notATeacher
+        });
+
         await clazz.save();
+
     } catch (e) {
         throw e;
     }

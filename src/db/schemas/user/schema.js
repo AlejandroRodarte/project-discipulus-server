@@ -178,6 +178,29 @@ userSchema.pre('remove', async function() {
 
 });
 
+userSchema.statics.findByIdAndValidateRole = async function(_id, role, { notFoundErrorMessage, invalidRoleErrorMessage }) {
+
+    const User = this;
+
+    const user = await User.findOne({
+        _id,
+        enabled: true
+    });
+
+    if (!user) {
+        throw new Error(notFoundErrorMessage);
+    }
+
+    const hasRole = await user.hasRole(role);
+
+    if (!hasRole) {
+        throw new Error(invalidRoleErrorMessage)
+    }
+
+    return user;
+
+};
+
 userSchema.methods.getUserRoles = async function() {
 
     const user = this;

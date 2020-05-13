@@ -27,34 +27,20 @@ parentStudentInvitationSchema.methods.checkAndSave = async function() {
         throw new Error(modelErrorMessages.selfAssociation);
     }
 
-    const studentUser = await User.findOne({
-        _id: student,
-        enabled: true
-    });
+    try {
 
-    if (!studentUser) {
-        throw new Error(modelErrorMessages.studentNotFound);
-    }
+        await User.findByIdAndValidateRole(student, roleTypes.ROLE_STUDENT, {
+            notFoundErrorMessage: modelErrorMessages.studentNotFound,
+            invalidRoleErrorMessage: modelErrorMessages.notAStudent
+        });
 
-    const isStudent = await studentUser.hasRole(roleTypes.ROLE_STUDENT);
+        await User.findByIdAndValidateRole(parent, roleTypes.ROLE_PARENT, {
+            notFoundErrorMessage: modelErrorMessages.parentNotFound,
+            invalidRoleErrorMessage: modelErrorMessages.notAParent
+        });
 
-    if (!isStudent) {
-        throw new Error(modelErrorMessages.notAStudent);
-    }
-
-    const parentUser = await User.findOne({
-        _id: parent,
-        enabled: true
-    });
-
-    if (!parentUser) {
-        throw new Error(modelErrorMessages.parentNotFound);
-    }
-
-    const isParent = await parentUser.hasRole(roleTypes.ROLE_PARENT);
-
-    if (!isParent) {
-        throw new Error(modelErrorMessages.notAParent);
+    } catch (e) {
+        throw e;
     }
 
     const parentStudentExists = await ParentStudent.exists({
