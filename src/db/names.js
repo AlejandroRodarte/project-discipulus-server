@@ -36,27 +36,27 @@ const names = {
     },
 
     sharedUserFile: {
-        collectionName: 'sharedusersfiles',
+        collectionName: 'shareduserfiles',
         modelName: 'SharedUserFile'
     },
 
     userFile: {
-        collectionName: 'usersfiles',
+        collectionName: 'userfiles',
         modelName: 'UserFile'
     },
 
     studentFile: {
-        collectionName: 'studentsfiles',
+        collectionName: 'studentfiles',
         modelName: 'StudentFile'
     },
 
     parentFile: {
-        collectionName: 'parentsfiles',
+        collectionName: 'parentfiles',
         modelName: 'ParentFile'
     },
 
     teacherFile: {
-        collectionName: 'teachersfiles',
+        collectionName: 'teacherfiles',
         modelName: 'TeacherFile'
     },
 
@@ -72,7 +72,22 @@ const names = {
 
     class: {
         collectionName: 'classes',
-        modelName: 'Classes'
+        modelName: 'Class'
+    },
+
+    classStudent: {
+        collectionName: 'classstudents',
+        modelName: 'ClassStudent'
+    },
+
+    classStudentInvitation: {
+        collectionName: 'classstudentinvitations',
+        modelName: 'ClassStudentInvitation'
+    },
+
+    classUnknownStudentInvitation: {
+        collectionName: 'classunknownstudentinvitations',
+        modelName: 'ClassUnknownStudentInvitation'
     }
 
 };
