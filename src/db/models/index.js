@@ -9,6 +9,9 @@ const StudentFile = require('./student-file');
 const UserFile = require('./user-file');
 const UserEvent = require('./user-event');
 const Class = require('./class');
+const ClassStudent = require('./class-student');
+const ClassStudentInvitation = require('./class-student-invitation');
+const ClassUnknownStudentInvitation = require('./class-unknown-student-invitation');
 const Shared = require('./shared');
 
 module.exports = {
@@ -23,5 +26,8 @@ module.exports = {
     UserFile,
     UserEvent,
     Class,
+    ClassStudent,
+    ClassStudentInvitation,
+    ClassUnknownStudentInvitation,
     Shared
 };
