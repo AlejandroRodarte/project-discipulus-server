@@ -175,37 +175,24 @@ describe('[db/models/class] - Valid class', () => {
 
 describe('[db/models/class] - methods.checkAndSave', () => {
 
-    let userFindOneStub;
-    let userHasRoleStub;
+    let userFindByIdAndValidateRoleStub;
     let classSaveStub;
 
-    it('Should throw error if User.findOne (called with correct args) resolved to null', async () => {
+    it('Should throw error if User.findByIdAndValidateRole (called with correct args) throws', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
-        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.teacherNotFound);
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').rejects();
+        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(userFindOneStub, {
-            _id: clazz.user,
-            enabled: true
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, clazz.user, roleTypes.ROLE_TEACHER, {
+            notFoundErrorMessage: modelErrorMessages.teacherNotFound,
+            invalidRoleErrorMessage: modelErrorMessages.notATeacher
         });
-
-    });
-
-    it('Should throw error if user.hasRole resolved to false', async () => {
-
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
-        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(false);
-
-        await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notATeacher);
-
-        sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_TEACHER);
 
     });
 
     it('Should throw error if class.save happens to fail', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
-        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(user);
         classSaveStub = sinon.stub(clazz, 'save').rejects();
 
         await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -216,8 +203,7 @@ describe('[db/models/class] - methods.checkAndSave', () => {
 
     it('Should return class model instance if all promises resolve properly', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
-        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(user);
         classSaveStub = sinon.stub(clazz, 'save').resolves(clazz);
 
         await expect(clazz.checkAndSave()).to.eventually.be.eql(clazz);

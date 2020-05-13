@@ -35,9 +35,7 @@ beforeEach(() => {
 
 describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
-    let userFindOneStub;
-    let studentHasRoleStub;
-    let parentHasRoleStub;
+    let userFindByIdAndValidateRole;
     let parentStudentExistsStub;
     let parentStudentInvitationSaveStub;
 
@@ -54,77 +52,45 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
     });
 
-    it('Should call User.findOne with correct args and throw error when resolves null user', async () => {
+    it('Should call User.findByIdAndValidateRole with correct args and throw error when it throws error', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+        userFindByIdAndValidateRole = sinon.stub(User, 'findByIdAndValidateRole').rejects();
         
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
     
-        sinon.assert.calledOnceWithExactly(userFindOneStub, {
-            _id: parentStudentInvitation.student,
-            enabled: true
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentStudentInvitation.student, roleTypes.ROLE_STUDENT, {
+            notFoundErrorMessage: modelErrorMessages.studentNotFound,
+            invalidRoleErrorMessage: modelErrorMessages.notAStudent
         });
 
     });
 
-    it('Should call student.hasRole with correct args and throw error when resolves to false', async () => {
+    it('Should throw error if second User.findByIdAndValidateRole call (with correct args) resolves null to a parent user', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(student);
-        studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(false);
-
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAStudent);
-
-        sinon.assert.calledOnceWithExactly(studentHasRoleStub, roleTypes.ROLE_STUDENT);
-
-    });
-
-    it('Should throw error if second User.findOne call (with correct args) resolves null to a parent user', async () => {
-
-        userFindOneStub = 
-            sinon.stub(User, 'findOne')
+        userFindByIdAndValidateRole = 
+            sinon.stub(User, 'findByIdAndValidateRole')
                  .onFirstCall().resolves(student)
-                 .onSecondCall().resolves(null);
+                 .onSecondCall().rejects();
 
-        studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(true);    
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentNotFound);
-
-        sinon.assert.calledWith(userFindOneStub.secondCall, {
-            _id: parentStudentInvitation.parent,
-            enabled: true
+        sinon.assert.calledWith(userFindByIdAndValidateRole.secondCall, parentStudentInvitation.parent, roleTypes.ROLE_PARENT, {
+            notFoundErrorMessage: modelErrorMessages.parentNotFound,
+            invalidRoleErrorMessage: modelErrorMessages.notAParent
         });
-
-    });
-
-    it('Should throw error if parent.hasRole resolves to false', async () => {
-
-        userFindOneStub = 
-            sinon.stub(User, 'findOne')
-                 .onFirstCall().resolves(student)
-                 .onSecondCall().resolves(parent);
-
-        studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(true);
-        parentHasRoleStub = sinon.stub(parent, 'hasRole').resolves(false);
-
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAParent);
-
-        sinon.assert.calledOnceWithExactly(parentHasRoleStub, roleTypes.ROLE_PARENT);
 
     });
 
     it('Should throw error if there is already a parent-student association between both users (called with correct args)', async () => {
 
-        userFindOneStub = 
-            sinon.stub(User, 'findOne')
+        userFindByIdAndValidateRole = 
+            sinon.stub(User, 'findByIdAndValidateRole')
                  .onFirstCall().resolves(student)
                  .onSecondCall().resolves(parent);
 
-        studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(true);
-        parentHasRoleStub = sinon.stub(parent, 'hasRole').resolves(true);
-
         parentStudentExistsStub = sinon.stub(ParentStudent, 'exists').resolves(true);
 
-        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentStudentAlreadyExists);
+        await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
         sinon.assert.calledOnceWithExactly(parentStudentExistsStub, {
             parent: parentStudentInvitation.parent,
@@ -135,13 +101,10 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
     it('Should throw error on save if ParentStudentInvitation model validation rules fail', async () => {
 
-        userFindOneStub = 
-            sinon.stub(User, 'findOne')
+        userFindByIdAndValidateRole = 
+            sinon.stub(User, 'findByIdAndValidateRole')
                  .onFirstCall().resolves(student)
                  .onSecondCall().resolves(parent);
-
-        studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(true);
-        parentHasRoleStub = sinon.stub(parent, 'hasRole').resolves(true);
 
         parentStudentExistsStub = sinon.stub(ParentStudent, 'exists').resolves(false);
         parentStudentInvitationSaveStub = sinon.stub(parentStudentInvitation, 'save').rejects();
@@ -154,13 +117,10 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
     it('Should return parentStudentInvitation instance model when validations pass', async () => {
 
-        userFindOneStub = 
-            sinon.stub(User, 'findOne')
+        userFindByIdAndValidateRole = 
+            sinon.stub(User, 'findByIdAndValidateRole')
                  .onFirstCall().resolves(student)
                  .onSecondCall().resolves(parent);
-
-        studentHasRoleStub = sinon.stub(student, 'hasRole').resolves(true);
-        parentHasRoleStub = sinon.stub(parent, 'hasRole').resolves(true);
 
         parentStudentExistsStub = sinon.stub(ParentStudent, 'exists').resolves(false);
         parentStudentInvitationSaveStub = sinon.stub(parentStudentInvitation, 'save').resolves();
