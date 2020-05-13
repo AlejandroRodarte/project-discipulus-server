@@ -32,13 +32,13 @@ describe('[db/models/user-file] - uniqueUserFile context', () => {
         const unpersistedUsersFiles = uniqueUserFileContext.unpersisted[names.userFile.modelName];
 
         it('Should fail on duplicate user/file.originalname index', async () => {
-            const userFileDoc = new UserFile(unpersistedUsersFiles[0]);
-            await expect(userFileDoc.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+            const userFile = new UserFile(unpersistedUsersFiles[0]);
+            await expect(userFile.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
 
         it('Should persist on unique user/file.originalname index', async () => {
-            const userFileDoc = new UserFile(unpersistedUsersFiles[1]);
-            await expect(userFileDoc.save()).to.eventually.be.eql(userFileDoc);
+            const userFile = new UserFile(unpersistedUsersFiles[1]);
+            await expect(userFile.save()).to.eventually.be.eql(userFile);
         });
 
     });
@@ -92,36 +92,34 @@ describe('[db/models/user-file] - saveUserFile context', function() {
 
     this.beforeEach(dbStorage.init(saveUserFileContext.persisted));
 
-    const unpersistedDb = saveUserFileContext.unpersisted.db;
+    const unpersistedUserFiles = saveUserFileContext.unpersisted.db[names.userFile.modelName];
 
     describe('[db/models/user-file] - methods.saveFileAndDoc', async () => {
 
-        const unpersistedUserFiles = unpersistedDb[names.userFile.modelName];
-
         it('Should throw error if a file is persisted to an unknown user', async () => {
 
-            const unknownUserFileDoc = unpersistedUserFiles[0];
-            const unknownUserFile = new UserFile(unknownUserFileDoc);
+            const userFileDoc = unpersistedUserFiles[0];
+            const userFile = new UserFile(userFileDoc);
 
-            await expect(unknownUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
+            await expect(userFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
         it('Should throw error if a file is persisted to a disabled user', async () => {
 
-            const disabledUserFileDoc = unpersistedUserFiles[1];
-            const disabledUserFile = new UserFile(disabledUserFileDoc);
+            const userFileDoc = unpersistedUserFiles[1];
+            const userFile = new UserFile(userFileDoc);
 
-            await expect(disabledUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
+            await expect(userFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
         it('Should throw error is userFile.save fails validation/uniqueness', async () => {
 
-            const nonUniqueUserFileDoc = unpersistedUserFiles[2];
-            const nonUniqueUserFile = new UserFile(nonUniqueUserFileDoc);
+            const userFileDoc = unpersistedUserFiles[2];
+            const userFile = new UserFile(userFileDoc);
 
-            await expect(nonUniqueUserFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(mongo.MongoError);
+            await expect(userFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(mongo.MongoError);
 
         });
 

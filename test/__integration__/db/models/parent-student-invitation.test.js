@@ -1,13 +1,13 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo, Types } = require('mongoose');
+const { mongo } = require('mongoose');
 
 const ParentStudentInvitation = require('../../../../src/db/models/parent-student-invitation');
 
 const { baseParentStudentInvitationContext, uniqueParentStudentInvitationContext } = require('../../../__fixtures__/models');
 const db = require('../../../__fixtures__/functions/db');
 
-const { user, parentStudentInvitation } = require('../../../../src/db/names');
+const names = require('../../../../src/db/names');
 
 const { modelErrorMessages } = require('../../../../src/util/errors');
 
@@ -18,15 +18,15 @@ describe('[db/models/parent-student-invitation] - uniqueParentStudentInvitation 
 
     beforeEach(db.init(uniqueParentStudentInvitationContext.persisted));
 
-    const unpersistedParentUserInvitations = uniqueParentStudentInvitationContext.unpersisted[parentStudentInvitation.modelName];
+    const unpersistedParentUserInvitations = uniqueParentStudentInvitationContext.unpersisted[names.parentStudentInvitation.modelName];
 
     describe('[db/models/parent-student-invitation] - Non-unique parent-students', async () => {
 
-        const nonUniqueParentStudentInvitation = unpersistedParentUserInvitations[3];
+        const parentStudentInvitationDoc = unpersistedParentUserInvitations[3];
 
         it('Should not persist a parent-student-invitation that has the same user/role composite _id', async () => {
-            const duplicateParentStudentInvitation = new ParentStudentInvitation(nonUniqueParentStudentInvitation);
-            await expect(duplicateParentStudentInvitation.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+            await expect(parentStudentInvitation.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
     
     });
@@ -35,8 +35,8 @@ describe('[db/models/parent-student-invitation] - uniqueParentStudentInvitation 
 
         it('Should persist a parent-student-invitation with same parent _id and different student _id', async () => {
             
-            const uniqueParentStudentInvitationDoc = unpersistedParentUserInvitations[0];
-            const parentStudentInvitation = new ParentStudentInvitation(uniqueParentStudentInvitationDoc);
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[0];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
             await expect(parentStudentInvitation.save()).to.eventually.be.eql(parentStudentInvitation);
 
@@ -44,8 +44,8 @@ describe('[db/models/parent-student-invitation] - uniqueParentStudentInvitation 
     
         it('Should persist a parent-student-invitation with same student _id and different parent _id', async () => {
             
-            const uniqueParentStudentInvitationDoc = unpersistedParentUserInvitations[1];
-            const parentStudentInvitation = new ParentStudentInvitation(uniqueParentStudentInvitationDoc);
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[1];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
             await expect(parentStudentInvitation.save()).to.eventually.be.eql(parentStudentInvitation);
 
@@ -53,8 +53,8 @@ describe('[db/models/parent-student-invitation] - uniqueParentStudentInvitation 
     
         it('Should persist a parent-student-invitation with different parent and student _id', async () => {
 
-            const uniqueParentStudentInvitationDoc = unpersistedParentUserInvitations[2];
-            const parentStudentInvitation = new ParentStudentInvitation(uniqueParentStudentInvitationDoc);
+            const parentStudentInvitationDoc = unpersistedParentUserInvitations[2];
+            const parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
 
             await expect(parentStudentInvitation.save()).to.eventually.be.eql(parentStudentInvitation);
 
@@ -70,7 +70,7 @@ describe('[db/models/parent-student-invitation] - baseParentStudentInvitation co
 
     beforeEach(db.init(baseParentStudentInvitationContext.persisted));
 
-    const unpersistedParentUserInvitations = baseParentStudentInvitationContext.unpersisted[parentStudentInvitation.modelName];
+    const unpersistedParentUserInvitations = baseParentStudentInvitationContext.unpersisted[names.parentStudentInvitation.modelName];
 
     describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 

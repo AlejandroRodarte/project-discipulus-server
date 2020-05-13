@@ -100,37 +100,37 @@ describe('[db/models/parent-file] - saveParentFile context', function() {
 
         it('Should throw error if a file is persisted to an unknown user', async () => {
 
-            const unknownParentFileDoc = unpersistedParentFiles[0];
-            const unknownParentFile = new ParentFile(unknownParentFileDoc);
+            const parentFileDoc = unpersistedParentFiles[0];
+            const parentFile = new ParentFile(parentFileDoc);
 
-            await expect(unknownParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
+            await expect(parentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
         it('Should throw error if a file is persisted to a disabled user', async () => {
 
-            const disabledParentFileDoc = unpersistedParentFiles[1];
-            const disabledParentFile = new ParentFile(disabledParentFileDoc);
+            const parentFileDoc = unpersistedParentFiles[1];
+            const parentFile = new ParentFile(parentFileDoc);
 
-            await expect(disabledParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
+            await expect(parentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
         it('Should throw error if a file is persisted to a user that is not a parent', async () => {
 
-            const notAParentFileDoc = unpersistedParentFiles[2];
-            const notAParentFile = new ParentFile(notAParentFileDoc);
+            const parentFileDoc = unpersistedParentFiles[2];
+            const parentFile = new ParentFile(parentFileDoc);
 
-            await expect(notAParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.fileStorePermissionDenied);
+            await expect(parentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.fileStorePermissionDenied);
 
         });
 
         it('Should throw error is parentFile.save fails validation/uniqueness', async () => {
 
-            const nonUniqueParentFileDoc = unpersistedParentFiles[3];
-            const nonUniqueParentFile = new ParentFile(nonUniqueParentFileDoc);
+            const parentFileDoc = unpersistedParentFiles[3];
+            const parentFile = new ParentFile(parentFileDoc);
 
-            await expect(nonUniqueParentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(mongo.MongoError);
+            await expect(parentFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(mongo.MongoError);
 
         });
 

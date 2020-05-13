@@ -7,7 +7,7 @@ const { ParentStudent, ParentStudentInvitation } = require('../../../../src/db/m
 const { baseParentStudentContext, uniqueParentStudentContext } = require('../../../__fixtures__/models');
 const db = require('../../../__fixtures__/functions/db');
 
-const { parentStudent } = require('../../../../src/db/names');
+const names = require('../../../../src/db/names');
 
 const { modelErrorMessages } = require('../../../../src/util/errors');
 
@@ -18,15 +18,15 @@ describe('[db/models/parent-student] - uniqueParentStudent context', () => {
 
     beforeEach(db.init(uniqueParentStudentContext.persisted));
 
-    const unpersistedParentStudents = uniqueParentStudentContext.unpersisted[parentStudent.modelName];
+    const unpersistedParentStudents = uniqueParentStudentContext.unpersisted[names.parentStudent.modelName];
 
     describe('[db/models/parent-student] - Non-unique parent-students', async () => {
 
-        const nonUniqueParentStudentDoc = unpersistedParentStudents[3];
+        const parentStudentDoc = unpersistedParentStudents[3];
 
         it('Should not persist a parent-student that has the same user/role composite _id', async () => {
-            const duplicateParentStudent = new ParentStudent(nonUniqueParentStudentDoc);
-            await expect(duplicateParentStudent.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+            const parentStudent = new ParentStudent(parentStudentDoc);
+            await expect(parentStudent.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
     
     });
@@ -35,8 +35,8 @@ describe('[db/models/parent-student] - uniqueParentStudent context', () => {
 
         it('Should persist a parent-student with same parent _id and different student _id', async () => {
             
-            const uniqueParentStudentDoc = unpersistedParentStudents[0];
-            const parentStudent = new ParentStudent(uniqueParentStudentDoc);
+            const parentStudentDoc = unpersistedParentStudents[0];
+            const parentStudent = new ParentStudent(parentStudentDoc);
 
             await expect(parentStudent.save()).to.eventually.be.eql(parentStudent);
 
@@ -44,8 +44,8 @@ describe('[db/models/parent-student] - uniqueParentStudent context', () => {
     
         it('Should persist a parent-student with same student _id and different parent _id', async () => {
             
-            const uniqueParentStudentDoc = unpersistedParentStudents[1];
-            const parentStudent = new ParentStudent(uniqueParentStudentDoc);
+            const parentStudentDoc = unpersistedParentStudents[1];
+            const parentStudent = new ParentStudent(parentStudentDoc);
 
             await expect(parentStudent.save()).to.eventually.be.eql(parentStudent);
 
@@ -53,8 +53,8 @@ describe('[db/models/parent-student] - uniqueParentStudent context', () => {
     
         it('Should persist a parent-student with different parent and student _id', async () => {
 
-            const uniqueParentStudentDoc = unpersistedParentStudents[2];
-            const parentStudent = new ParentStudent(uniqueParentStudentDoc);
+            const parentStudentDoc = unpersistedParentStudents[2];
+            const parentStudent = new ParentStudent(parentStudentDoc);
 
             await expect(parentStudent.save()).to.eventually.be.eql(parentStudent);
 
@@ -70,7 +70,7 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
 
     beforeEach(db.init(baseParentStudentContext.persisted));
 
-    const unpersistedParentStudents = baseParentStudentContext.unpersisted[parentStudent.modelName];
+    const unpersistedParentStudents = baseParentStudentContext.unpersisted[names.parentStudent.modelName];
 
     describe('[db/models/parent-student] - methods.checkAndSave', () => {
 

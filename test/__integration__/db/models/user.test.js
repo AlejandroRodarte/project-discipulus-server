@@ -36,7 +36,7 @@ const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
 const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
 
-const { user, userFile, parentFile, teacherFile, studentFile } = require('../../../../src/db/names');
+const names = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
@@ -50,14 +50,12 @@ describe('[db/models/user] - uniqueUser context', () => {
 
     beforeEach(db.init(uniqueUserContext.persisted));
 
-    const persistedUser = uniqueUserContext.persisted[user.modelName][0];
-    const persistedUserId = persistedUser._id;
-
-    const uniqueUserDoc = uniqueUserContext.unpersisted[user.modelName][0];
+    const persistedUsers = uniqueUserContext.persisted[names.user.modelName];
+    const unpersistedUsers = uniqueUserContext.unpersisted[names.user.modelName];
 
     describe('[db/models/user] - Non-unique names', () => {
 
-        const nonUniqueUserDoc = uniqueUserContext.unpersisted[user.modelName][1];
+        const nonUniqueUserDoc = unpersistedUsers[1];
 
         it('Should persist a user with a non-unique name', async () => {
             const user = new User(nonUniqueUserDoc);
@@ -68,30 +66,32 @@ describe('[db/models/user] - uniqueUser context', () => {
     
     describe('[db/models/user] - Non-unique usernames', () => {
     
-        const nonUniqueUserDoc = uniqueUserContext.unpersisted[user.modelName][2];
+        const userDoc = unpersistedUsers[2];
 
         it('Should not persist a user with a non-unique username', async () => {
-            const duplicateUser = new User(nonUniqueUserDoc);
-            await expect(duplicateUser.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+            const user = new User(userDoc);
+            await expect(user.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
     
     });
     
     describe('[db/models/user] - Non-unique emails', () => {
     
-        const nonUniqueUserDoc = uniqueUserContext.unpersisted[user.modelName][3];
+        const userDoc = unpersistedUsers[3];
 
         it('Should not persist a user with a non-unique email', async () => {
-            const duplicateUser = new User(nonUniqueUserDoc);
-            await expect(duplicateUser.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+            const user = new User(userDoc);
+            await expect(user.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
     
     });
     
     describe('[db/models/user] - Unique username and email', () => {
 
+        const userDoc = unpersistedUsers[0];
+
         it('Should persist a user with a required unique fields', async () => {
-            const user = new User(uniqueUserDoc);
+            const user = new User(userDoc);
             await expect(user.save()).to.eventually.be.eql(user);
         });
     
@@ -99,12 +99,15 @@ describe('[db/models/user] - uniqueUser context', () => {
     
     describe('[db/models/user] - Pre save hook', () => {
 
+        const userOne = persistedUsers[0];
+        const userOneId = userOne._id;
+
         it('Should persist a user with a hashed password', async () => {
     
-            const user = await User.findOne({ _id: persistedUserId });
+            const user = await User.findOne({ _id: userOneId });
     
             expect(user.password.length).to.equal(60);
-            expect(user.password).to.not.equal(persistedUser.password);
+            expect(user.password).to.not.equal(userOne.password);
     
         });
     
@@ -118,7 +121,9 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     beforeEach(db.init(baseUserRoleContext.persisted));
 
-    const persistedUserId = baseUserRoleContext.persisted[user.modelName][0]._id;
+    const persistedUsers = baseUserRoleContext.persisted[names.user.modelName];
+
+    const userOneId = persistedUsers[0]._id;
 
     describe('[db/models/user] - Pre remove hook', () => {
 
@@ -130,11 +135,11 @@ describe('[db/models/user] - baseUserRole context', () => {
 
         it('Should remove user-role association upon user deletion', async () => {
 
-            const user = await User.findOne({ _id: persistedUserId });
+            const user = await User.findOne({ _id: userOneId });
             await user.remove();
 
             const userRoleDocCount = await UserRole.countDocuments({
-                user: persistedUserId
+                user: userOneId
             });
 
             expect(userRoleDocCount).to.equal(0);
@@ -149,10 +154,10 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     describe('[db/models/user] - methods.getUserRoles', () => {
 
-        const users = baseUserRoleContext.persisted[user.modelName];
+        const persistedUsers = baseUserRoleContext.persisted[names.user.modelName];
 
-        const userTwoId = users[1]._id;
-        const userThreeId = users[2]._id;
+        const userTwoId = persistedUsers[1]._id;
+        const userThreeId = persistedUsers[2]._id;
 
         it('Should return an array of rolenames on user with roles', async () => {
 
@@ -181,10 +186,10 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     describe('[db/models/user] - methods.hasRole', () => {
 
-        const users = baseUserRoleContext.persisted[user.modelName];
+        const persistedUsers = baseUserRoleContext.persisted[names.user.modelName];
 
-        const userOneId = users[0]._id;
-        const userTwoId = users[2]._id;
+        const userOneId = persistedUsers[0]._id;
+        const userTwoId = persistedUsers[2]._id;
 
         it('Should return true on user that has a role', async () => {
 
@@ -214,7 +219,7 @@ describe('[db/models/user] - baseParentStudent context', () => {
 
     beforeEach(db.init(baseParentStudentContext.persisted));
 
-    const persisted = baseParentStudentContext.persisted;
+    const persistedUsers = baseParentStudentContext.persisted[names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
@@ -223,8 +228,6 @@ describe('[db/models/user] - baseParentStudent context', () => {
         beforeEach(() => {
             deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
         });
-
-        const persistedUsers = persisted[user.modelName];
 
         it('Should delete associated parentStudent records upon student user deletion', async () => {
             
@@ -298,7 +301,7 @@ describe('[db/models/user] - baseParentStudentInvitation context', () => {
             deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseParentStudentInvitationContext.persisted[user.modelName];
+        const persistedUsers = baseParentStudentInvitationContext.persisted[names.user.modelName];
 
         it('Should delete associated parentStudentInvitation records upon parent user deletion', async () => {
 
@@ -364,7 +367,7 @@ describe('[db/models/user] - baseUserFile context', () => {
 
     beforeEach(db.init(baseUserFileContext.persisted));
 
-    const persistedUsers = baseUserFileContext.persisted[user.modelName];
+    const persistedUsers = baseUserFileContext.persisted[names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
@@ -374,16 +377,16 @@ describe('[db/models/user] - baseUserFile context', () => {
             deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
         });
 
-        const userId = persistedUsers[0]._id;
+        const userOneId = persistedUsers[0]._id;
 
         it('Should delete all associated user files upon user deletion', async () => {
 
-            const user = await User.findOne({ _id: userId });
+            const user = await User.findOne({ _id: userOneId });
 
             await user.remove();
 
             const docCount = await UserFile.countDocuments({
-                user: userId
+                user: userOneId
             });
 
             expect(docCount).to.equal(0);
@@ -404,7 +407,7 @@ describe('[db/models/user] - baseParentFile context', () => {
 
     beforeEach(db.init(baseParentFileContext.persisted));
 
-    const persistedUsers = baseParentFileContext.persisted[user.modelName];
+    const persistedUsers = baseParentFileContext.persisted[names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
@@ -444,7 +447,7 @@ describe('[db/models/user] - baseStudentFile context', () => {
 
     beforeEach(db.init(baseStudentFileContext.persisted));
 
-    const persistedUsers = baseStudentFileContext.persisted[user.modelName];
+    const persistedUsers = baseStudentFileContext.persisted[names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
@@ -484,7 +487,7 @@ describe('[db/models/user] - baseTeacherFile context', () => {
 
     beforeEach(db.init(baseTeacherFileContext.persisted));
 
-    const persistedUsers = baseTeacherFileContext.persisted[user.modelName];
+    const persistedUsers = baseTeacherFileContext.persisted[names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
@@ -526,10 +529,10 @@ describe('[db/models/user] - userAvatar context', function() {
 
     this.beforeEach(dbStorage.init(userAvatarContext.persisted));
 
-    const persistedUsers = userAvatarContext.persisted.db[user.modelName];
-    const persistedAvatars = userAvatarContext.persisted.storage[user.modelName];
+    const persistedUsers = userAvatarContext.persisted.db[names.user.modelName];
+    const persistedAvatars = userAvatarContext.persisted.storage[names.user.modelName];
 
-    const unpersistedAvatars = userAvatarContext.unpersisted.storage[user.modelName];
+    const unpersistedAvatars = userAvatarContext.unpersisted.storage[names.user.modelName];
 
     describe('[db/models/user] - methods.saveAvatar', () => {
 
@@ -555,7 +558,7 @@ describe('[db/models/user] - userAvatar context', function() {
 
             await expect(userOne.saveAvatar(avatarFile, buffer)).to.eventually.be.eql(userOne);
 
-            const res = await storageApi.getMultipartObject(bucketNames[user.modelName], userOne.avatar.keyname);
+            const res = await storageApi.getMultipartObject(bucketNames[names.user.modelName], userOne.avatar.keyname);
 
             expect(res.buffer).to.eql(buffer);
             expect(res.contentType).to.equal(userOne.avatar.mimetype);
@@ -572,14 +575,14 @@ describe('[db/models/user] - userAvatar context', function() {
 
             await expect(userTwo.saveAvatar(avatarFile, buffer)).to.eventually.be.eql(userTwo);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[user.modelName]);
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.user.modelName]);
 
             const oldAvatarKeyname = persistedAvatars[0].keyname;
 
             expect(bucketKeys.length).to.equal(1);
             expect(bucketKeys).to.not.include(oldAvatarKeyname);
 
-            const res = await storageApi.getMultipartObject(bucketNames[user.modelName], userTwo.avatar.keyname);
+            const res = await storageApi.getMultipartObject(bucketNames[names.user.modelName], userTwo.avatar.keyname);
 
             expect(res.buffer).to.eql(buffer);
             expect(res.contentType).to.equal(userTwo.avatar.mimetype);
@@ -594,11 +597,11 @@ describe('[db/models/user] - userAvatar context', function() {
 
 describe('[db/models/user] - removeAllUserFiles context', function() {
 
-    this.timeout(20000);
+    this.timeout(30000);
 
     this.beforeEach(dbStorage.init(removeAllUserFilesContext.persisted));
 
-    const persistedUsers = removeAllUserFilesContext.persisted.db[user.modelName];
+    const persistedUsers = removeAllUserFilesContext.persisted.db[names.user.modelName];
 
     describe('[db/models/user] - pre remove hook', () => {
 
@@ -609,11 +612,11 @@ describe('[db/models/user] - removeAllUserFiles context', function() {
 
             await expect(userToDelete.remove()).to.eventually.be.fulfilled;
 
-            const avatarKeys = await storageApi.listBucketKeys(bucketNames[user.modelName]);
-            const userFileKeys = await storageApi.listBucketKeys(bucketNames[userFile.modelName]);
-            const parentFileKeys = await storageApi.listBucketKeys(bucketNames[parentFile.modelName]);
-            const studentFileKeys = await storageApi.listBucketKeys(bucketNames[studentFile.modelName]);
-            const teacherFileKeys = await storageApi.listBucketKeys(bucketNames[teacherFile.modelName]);
+            const avatarKeys = await storageApi.listBucketKeys(bucketNames[names.user.modelName]);
+            const userFileKeys = await storageApi.listBucketKeys(bucketNames[names.userFile.modelName]);
+            const parentFileKeys = await storageApi.listBucketKeys(bucketNames[names.parentFile.modelName]);
+            const studentFileKeys = await storageApi.listBucketKeys(bucketNames[names.studentFile.modelName]);
+            const teacherFileKeys = await storageApi.listBucketKeys(bucketNames[names.teacherFile.modelName]);
 
             expect(avatarKeys.length).to.equal(0);
             expect(userFileKeys.length).to.equal(0);
@@ -641,7 +644,7 @@ describe('[db/models/user] - baseUserEvent context', () => {
             deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseUserEventContext.persisted[user.modelName];
+        const persistedUsers = baseUserEventContext.persisted[names.user.modelName];
 
         it('Should delete all associated user events upon user deletion', async () => {
 
@@ -680,7 +683,7 @@ describe('[db/models/user] - baseClass context', () => {
             deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseClassContext.persisted[user.modelName];
+        const persistedUsers = baseClassContext.persisted[names.user.modelName];
 
         it('Should delete all associated classes upon user deletion', async () => {
 

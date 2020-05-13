@@ -32,10 +32,10 @@ describe('[db/models/class] - uniqueClass context', () => {
 
         it('Should not persist if user/title fields for a class are not unique', async () => {
 
-            const nonUniqueClassDoc = unpersistedClasses[0];
-            const nonUniqueClass = new Class(nonUniqueClassDoc);
+            const classDoc = unpersistedClasses[0];
+            const clazz = new Class(classDoc);
 
-            await expect(nonUniqueClass.save()).to.eventually.be.rejectedWith(mongo.MongoError);
+            await expect(clazz.save()).to.eventually.be.rejectedWith(mongo.MongoError);
 
         });
 
@@ -45,10 +45,10 @@ describe('[db/models/class] - uniqueClass context', () => {
 
         it('Should persist if user/title fields for a class is unique', async () => {
 
-            const uniqueClassDoc = unpersistedClasses[1];
-            const uniqueClass = new Class(uniqueClassDoc);
+            const classDoc = unpersistedClasses[1];
+            const clazz = new Class(classDoc);
 
-            await expect(uniqueClass.save()).to.eventually.be.eql(uniqueClass);
+            await expect(clazz.save()).to.eventually.be.eql(clazz);
 
         });
 
@@ -68,46 +68,46 @@ describe('[db/models/class] - baseClass context', () => {
 
         it('Should throw error if user is not found', async () => {
 
-            const unknownUserClassDoc = unpersistedClasses[0];
-            const unknownUserClass = new Class(unknownUserClassDoc);
+            const classDoc = unpersistedClasses[0];
+            const clazz = new Class(classDoc);
 
-            await expect(unknownUserClass.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.teacherNotFound);
+            await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.teacherNotFound);
 
         });
 
         it('Should throw error if user exists but the account is disabled', async () => {
 
-            const disabledUserClassDoc = unpersistedClasses[1];
-            const disabledUserClass = new Class(disabledUserClassDoc);
+            const classDoc = unpersistedClasses[1];
+            const clazz = new Class(classDoc);
 
-            await expect(disabledUserClass.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.teacherNotFound);
+            await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.teacherNotFound);
 
         });
 
         it('Should throw error if class owner is not a user with the teacher role assigned', async () => {
 
-            const notATeacherClassDoc = unpersistedClasses[2];
-            const notATeacherClass = new Class(notATeacherClassDoc);
+            const classDoc = unpersistedClasses[2];
+            const clazz = new Class(classDoc);
 
-            await expect(notATeacherClass.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notATeacher);
+            await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notATeacher);
 
         });
 
         it('Should throw error if class to persist fails validation or unique index requirements', async () => {
 
-            const invalidClassDoc = unpersistedClasses[3];
-            const invalidClass = new Class(invalidClassDoc);
+            const classDoc = unpersistedClasses[3];
+            const clazz = new Class(classDoc);
 
-            await expect(invalidClass.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
+            await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
 
         });
 
         it('Should persist properly a valid class model to an enabled teacher', async () => {
 
-            const validClassDoc = unpersistedClasses[4];
-            const validClass = new Class(validClassDoc);
+            const classDoc = unpersistedClasses[4];
+            const clazz = new Class(classDoc);
 
-            await expect(validClass.checkAndSave()).to.eventually.be.eql(validClass);
+            await expect(clazz.checkAndSave()).to.eventually.be.eql(clazz);
 
         });
 
