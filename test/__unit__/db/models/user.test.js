@@ -1,3 +1,5 @@
+const { Types } = require('mongoose');
+
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
@@ -242,6 +244,60 @@ describe('[db/models/user] - enabled', () => {
 
     it('Should set enabled flag to true as default upon user model instance creation', () => {
         expect(user.enabled).to.equal(true);
+    });
+
+});
+
+describe('[db/models/user] - statics.findByIdAndValidateRole', () => {
+
+    let userFindOneStub;
+    let userHasRoleStub;
+
+    const notFoundErrorMessage = 'User not found';
+    const invalidRoleErrorMessage = 'Invalid role permission';
+
+    const errorMessages = {
+        notFoundErrorMessage,
+        invalidRoleErrorMessage
+    };
+
+    const userId = new Types.ObjectId();
+
+    it('Should throw error if User.findOne (called with correct args) resolves to null', async () => {
+
+        userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+
+        await expect(User.findByIdAndValidateRole(userId, roleTypes.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, notFoundErrorMessage);
+
+        sinon.assert.calledOnceWithExactly(userFindOneStub, {
+            _id: userId,
+            enabled: true
+        });
+
+    });
+
+    it('Should throw error if resolved user.hasRole returns false', async () => {
+
+        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
+        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(false);
+
+        await expect(User.findByIdAndValidateRole(userId, roleTypes.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, invalidRoleErrorMessage);
+
+        sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_PARENT);
+
+    });
+
+    it('Should return user model instance if all promises resolve', async () => {
+
+        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
+        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
+
+        await expect(User.findByIdAndValidateRole(userId, roleTypes.ROLE_PARENT, errorMessages)).to.eventually.eql(user);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
     });
 
 });
