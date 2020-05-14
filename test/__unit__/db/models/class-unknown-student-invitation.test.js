@@ -5,9 +5,11 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { ClassUnknownStudentInvitation, ClassStudentInvitation, User } = require('../../../../src/db/models');
+const { ClassUnknownStudentInvitation, ClassStudentInvitation, User, Class } = require('../../../../src/db/models');
 const { classUnknownStudentInvitationDefinition } = require('../../../../src/db/schemas/class-unknown-student-invitation');
 const modelFunctions = require('../../../__fixtures__/functions/models');
+
+const { modelErrorMessages } = require('../../../../src/util/errors');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -84,6 +86,7 @@ describe('[db/models/class-unknown-student-invitation] - methods.checkAndSave', 
     let userFindOneStub;
     let classStudentInvitationCheckAndSaveStub;
     let classUnknownStudentInvitationSaveStub;
+    let classExistsStub;
 
     it('Should throw error if User.findOne (called with correct args) finds a user, a regular invitation is made but checkAndSave fails', async () => {
 
@@ -108,6 +111,19 @@ describe('[db/models/class-unknown-student-invitation] - methods.checkAndSave', 
         await expect(classUnknownStudentInvitation.checkAndSave()).to.eventually.include({
             class: classUnknownStudentInvitation.class,
             user: student._id
+        });
+
+    });
+
+    it('Should throw error if user is indeed unknown but Class.exists (called with correct args) resolves false', async () => {
+
+        userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+        classExistsStub = sinon.stub(Class, 'exists').resolves(false);
+
+        await expect(classUnknownStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classNotFound);
+
+        sinon.assert.calledOnceWithExactly(classExistsStub, {
+            _id: classUnknownStudentInvitation.class
         });
 
     });
