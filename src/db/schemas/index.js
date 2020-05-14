@@ -11,6 +11,8 @@ const { classDefinition, classSchema } = require('./class');
 const { classStudentDefinition, classStudentSchema } = require('./class-student');
 const { classStudentInvitationDefinition, classStudentInvitationSchema } = require('./class-student-invitation');
 const { classUnknownStudentInvitationDefinition, classUnknownStudentInvitationSchema } = require('./class-unknown-student-invitation');
+const { classFileDefinition, classFileSchema } = require('./class-file');
+const { classStudentFileDefinition, classStudentFileSchema } = require('./class-student-file');
 const shared = require('./shared');
 
 module.exports = {
@@ -29,7 +31,9 @@ module.exports = {
         classDefinition,
         classStudentDefinition,
         classStudentInvitationDefinition,
-        classUnknownStudentInvitationDefinition
+        classUnknownStudentInvitationDefinition,
+        classFileDefinition,
+        classStudentFileDefinition
     },
 
     schemas: {
@@ -46,7 +50,9 @@ module.exports = {
         classSchema,
         classStudentSchema,
         classStudentInvitationSchema,
-        classUnknownStudentInvitationSchema
+        classUnknownStudentInvitationSchema,
+        classFileSchema,
+        classStudentFileSchema
     },
 
     shared
