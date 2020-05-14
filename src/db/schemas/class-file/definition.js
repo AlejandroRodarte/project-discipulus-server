@@ -15,6 +15,11 @@ const classFileDefinition = {
     file: {
         type: sharedFileSchema,
         required: [true, 'A file is required']
+    },
+
+    published: {
+        type: Boolean,
+        default: false
     }
 
 };
