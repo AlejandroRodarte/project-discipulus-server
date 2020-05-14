@@ -131,6 +131,7 @@ describe('[db/models/class-unknown-student-invitation] - methods.checkAndSave', 
     it('Should throw error if classUnknownStudentInvitation.save fails', async () => {
 
         userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+        classExistsStub = sinon.stub(Class, 'exists').resolves(true);
         classUnknownStudentInvitationSaveStub = sinon.stub(classUnknownStudentInvitation, 'save').rejects();
 
         await expect(classUnknownStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -142,6 +143,7 @@ describe('[db/models/class-unknown-student-invitation] - methods.checkAndSave', 
     it('Should return class-unknown-student invitation on success', async () => {
 
         userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+        classExistsStub = sinon.stub(Class, 'exists').resolves(true);
         classUnknownStudentInvitationSaveStub = sinon.stub(classUnknownStudentInvitation, 'save').resolves(classUnknownStudentInvitation);
 
         await expect(classUnknownStudentInvitation.checkAndSave()).to.eventually.eql(classUnknownStudentInvitation);
