@@ -11,62 +11,62 @@ const names = {
     },
 
     sharedFile: {
-        collectionName: 'sharedfiles',
+        collectionName: 'sharedFiles',
         modelName: 'SharedFile'
     },
 
     userRole: {
-        collectionName: 'usersroles',
+        collectionName: 'userRoles',
         modelName: 'UserRole'
     },
 
     sharedParentStudent: {
-        collectionName: 'sharedparentsstudents',
+        collectionName: 'sharedParentStudents',
         modelName: 'SharedParentStudent'
     },
 
     parentStudent: {
-        collectionName: 'parentsstudents',
+        collectionName: 'parentStudents',
         modelName: 'ParentStudent'
     },
 
     parentStudentInvitation: {
-        collectionName: 'parentsstudentsinvitations',
+        collectionName: 'parentStudentInvitations',
         modelName: 'ParentStudentInvitation'
     },
 
     sharedUserFile: {
-        collectionName: 'shareduserfiles',
+        collectionName: 'sharedUserFiles',
         modelName: 'SharedUserFile'
     },
 
     userFile: {
-        collectionName: 'userfiles',
+        collectionName: 'userFiles',
         modelName: 'UserFile'
     },
 
     studentFile: {
-        collectionName: 'studentfiles',
+        collectionName: 'studentFiles',
         modelName: 'StudentFile'
     },
 
     parentFile: {
-        collectionName: 'parentfiles',
+        collectionName: 'parentFiles',
         modelName: 'ParentFile'
     },
 
     teacherFile: {
-        collectionName: 'teacherfiles',
+        collectionName: 'teacherFiles',
         modelName: 'TeacherFile'
     },
 
     sharedTimeRange: {
-        collectionName: 'sharedtimeranges',
+        collectionName: 'sharedTimeRanges',
         modelName: 'SharedTimeRange'
     },
 
     userEvent: {
-        collectionName: 'userevents',
+        collectionName: 'userEvents',
         modelName: 'UserEvent'
     },
 
@@ -76,27 +76,27 @@ const names = {
     },
 
     classStudent: {
-        collectionName: 'classstudents',
+        collectionName: 'classStudents',
         modelName: 'ClassStudent'
     },
 
     classStudentInvitation: {
-        collectionName: 'classstudentinvitations',
+        collectionName: 'classStudentInvitations',
         modelName: 'ClassStudentInvitation'
     },
 
     classUnknownStudentInvitation: {
-        collectionName: 'classunknownstudentinvitations',
+        collectionName: 'classUnknownStudentInvitations',
         modelName: 'ClassUnknownStudentInvitation'
     },
     
     classFile: {
-        collectionName: 'classfiles',
+        collectionName: 'classFiles',
         modelName: 'ClassFile'
     },
 
     classStudentFile: {
-        collectionName: 'classstudentfiles',
+        collectionName: 'classStudentFiles',
         modelName: 'ClassStudentFile'
     }
 
