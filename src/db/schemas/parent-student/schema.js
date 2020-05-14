@@ -39,22 +39,18 @@ parentStudentSchema.methods.checkAndSave = async function() {
             invalidRoleErrorMessage: modelErrorMessages.notAStudent
         });
 
-    } catch (e) {
-        throw e;
-    }
+        const invitation = await ParentStudentInvitation.findOne({
+            parent,
+            student
+        });
+    
+        if (!invitation) {
+            throw new Error(modelErrorMessages.parentStudentInvitationRequired);
+        }
 
-    const invitation = await ParentStudentInvitation.findOne({
-        parent,
-        student
-    });
-
-    if (!invitation) {
-        throw new Error(modelErrorMessages.parentStudentInvitationRequired);
-    }
-
-    try {
         await parentStudent.save();
         await invitation.remove();
+
     } catch (e) {
         throw e;
     }

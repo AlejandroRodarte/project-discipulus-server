@@ -162,18 +162,16 @@ classSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     clazz.avatar = avatarDoc;
 
     try {
-        await clazz.save();
-    } catch (e) {
-        throw e;
-    }
 
-    try {
+        await clazz.save();
+
         await storageApi.createMultipartObject(bucketNames[names.class.modelName], {
             keyname: clazz.avatar.keyname,
             buffer,
             size: buffer.length,
             mimetype: clazz.avatar.mimetype
         });
+
     } catch (e) {
 
         clazz.avatar = undefined;

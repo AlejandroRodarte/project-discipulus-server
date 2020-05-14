@@ -256,18 +256,16 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     userModel.avatar = avatarDoc;
 
     try {
-        await userModel.save();
-    } catch (e) {
-        throw e;
-    }
 
-    try {
+        await userModel.save();
+
         await storageApi.createMultipartObject(bucketNames[names.user.modelName], {
             keyname: userModel.avatar.keyname,
             buffer,
             size: buffer.length,
             mimetype: userModel.avatar.mimetype
         });
+
     } catch (e) {
 
         userModel.avatar = undefined;

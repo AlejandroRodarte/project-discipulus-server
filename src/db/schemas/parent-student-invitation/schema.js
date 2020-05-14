@@ -39,21 +39,17 @@ parentStudentInvitationSchema.methods.checkAndSave = async function() {
             invalidRoleErrorMessage: modelErrorMessages.notAParent
         });
 
-    } catch (e) {
-        throw e;
-    }
+        const parentStudentExists = await ParentStudent.exists({
+            parent,
+            student
+        });
+    
+        if (parentStudentExists) {
+            throw new Error(modelErrorMessages.parentStudentAlreadyExists);
+        }
 
-    const parentStudentExists = await ParentStudent.exists({
-        parent,
-        student
-    });
-
-    if (parentStudentExists) {
-        throw new Error(modelErrorMessages.parentStudentAlreadyExists);
-    }
-
-    try {
         await parentStudentInvitation.save();
+
     } catch (e) {
         throw e;
     }
