@@ -88,6 +88,16 @@ const names = {
     classUnknownStudentInvitation: {
         collectionName: 'classunknownstudentinvitations',
         modelName: 'ClassUnknownStudentInvitation'
+    },
+    
+    classFiles: {
+        collectionName: 'classfiles',
+        modelName: 'ClassFile'
+    },
+
+    classStudentFiles: {
+        collectionName: 'classstudentfiles',
+        modelName: 'ClassStudentFile'
     }
 
 };
