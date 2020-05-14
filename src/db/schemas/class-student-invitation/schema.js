@@ -24,40 +24,33 @@ classStudentInvitationSchema.methods.checkAndSave = async function() {
     const ClassStudent = classStudentInvitation.model(names.classStudent.modelName);
 
     try {
+
         await User.findByIdAndValidateRole(classStudentInvitation.user, roleTypes.ROLE_STUDENT, {
             notFoundErrorMessage: modelErrorMessages.studentNotFound,
             invalidRoleErrorMessage: modelErrorMessages.notAStudent
         });
-    } catch (e) {
-        throw e;
-    }
 
-    const clazz = await Class.findOne({ _id: classStudentInvitation.class });
+        await Class.findByIdAndCheckForSelfAssociation({
+            classId: classStudentInvitation.class,
+            studentId: classStudentInvitation.user
+        });
 
-    if (!clazz) {
-        throw new Error(modelErrorMessages.classNotFound)
-    }
+        const classStudentExists = await ClassStudent.exists({
+            class: classStudentInvitation.class,
+            user: classStudentInvitation.user
+        });
+    
+        if (classStudentExists) {
+            throw new Error(modelErrorMessages.classStudentAlreadyExists);
+        }
 
-    if (clazz.user.toHexString() === classStudentInvitation.user.toHexString()) {
-        throw new Error(modelErrorMessages.selfTeaching);
-    }
-
-    const classStudentExists = await ClassStudent.exists({
-        class: classStudentInvitation.class,
-        user: classStudentInvitation.user
-    });
-
-    if (classStudentExists) {
-        throw new Error(modelErrorMessages.classStudentAlreadyExists);
-    }
-
-    try {
         await classStudentInvitation.save();
+
+        return classStudentInvitation;
+
     } catch (e) {
         throw e;
     }
-
-    return classStudentInvitation;
 
 };
 
