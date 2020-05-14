@@ -13,7 +13,9 @@ const {
     TeacherFile,
     ParentStudentInvitation,
     UserEvent,
-    Class
+    Class,
+    ClassStudent,
+    ClassStudentInvitation
 } = require('../../../../src/db/models');
 
 const { 
@@ -26,7 +28,8 @@ const {
     baseTeacherFileContext,
     baseParentStudentInvitationContext,
     baseUserEventContext,
-    baseClassContext
+    baseClassContext,
+    baseClassStudentContext
 } = require('../../../__fixtures__/models');
 
 const { userAvatarContext, removeAllUserFilesContext } = require('../../../__fixtures__/models-storage');
@@ -707,5 +710,59 @@ describe('[db/models/user] - baseClass context', () => {
     });
 
     afterEach(db.teardown(baseUserEventContext.persisted));
+
+});
+
+describe('[db/models/user] - baseClassStudent context', () => {
+
+    beforeEach(db.init(baseClassStudentContext.persisted));
+
+    describe('[db/models/user] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
+        const persistedUsers = baseClassStudentContext.persisted[names.user.modelName];
+
+        it('Should delete all associated class-student records upon student deletion', async () => {
+
+            const userTwoId = persistedUsers[2]._id;
+            const userTwo = await User.findOne({ _id: userTwoId });
+
+            await userTwo.remove();
+
+            const docCount = await ClassStudent.countDocuments({
+                user: userTwo._id
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        it('Should delete all associated class-student-invitation records upon student deletion', async () => {
+
+            const userThreeId = persistedUsers[2]._id;
+            const userThree = await User.findOne({ _id: userThreeId });
+
+            await userThree.remove();
+
+            const docCount = await ClassStudentInvitation.countDocuments({
+                user: userThree._id
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseClassStudentContext.persisted));
 
 });
