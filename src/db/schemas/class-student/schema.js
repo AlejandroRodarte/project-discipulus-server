@@ -70,7 +70,7 @@ classStudentSchema.methods.checkKnownInvitationAndSave = async function() {
 
 };
 
-classStudentSchema.methods.saveUnknownInvitation = async function() {
+classStudentSchema.methods.checkUnknownInvitationAndSave = async function() {
 
     const classStudent = this;
     const ClassUnknownStudentInvitation = classStudent.model(names.classUnknownStudentInvitation.modelName);
@@ -94,8 +94,6 @@ classStudentSchema.methods.saveUnknownInvitation = async function() {
     } catch (e) {
         throw e;
     }
-
-    // invitation should exist before persisting (ClassStudentInvitation)
 
     return classStudent;
 

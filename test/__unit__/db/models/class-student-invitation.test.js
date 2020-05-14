@@ -24,7 +24,7 @@ const [studentDoc] = modelFunctions.generateFakeUsers(1, { fakeToken: true });
 const classDoc = {
 
     _id: new Types.ObjectId(),
-    user: classStudentInvitationDoc.user,
+    user: new Types.ObjectId(),
 
     ...modelFunctions.generateFakeClass({
         titleWords: 5,
