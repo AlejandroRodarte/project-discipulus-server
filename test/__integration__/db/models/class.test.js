@@ -1,16 +1,17 @@
 const chai = require('chai');
+const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo, Error: MongooseError } = require('mongoose');
 
-const Class = require('../../../../src/db/models/class');
+const { Class, ClassStudent, ClassStudentInvitation, ClassUnknownStudentInvitation } = require('../../../../src/db/models');
 
-const { uniqueClassContext, baseClassContext } = require('../../../__fixtures__/models');
+const { uniqueClassContext, baseClassContext, baseClassStudentContext } = require('../../../__fixtures__/models');
 const { classAvatarContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
-const { class: clazz } = require('../../../../src/db/names');
+const names = require('../../../../src/db/names');
 
 const storageApi = require('../../../../src/api/storage');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
@@ -26,7 +27,7 @@ describe('[db/models/class] - uniqueClass context', () => {
 
     beforeEach(db.init(uniqueClassContext.persisted));
 
-    const unpersistedClasses = uniqueClassContext.unpersisted[clazz.modelName];
+    const unpersistedClasses = uniqueClassContext.unpersisted[names.class.modelName];
 
     describe('[db/models/class] - Non unique user/title fields', () => {
 
@@ -62,7 +63,7 @@ describe('[db/models/class] - baseClass context', () => {
 
     beforeEach(db.init(baseClassContext.persisted));
 
-    const unpersistedClasses = baseClassContext.unpersisted[clazz.modelName];
+    const unpersistedClasses = baseClassContext.unpersisted[names.class.modelName];
 
     describe('[db/models/class] - methods.checkAndSave', () => {
 
@@ -123,10 +124,10 @@ describe('[db/models/class] - classAvatar context', function() {
 
     this.beforeEach(dbStorage.init(classAvatarContext.persisted));
 
-    const persistedClasses = classAvatarContext.persisted.db[clazz.modelName];
-    const persistedClassAvatars = classAvatarContext.persisted.storage[clazz.modelName];
+    const persistedClasses = classAvatarContext.persisted.db[names.class.modelName];
+    const persistedClassAvatars = classAvatarContext.persisted.storage[names.class.modelName];
 
-    const unpersistedClassAvatars = classAvatarContext.unpersisted.storage[clazz.modelName];
+    const unpersistedClassAvatars = classAvatarContext.unpersisted.storage[names.class.modelName];
 
     describe('[db/models/class] - methods.saveAvatar', () => {
 
@@ -152,7 +153,7 @@ describe('[db/models/class] - classAvatar context', function() {
 
             await expect(classTwo.saveAvatar(pngImage, buffer)).to.eventually.be.eql(classTwo);
 
-            const res = await storageApi.getMultipartObject(bucketNames[clazz.modelName], classTwo.avatar.keyname);
+            const res = await storageApi.getMultipartObject(bucketNames[names.class.modelName], classTwo.avatar.keyname);
 
             expect(res.buffer).to.eql(buffer);
             expect(res.contentType).to.eql(classTwo.avatar.mimetype);
@@ -169,14 +170,14 @@ describe('[db/models/class] - classAvatar context', function() {
 
             await expect(classOne.saveAvatar(pngImage, buffer)).to.eventually.be.eql(classOne);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[clazz.modelName]);
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.class.modelName]);
 
             const oldAvatarKeyname = persistedClassAvatars[0].keyname;
 
             expect(bucketKeys.length).to.equal(1);
             expect(bucketKeys).to.not.include(oldAvatarKeyname);
 
-            const res = await storageApi.getMultipartObject(bucketNames[clazz.modelName], classOne.avatar.keyname);
+            const res = await storageApi.getMultipartObject(bucketNames[names.class.modelName], classOne.avatar.keyname);
 
             expect(res.buffer).to.eql(buffer);
             expect(res.contentType).to.eql(classOne.avatar.mimetype);
@@ -196,7 +197,7 @@ describe('[db/models/class] - classAvatar context', function() {
 
             await classOne.remove();
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[clazz.modelName]);
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.class.modelName]);
             expect(bucketKeys).to.not.include(classOneAvatarKeyname);
 
         });
@@ -206,3 +207,64 @@ describe('[db/models/class] - classAvatar context', function() {
     this.afterEach(dbStorage.teardown(classAvatarContext.persisted));
 
 });
+
+describe('[db/models/class] - baseClassStudent context', () => {
+
+    beforeEach(db.init(baseClassStudentContext.persisted));
+
+    describe('[db/models/class] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        const persistedClasses = baseClassStudentContext.persisted[names.class.modelName];
+        const classOneId = persistedClasses[0]._id;
+
+        beforeEach(async () => {
+
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+
+            const clazz = await Class.findOne({ _id: classOneId });
+            await clazz.remove();
+
+        });
+
+        it('Should delete all associated class-student records upon class removal', async () => {
+
+            const docCount = await ClassStudent.countDocuments({
+                class: classOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        it('Should delete all associated class-student-invitation records upon class removal', async () => {
+
+            const docCount = await ClassStudentInvitation.countDocuments({
+                class: classOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        it('Should delete all associated class-unknown-student-invitation records upon class removal', async () => {
+
+            const docCount = await ClassUnknownStudentInvitation.countDocuments({
+                class: classOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseClassStudentContext.persisted));
+
+});
+
