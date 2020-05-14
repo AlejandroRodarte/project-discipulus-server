@@ -1,3 +1,5 @@
+const { Types } = require('mongoose');
+
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
@@ -169,6 +171,46 @@ describe('[db/models/class] - Valid class', () => {
 
     it('Should validate a class that meets all validation requirements', () => {
         testForValidModel(clazz);
+    });
+
+});
+
+describe('[db/models/class] - statics.findByIdAndCheckForSelfAssociation', () => {
+
+    let classFindOneStub;
+    
+    const ids = {
+        classId: clazz._id,
+        studentId: new Types.ObjectId()
+    };
+
+    it('Should throw error if Class.findOne (called with right args) resolves null', async () => {
+
+        classFindOneStub = sinon.stub(Class, 'findOne').resolves(null);
+        await expect(Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.be.rejectedWith(Error, modelErrorMessages.classNotFound);
+
+        sinon.assert.calledOnceWithExactly(classFindOneStub, {
+            _id: ids.classId
+        });
+
+    });
+
+    it('Should throw error if class.user equals studentId (self-association)', async () => {
+
+        clazz.user = ids.studentId;
+
+        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+        await expect(Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfTeaching);
+
+    });
+
+    it('Should return class instance if all checks pass', async () => {
+        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+        await expect(Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.eql(clazz);
+    });
+
+    afterEach(() => {
+        sinon.restore();
     });
 
 });
