@@ -105,6 +105,24 @@ classSchema.pre('remove', async function() {
 
 });
 
+classSchema.statics.findByIdAndCheckForSelfAssociation = async function({ classId, studentId }) {
+
+    const Class = this;
+
+    const clazz = await Class.findOne({ _id: classId });
+
+    if (!clazz) {
+        throw new Error(modelErrorMessages.classNotFound);
+    }
+
+    if (clazz.user.toHexString() === studentId.toHexString()) {
+        throw new Error(modelErrorMessages.selfTeaching);
+    }
+
+    return clazz;
+
+};
+
 classSchema.methods.checkAndSave = async function() {
 
     const clazz = this;

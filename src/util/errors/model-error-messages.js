@@ -12,5 +12,7 @@ module.exports = {
     fileStorePermissionDenied: 'You do not have enough permissions to store a file here',
     classStudentAlreadyExists: 'The student is already registered at your class',
     selfTeaching: 'You can not be a student of your own class',
-    classNotFound: 'The class was not found'
+    classNotFound: 'The class was not found',
+    classStudentInvitationRequired: 'An invitation is required before performing a student/class association',
+    classUnknownStudentInvitationRequired: 'An invitation is required before performing a student/class association'
 };
