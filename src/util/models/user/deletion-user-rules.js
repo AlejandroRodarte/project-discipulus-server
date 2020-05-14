@@ -45,6 +45,18 @@ const deletionUserRules = {
             fieldName: 'user',
             deleteFiles: true,
             deleteMode: deleteModes.DELETE_MANY
+        },
+        {
+            modelName: names.classStudent.modelName,
+            fieldName: 'user',
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
+        },
+        {
+            modelName: names.classStudentInvitation.modelName,
+            fieldName: 'user',
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
         }
     ],
 
