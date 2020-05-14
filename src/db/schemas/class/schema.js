@@ -10,6 +10,13 @@ const bucketNames = require('../../../api/storage/config/bucket-names');
 
 const { modelErrorMessages } = require('../../../util/errors');
 
+const deletionClassRules = require('../../../util/models/class/deletion-class-rules');
+
+const storageApi = require('../../../api/storage');
+const bucketNames = require('../../../api/storage/config/bucket-names');
+
+const deleteModes = require('../../../util/delete-modes');
+
 const schemaOpts = {
     collection: names.class.collectionName
 };
@@ -48,6 +55,55 @@ classSchema.pre('remove', async function() {
             throw e;
         }
 
+    }
+
+    try {
+
+        for (const rule of deletionClassRules) {
+            
+            if (rule.deleteFiles) {
+
+                const fileDocs = await user.model(rule.modelName).find({
+                    [rule.fieldName]: clazz._id
+                });
+
+                const keynames = fileDocs.map(fileDoc => fileDoc.file.keyname)
+
+                await storageApi.deleteBucketObjects(bucketNames[rule.modelName], keynames);
+
+            }
+
+            switch (rule.deleteMode) {
+
+                case deleteModes.DELETE_MANY:
+
+                    await clazz.model(rule.modelName).deleteMany({
+                        [rule.fieldName]: clazz._id
+                    });
+
+                    break;
+
+                case deleteModes.REMOVE:
+
+                    const docs = await clazz.model(rule.modelName).find({
+                        [rule.fieldName]: clazz._id
+                    });
+
+                    for (const doc of docs) {
+                        await doc.remove();
+                    }
+
+                    break;
+
+                default:
+                    break;
+
+            }
+
+        }
+
+    } catch (e) {
+        throw e;
     }
 
 });
