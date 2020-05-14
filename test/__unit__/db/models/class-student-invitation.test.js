@@ -31,3 +31,11 @@ describe('[db/models/class-student-invitation] - Invalid user', () => {
     });
 
 });
+
+describe('[db/models/class-student-invitation] - Valid model', () => {
+
+    it('Should validate correct class-student invitation model', () => {
+        modelFunctions.testForValidModel(classStudentInvitation);
+    })
+
+});
