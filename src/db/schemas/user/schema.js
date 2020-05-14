@@ -19,55 +19,55 @@ const schemaOpts = {
 
 const userSchema = new Schema(userDefinition, schemaOpts);
 
-userSchema.virtual('userroles', {
+userSchema.virtual('userRoles', {
     ref: names.userRole.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
-userSchema.virtual('parentstudents', {
+userSchema.virtual('parentStudents', {
     ref: names.parentStudent.modelName,
     localField: '_id',
     foreignField: 'parent'
 });
 
-userSchema.virtual('studentparents', {
+userSchema.virtual('studentParents', {
     ref: names.parentStudent.modelName,
     localField: '_id',
     foreignField: 'student'
 });
 
-userSchema.virtual('parentstudentinvitations', {
+userSchema.virtual('parentStudentInvitations', {
     ref: names.parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'parent'
 });
 
-userSchema.virtual('studentparentinvitations', {
+userSchema.virtual('studentParentInvitations', {
     ref: names.parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'student'
 });
 
-userSchema.virtual('userfiles', {
+userSchema.virtual('userFiles', {
     ref: names.userFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
-userSchema.virtual('parentfiles', {
+userSchema.virtual('parentFiles', {
     ref: names.parentFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
-userSchema.virtual('teacherfiles', {
+userSchema.virtual('teacherFiles', {
     ref: names.teacherFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
-userSchema.virtual('studentfiles', {
+userSchema.virtual('studentFiles', {
     ref: names.studentFile.modelName,
     localField: '_id',
     foreignField: 'user'
@@ -79,13 +79,13 @@ userSchema.virtual('events', {
     foreignField: 'user'
 });
 
-userSchema.virtual('studentclasses', {
+userSchema.virtual('studentClasses', {
     ref: names.classStudent.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
-userSchema.virtual('studentclassinvitations', {
+userSchema.virtual('studentClassInvitations', {
     ref: names.classStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'user'

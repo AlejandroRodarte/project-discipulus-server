@@ -9,7 +9,7 @@ const schemaOpts = {
 
 const roleSchema = new Schema(roleDefinition, schemaOpts);
 
-roleSchema.virtual('roleusers', {
+roleSchema.virtual('roleUsers', {
     ref: userRole.modelName,
     localField: '_id',
     foreignField: 'role'
