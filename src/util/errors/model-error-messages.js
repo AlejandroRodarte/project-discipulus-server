@@ -11,5 +11,6 @@ module.exports = {
     userNotFoundOrDisabled: 'Your account is currently disabled or has been deleted',
     fileStorePermissionDenied: 'You do not have enough permissions to store a file here',
     classStudentAlreadyExists: 'The student is already registered at your class',
-    selfTeaching: 'You can not be a student of your own class'
+    selfTeaching: 'You can not be a student of your own class',
+    classNotFound: 'The class was not found'
 };

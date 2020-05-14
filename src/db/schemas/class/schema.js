@@ -12,9 +12,6 @@ const { modelErrorMessages } = require('../../../util/errors');
 
 const deletionClassRules = require('../../../util/models/class/deletion-class-rules');
 
-const storageApi = require('../../../api/storage');
-const bucketNames = require('../../../api/storage/config/bucket-names');
-
 const deleteModes = require('../../../util/delete-modes');
 
 const schemaOpts = {

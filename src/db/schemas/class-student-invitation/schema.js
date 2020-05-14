@@ -8,7 +8,7 @@ const roleTypes = require('../../../util/roles');
 const { modelErrorMessages } = require('../../../util/errors');
 
 const schemaOpts = {
-    collection: classStudentInvitation.collectionName
+    collection: names.classStudentInvitation.collectionName
 };
 
 const classStudentInvitationSchema = new Schema(classStudentInvitationDefinition, schemaOpts);
@@ -34,6 +34,10 @@ classStudentInvitationSchema.methods.checkAndSave = async function() {
 
     const clazz = await Class.findOne({ _id: classStudentInvitation.class });
 
+    if (!clazz) {
+        throw new Error(modelErrorMessages.classNotFound)
+    }
+
     if (clazz.user.toHexString() === classStudentInvitation.user.toHexString()) {
         throw new Error(modelErrorMessages.selfTeaching);
     }
@@ -43,7 +47,7 @@ classStudentInvitationSchema.methods.checkAndSave = async function() {
         user: classStudentInvitation.user
     });
 
-    if (!classStudentExists) {
+    if (classStudentExists) {
         throw new Error(modelErrorMessages.classStudentAlreadyExists);
     }
 

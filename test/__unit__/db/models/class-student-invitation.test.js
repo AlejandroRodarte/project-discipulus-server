@@ -1,18 +1,55 @@
 const { Types } = require('mongoose');
-const expect = require('chai').expect;
 
-const { ClassStudentInvitation } = require('../../../../src/db/models');
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+const sinon = require('sinon');
+
+const { ClassStudentInvitation, ClassStudent, Class, User } = require('../../../../src/db/models');
 const { classStudentInvitationDefinition } = require('../../../../src/db/schemas/class-student-invitation');
 const modelFunctions = require('../../../__fixtures__/functions/models');
+
+const { modelErrorMessages } = require('../../../../src/util/errors');
+const roleTypes = require('../../../../src/util/roles');
+
+const expect = chai.expect;
+chai.use(chaiAsPromised);
 
 const classStudentInvitationDoc = {
     class: new Types.ObjectId(),
     user: new Types.ObjectId()
 };
 
-let classStudentInvitation = new ClassStudentInvitation(classStudentInvitationDoc);
+const [studentDoc] = modelFunctions.generateFakeUsers(1, { fakeToken: true });
 
-beforeEach(() => classStudentInvitation = modelFunctions.getNewModelInstance(ClassStudentInvitation, classStudentInvitationDoc));
+const classDoc = {
+
+    _id: new Types.ObjectId(),
+    user: classStudentInvitationDoc.user,
+
+    ...modelFunctions.generateFakeClass({
+        titleWords: 5,
+        descriptionWords: 10,
+        sessions: [[0, 10]]
+    })
+
+};
+
+const classStudentDoc = {
+    class: classStudentInvitationDoc.class,
+    user: classStudentInvitationDoc.user
+};
+
+let classStudentInvitation = new ClassStudentInvitation(classStudentInvitationDoc);
+let clazz = new Class(classDoc);
+let classStudent = new ClassStudent(classStudentDoc);
+let student = new User(studentDoc);
+
+beforeEach(() => {
+    classStudentInvitation = modelFunctions.getNewModelInstance(ClassStudentInvitation, classStudentInvitationDoc);
+    clazz = modelFunctions.getNewModelInstance(Class, classDoc);
+    classStudent = modelFunctions.getNewModelInstance(ClassStudent, classStudentDoc);
+    student = modelFunctions.getNewModelInstance(User, studentDoc);
+});
 
 describe('[db/models/class-student-invitation] - Invalid class', () => {
 
@@ -37,5 +74,95 @@ describe('[db/models/class-student-invitation] - Valid model', () => {
     it('Should validate correct class-student invitation model', () => {
         modelFunctions.testForValidModel(classStudentInvitation);
     })
+
+});
+
+describe('[db/models/class-student-invitation] - methods.checkAndSave', () => {
+
+    let userFindByIdAndValidateRoleStub;
+    let classFindOneStub;
+    let classStudentExistsStub;
+    let classStudentInvitationSaveStub;
+
+    it('Should throw error if user.findByIdAndValidateRoleStub (with correct args) throws error on student search', async () => {
+
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').rejects();
+        await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, classStudentInvitation.user, roleTypes.ROLE_STUDENT, {
+            notFoundErrorMessage: modelErrorMessages.studentNotFound,
+            invalidRoleErrorMessage: modelErrorMessages.notAStudent
+        });
+
+    });
+
+    it('Should throw error if Class.findOne (called with correct args) resolves to null', async () => {
+
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
+        classFindOneStub = sinon.stub(Class, 'findOne').resolves(null);
+
+        await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classNotFound);
+
+        sinon.assert.calledOnceWithExactly(classFindOneStub, {
+            _id: classStudentInvitation.class
+        });
+
+    });
+
+    it('Should throw error if class.user _id (teacher) matches the invitation user (student)', async () => {
+
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
+        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+
+        await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfTeaching);
+
+    });
+
+    it('Should throw error if ClassStudent.exists (called with correct args) resolvs to true (student already associated to class)', async () => {
+
+        clazz.user = new Types.ObjectId();
+
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
+        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+        classStudentExistsStub = sinon.stub(ClassStudent, 'exists').resolves(true);
+
+        await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classStudentAlreadyExists);
+
+        sinon.assert.calledOnceWithExactly(classStudentExistsStub, {
+            class: classStudentInvitation.class,
+            user: classStudentInvitation.user
+        });
+
+    });
+
+    it('Should throw error if classStudentInvitation.save happens to fail', async () => {
+
+        clazz.user = new Types.ObjectId();
+
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
+        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+        classStudentExistsStub = sinon.stub(ClassStudent, 'exists').resolves(false);
+        classStudentInvitationSaveStub = sinon.stub(classStudentInvitation, 'save').rejects();
+
+        await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+    });
+
+    it('Should return class student invitation instance if all required checks pass', async () => {
+
+        clazz.user = new Types.ObjectId();
+
+        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
+        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+        classStudentExistsStub = sinon.stub(ClassStudent, 'exists').resolves(false);
+        classStudentInvitationSaveStub = sinon.stub(classStudentInvitation, 'save').resolves(classStudentInvitation);
+
+        await expect(classStudentInvitation.checkAndSave()).to.eventually.eql(classStudentInvitation);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
+    });
 
 });
