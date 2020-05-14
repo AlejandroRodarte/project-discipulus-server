@@ -40,6 +40,12 @@ classSchema.virtual('classunknownstudentinvitations', {
     foreignField: 'class'
 });
 
+classSchema.virtual('classfiles', {
+    ref: names.classFile.modelName,
+    localField: '_id',
+    foreignField: 'class'
+});
+
 classSchema.pre('remove', async function() {
 
     const clazz = this;

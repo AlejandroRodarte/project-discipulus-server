@@ -15,6 +15,12 @@ const classStudentSchema = new Schema(classStudentDefinition, schemaOpts);
 
 classStudentSchema.index({ class: 1, user: 1 }, { unique: true });
 
+classStudentSchema.virtual('classstudentfiles', {
+    ref: names.classStudentFile.modelName,
+    localField: '_id',
+    foreignField: 'classStudent'
+});
+
 classStudentSchema.methods.checkUser = async function() {
 
     const classStudent = this;
