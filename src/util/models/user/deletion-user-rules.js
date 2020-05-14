@@ -50,7 +50,7 @@ const deletionUserRules = {
             modelName: names.classStudent.modelName,
             fieldName: 'user',
             deleteFiles: false,
-            deleteMode: deleteModes.DELETE_MANY
+            deleteMode: deleteModes.REMOVE
         },
         {
             modelName: names.classStudentInvitation.modelName,

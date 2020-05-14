@@ -7,6 +7,9 @@ const roleTypes = require('../../../util/roles');
 
 const { modelErrorMessages } = require('../../../util/errors');
 
+const storageApi = require('../../../api/storage');
+const bucketNames = require('../../../api/storage/config/bucket-names');
+
 const schemaOpts = {
     collection: names.classStudent.collectionName
 };
@@ -14,6 +17,30 @@ const schemaOpts = {
 const classStudentSchema = new Schema(classStudentDefinition, schemaOpts);
 
 classStudentSchema.index({ class: 1, user: 1 }, { unique: true });
+
+classStudentSchema.pre('remove', async function() {
+
+    const classStudent = this;
+
+    const classStudentFiles = await classStudent.model(names.classStudentFile.modelName).find({
+        classStudent: classStudent._id
+    });
+
+    const keynames = classStudentFiles.map(fileDoc => fileDoc.file.keyname);
+
+    try {
+
+        await storageApi.deleteBucketObjects(bucketNames[names.classStudentFile.modelName], keynames);
+
+        await classStudent.model(names.classStudentFile.modelName).deleteMany({
+            classStudent: classStudent._id
+        });
+
+    } catch {
+        throw e;
+    }
+
+});
 
 classStudentSchema.virtual('classStudentFiles', {
     ref: names.classStudentFile.modelName,

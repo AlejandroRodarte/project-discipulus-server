@@ -7,7 +7,7 @@ const deletionClassRules = [
         modelName: names.classStudent.modelName,
         fieldName: 'class',
         deleteFiles: false,
-        deleteMode: deleteModes.DELETE_MANY
+        deleteMode: deleteModes.REMOVE
     },
     {
         modelName: names.classStudentInvitation.modelName,
@@ -19,6 +19,12 @@ const deletionClassRules = [
         modelName: names.classUnknownStudentInvitation.modelName,
         fieldName: 'class',
         deleteFiles: false,
+        deleteMode: deleteModes.DELETE_MANY
+    },
+    {
+        modelName: names.classFile.modelName,
+        fieldName: 'class',
+        deleteFiles: true,
         deleteMode: deleteModes.DELETE_MANY
     }
 ];
