@@ -34,20 +34,13 @@ const classDoc = {
 
 };
 
-const classStudentDoc = {
-    class: classStudentInvitationDoc.class,
-    user: classStudentInvitationDoc.user
-};
-
 let classStudentInvitation = new ClassStudentInvitation(classStudentInvitationDoc);
 let clazz = new Class(classDoc);
-let classStudent = new ClassStudent(classStudentDoc);
 let student = new User(studentDoc);
 
 beforeEach(() => {
     classStudentInvitation = modelFunctions.getNewModelInstance(ClassStudentInvitation, classStudentInvitationDoc);
     clazz = modelFunctions.getNewModelInstance(Class, classDoc);
-    classStudent = modelFunctions.getNewModelInstance(ClassStudent, classStudentDoc);
     student = modelFunctions.getNewModelInstance(User, studentDoc);
 });
 
@@ -80,7 +73,7 @@ describe('[db/models/class-student-invitation] - Valid model', () => {
 describe('[db/models/class-student-invitation] - methods.checkAndSave', () => {
 
     let userFindByIdAndValidateRoleStub;
-    let classFindOneStub;
+    let classFindByIdAndCheckForSelfAssociation;
     let classStudentExistsStub;
     let classStudentInvitationSaveStub;
 
@@ -96,25 +89,17 @@ describe('[db/models/class-student-invitation] - methods.checkAndSave', () => {
 
     });
 
-    it('Should throw error if Class.findOne (called with correct args) resolves to null', async () => {
+    it('Should throw error if Class.findByIdAndCheckForSelfAssociation (called with correct args) rejects', async () => {
 
         userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
-        classFindOneStub = sinon.stub(Class, 'findOne').resolves(null);
+        classFindByIdAndCheckForSelfAssociation = sinon.stub(Class, 'findByIdAndCheckForSelfAssociation').rejects();
 
-        await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classNotFound);
+        await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(classFindOneStub, {
-            _id: classStudentInvitation.class
+        sinon.assert.calledOnceWithExactly(classFindByIdAndCheckForSelfAssociation, {
+            classId: classStudentInvitation.class,
+            studentId: classStudentInvitation.user
         });
-
-    });
-
-    it('Should throw error if class.user _id (teacher) matches the invitation user (student)', async () => {
-
-        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
-        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
-
-        await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfTeaching);
 
     });
 
@@ -123,7 +108,7 @@ describe('[db/models/class-student-invitation] - methods.checkAndSave', () => {
         clazz.user = new Types.ObjectId();
 
         userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
-        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+        classFindByIdAndCheckForSelfAssociation = sinon.stub(Class, 'findByIdAndCheckForSelfAssociation').resolves(clazz);
         classStudentExistsStub = sinon.stub(ClassStudent, 'exists').resolves(true);
 
         await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classStudentAlreadyExists);
@@ -140,11 +125,13 @@ describe('[db/models/class-student-invitation] - methods.checkAndSave', () => {
         clazz.user = new Types.ObjectId();
 
         userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
-        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+        classFindByIdAndCheckForSelfAssociation = sinon.stub(Class, 'findByIdAndCheckForSelfAssociation').resolves(clazz);
         classStudentExistsStub = sinon.stub(ClassStudent, 'exists').resolves(false);
         classStudentInvitationSaveStub = sinon.stub(classStudentInvitation, 'save').rejects();
 
         await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnce(classStudentInvitationSaveStub);
 
     });
 
@@ -153,7 +140,7 @@ describe('[db/models/class-student-invitation] - methods.checkAndSave', () => {
         clazz.user = new Types.ObjectId();
 
         userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
-        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
+        classFindByIdAndCheckForSelfAssociation = sinon.stub(Class, 'findByIdAndCheckForSelfAssociation').resolves(clazz);
         classStudentExistsStub = sinon.stub(ClassStudent, 'exists').resolves(false);
         classStudentInvitationSaveStub = sinon.stub(classStudentInvitation, 'save').resolves(classStudentInvitation);
 
