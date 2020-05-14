@@ -18,6 +18,24 @@ const classSchema = new Schema(classDefinition, schemaOpts);
 
 classSchema.index({ user: 1, title: 1 }, { unique: true });
 
+classSchema.virtual('classstudents', {
+    ref: names.classStudent.modelName,
+    localField: '_id',
+    foreignField: 'class'
+});
+
+classSchema.virtual('classstudentinvitations', {
+    ref: names.classStudentInvitation.modelName,
+    localField: '_id',
+    foreignField: 'class'
+});
+
+classSchema.virtual('classunknownstudentinvitations', {
+    ref: names.classUnknownStudentInvitation.modelName,
+    localField: '_id',
+    foreignField: 'class'
+});
+
 classSchema.pre('remove', async function() {
 
     const clazz = this;
