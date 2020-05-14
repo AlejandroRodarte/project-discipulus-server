@@ -8,6 +8,6 @@ module.exports = {
     [names.studentFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-student-files`,
     [names.parentFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-parent-files`,
     [names.class.modelName]: `${process.env.BUCKET_PREFIX_NAME}-class-avatars`,
-    [names.classFiles.modelName]: `${process.env.BUCKET_PREFIX_NAME}-class-files`,
-    [names.classStudentFiles.modelName]: `${process.env.BUCKET_PREFIX_NAME}-class-student-files`
+    [names.classFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-class-files`,
+    [names.classStudentFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-class-student-files`
 };

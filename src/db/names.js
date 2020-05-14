@@ -90,12 +90,12 @@ const names = {
         modelName: 'ClassUnknownStudentInvitation'
     },
     
-    classFiles: {
+    classFile: {
         collectionName: 'classfiles',
         modelName: 'ClassFile'
     },
 
-    classStudentFiles: {
+    classStudentFile: {
         collectionName: 'classstudentfiles',
         modelName: 'ClassStudentFile'
     }
