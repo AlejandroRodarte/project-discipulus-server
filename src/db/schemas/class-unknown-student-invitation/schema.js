@@ -3,6 +3,8 @@ const { Schema } = require('mongoose');
 const classUnknownStudentInvitationDefinition = require('./definition');
 const names = require('../../names');
 
+const { modelErrorMessages } = require('../../../util/errors');
+
 const schemaOpts = {
     collection: names.classUnknownStudentInvitation.collectionName
 };
@@ -17,6 +19,7 @@ classUnknownStudentInvitationSchema.methods.checkAndSave = async function() {
 
     const User = classUnknownStudentInvitation.model(names.user.modelName);
     const ClassStudentInvitation = classUnknownStudentInvitation.model(names.classStudentInvitation.modelName);
+    const Class = classUnknownStudentInvitation.model(names.class.modelName);
 
     const student = await User.findOne({
         email: classUnknownStudentInvitation.email
@@ -40,7 +43,15 @@ classUnknownStudentInvitationSchema.methods.checkAndSave = async function() {
     }
 
     try {
+
+        const classExists = await Class.exists({ _id: classUnknownStudentInvitation.class });
+
+        if (!classExists) {
+            throw new Error(modelErrorMessages.classNotFound);
+        }
+
         await classUnknownStudentInvitation.save();
+
     } catch (e) {
         throw e;
     }
