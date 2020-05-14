@@ -3,7 +3,7 @@ const { Types } = require('mongoose');
 const { classStudentInvitation } = require('../../../../src/db/names');
 
 const classStudentInvitations = [
-    // 0. sample class student
+    // 0. sample class student invitation
     {
         class: new Types.ObjectId(),
         user: new Types.ObjectId()
