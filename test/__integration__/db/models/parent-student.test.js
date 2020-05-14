@@ -146,9 +146,25 @@ describe('[db/models/parent-student] - baseParentStudent context', () => {
 
         });
 
-        it('Should persist correct parentStudent doc and delete associated invitation', async () => {
+        it('Should throw an error if, for some reason, there is an invitation for an already associated user. Invitation should be deleted', async () => {
 
             const parentStudentDoc = unpersistedParentStudents[8];
+            const parentStudent = new ParentStudent(parentStudentDoc);
+
+            await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
+
+            const invitationExists = await ParentStudentInvitation.exists({
+                parent: parentStudent.parent,
+                student: parentStudent.student
+            });
+
+            expect(invitationExists).to.equal(false);
+
+        });
+
+        it('Should persist correct parentStudent doc and delete associated invitation', async () => {
+
+            const parentStudentDoc = unpersistedParentStudents[9];
             const parentStudent = new ParentStudent(parentStudentDoc);
 
             await expect(parentStudent.checkAndSave()).to.eventually.eql(parentStudent);

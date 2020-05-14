@@ -66,8 +66,20 @@ const parentsStudents = [
 ];
 
 const parentsStudentInvitations = [
-    // 0. pending invitation from user[2] (enabled parent) to user[3] (enabled student)
-    ...generateOneToMany('parent', users[2]._id, [{ student: users[3]._id }])
+    
+    ...generateOneToMany('parent', users[2]._id, [
+
+        // 0. pending invitation from user[2] (enabled parent) to user[3] (enabled student)
+        { 
+            student: users[3]._id 
+        },
+
+        // 1. pending invitation from user[2] (enabled parent) to user[0] (enabled student)
+        {
+            student: users[0]._id
+        }
+
+    ])
 ];
 
 const persisted = {

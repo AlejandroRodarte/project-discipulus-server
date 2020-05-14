@@ -39,7 +39,11 @@ const parentStudents = [
         { 
             student: persistedUsers[4]._id
         },
-        // 8. user[2] (enabled parent/student) with user[3] (enabled student)
+        // 7. user[2] (enabled parent/student) with user[0] (enabled student, already associated)
+        { 
+            student: persistedUsers[0]._id
+        },
+        // 9. user[2] (enabled parent/student) with user[3] (enabled student)
         { 
             student: persistedUsers[3]._id
         }
