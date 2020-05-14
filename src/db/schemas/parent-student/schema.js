@@ -48,8 +48,8 @@ parentStudentSchema.methods.checkAndSave = async function() {
             throw new Error(modelErrorMessages.parentStudentInvitationRequired);
         }
 
-        await parentStudent.save();
         await invitation.remove();
+        await parentStudent.save();
 
     } catch (e) {
         throw e;

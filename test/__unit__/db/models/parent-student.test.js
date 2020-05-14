@@ -116,6 +116,7 @@ describe('[db/models/parent-student] - methods.checkAndSave', () => {
 
         parentStudentInvitationFindOneStub = sinon.stub(ParentStudentInvitation, 'findOne').resolves(parentStudentInvitation);
 
+        parentStudentInvitationRemoveStub = sinon.stub(parentStudentInvitation, 'remove').resolves();
         parentStudentSaveStub = sinon.stub(parentStudent, 'save').rejects();
 
         await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -133,8 +134,8 @@ describe('[db/models/parent-student] - methods.checkAndSave', () => {
 
         parentStudentInvitationFindOneStub = sinon.stub(ParentStudentInvitation, 'findOne').resolves(parentStudentInvitation);
 
-        parentStudentSaveStub = sinon.stub(parentStudent, 'save').resolves(parentStudent);
         parentStudentInvitationRemoveStub = sinon.stub(parentStudentInvitation, 'remove').resolves();
+        parentStudentSaveStub = sinon.stub(parentStudent, 'save').resolves(parentStudent);
 
         await expect(parentStudent.checkAndSave()).to.eventually.be.eql(parentStudent);
 
