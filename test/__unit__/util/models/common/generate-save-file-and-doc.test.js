@@ -4,126 +4,72 @@ const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
 const { generateSaveFileAndDoc } = require('../../../../../src/util/models/common');
-const { generateFakeFile, getNewModelInstance, generateFakeUsers } = require('../../../../__fixtures__/functions/models');
+const { generateFakeFile, getNewModelInstance } = require('../../../../__fixtures__/functions/models');
 
-const { User, UserFile, ParentFile } = require('../../../../../src/db/models');
+const { User, UserFile } = require('../../../../../src/db/models');
 
 const names = require('../../../../../src/db/names');
-const roleTypes = require('../../../../../src/util/roles');
 
 const storageApi = require('../../../../../src/api/storage');
 const bucketNames = require('../../../../../src/api/storage/config/bucket-names');
 
-const { modelErrorMessages } = require('../../../../../src/util/errors');
-
 const expect = chai.expect;
 chai.use(chaiAsPromised);
-
-const [userDoc] = generateFakeUsers(1, {
-    fakeToken: true
-});
 
 const userFileDoc = {
     user: new Types.ObjectId(),
     file: generateFakeFile()
 };
 
-const parentFileDoc = {
-    user: new Types.ObjectId(),
-    file: generateFakeFile()
-};
-
 let userFile = new UserFile(userFileDoc);
-let parentFile = new ParentFile(parentFileDoc);
-let user = new User(userDoc);
-
-beforeEach(() => {
-    userFile = getNewModelInstance(UserFile, userFileDoc);
-    parentFile = getNewModelInstance(ParentFile, parentFileDoc);
-    user = getNewModelInstance(User, userDoc);
-});
+beforeEach(() => userFile = getNewModelInstance(UserFile, userFileDoc));
 
 describe('[util/models/common/generate-save-file-and-doc-method] - general flow', () => {
 
-    let userFindOneStub;
-    let userHasRoleStub;
-    let fileDocSaveStub;
+    let validateFake;
+    let userFileSaveStub;
     let createMultipartObjectStub;
-    let fileDocRemoveStub;
+    let userFileRemoveStub;
 
-    it('Returned function call should throw error if User.findOne (with correct args) returns null', async () => {
+    it('Returned function call should throw error if validate callback (called with doc instance) rejects', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+        validateFake = sinon.fake.rejects();
 
         const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.userFile.modelName,
-            roleOpts: {
-                check: false,
-                role: null
-            }
+            validate: validateFake
         }).bind(userFile);
 
-        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
-
-        sinon.assert.calledOnceWithExactly(userFindOneStub, {
-            _id: userFile.user,
-            enabled: true
-        });
+        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
+        sinon.assert.calledOnceWithExactly(validateFake, userFile);
 
     });
 
-    it('Returned function call should throw error if role-check test fails. user.hasRole is called with correct args', async () => {
+    it('Returned function call should throw error if fileDoc.save fails', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
-        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(false);
-
-        const saveFileAndDoc = generateSaveFileAndDoc({
-            modelName: names.parentFile.modelName,
-            roleOpts: {
-                check: true,
-                role: roleTypes.ROLE_PARENT
-            }
-        }).bind(parentFile);
-
-        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.fileStorePermissionDenied);
-
-        sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_PARENT);
-
-    });
-
-    it('Returned function should throw error if .save() call fails', async () => {
-
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
-        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
-        fileDocSaveStub = sinon.stub(parentFile, 'save').rejects();
+        validateFake = sinon.fake.resolves();
+        userFileSaveStub = sinon.stub(userFile, 'save').rejects();
 
         const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.parentFile.modelName,
-            roleOpts: {
-                check: true,
-                role: roleTypes.ROLE_PARENT
-            }
-        }).bind(parentFile);
+            validate: validateFake
+        }).bind(userFile);
 
         await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error);
-
-        sinon.assert.calledOnce(fileDocSaveStub);
+        sinon.assert.calledOnce(userFileSaveStub);
 
     });
 
     it('Returned function should throw error and call fileDoc.remove if storageApi.createMultipartObject happends to fail (called with correct args)', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
-        fileDocSaveStub = sinon.stub(userFile, 'save').resolves(userFile);
+        validateFake = sinon.fake.resolves();
+        userFileSaveStub = sinon.stub(userFile, 'save').resolves(userFile);
         createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').rejects();
-        fileDocRemoveStub = sinon.stub(userFile, 'remove').resolves();
+        userFileRemoveStub = sinon.stub(userFile, 'remove').resolves();
 
         const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.userFile.modelName,
-            roleOpts: {
-                check: false,
-                role: null
-            }
+            validate: validateFake
         }).bind(userFile);
 
         const buffer = Buffer.alloc(10);
@@ -137,26 +83,23 @@ describe('[util/models/common/generate-save-file-and-doc-method] - general flow'
             mimetype: userFile.file.mimetype
         });
 
-        sinon.assert.calledOnce(fileDocRemoveStub);
+        sinon.assert.calledOnce(userFileRemoveStub);
 
     });
 
     it('Returned function should return fileDoc if all promises succeed', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
-        userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
-        fileDocSaveStub = sinon.stub(parentFile, 'save').resolves(parentFile);
+        validateFake = sinon.fake.resolves();
+        userFileSaveStub = sinon.stub(userFile, 'save').resolves(userFile);
         createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+        userFileRemoveStub = sinon.stub(userFile, 'remove').resolves();
 
         const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.parentFile.modelName,
-            roleOpts: {
-                check: true,
-                role: roleTypes.ROLE_PARENT
-            }
-        }).bind(parentFile);
+            validate: validateFake
+        }).bind(userFile);
 
-        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.eql(parentFile);
+        await expect(saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.eql(userFile);
 
     });
 
