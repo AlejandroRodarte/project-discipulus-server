@@ -4,13 +4,12 @@ const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
 const { generateRegularFileValidator } = require('../../../../../src/util/models/common');
-const { generateFakeFile, getNewModelInstance, generateFakeUsers, generateFakeClass } = require('../../../../__fixtures__/functions/models');
+const { generateFakeFile, getNewModelInstance, generateFakeClass } = require('../../../../__fixtures__/functions/models');
 
 const { Class, ClassFile } = require('../../../../../src/db/models');
 
 const names = require('../../../../../src/db/names');
 
-const roleTypes = require('../../../../../src/util/roles');
 const { modelErrorMessages } = require('../../../../../src/util/errors');
 
 const expect = chai.expect;
@@ -31,7 +30,6 @@ const classFileDoc = {
     file: generateFakeFile()
 };
 
-let clazz = new Class(classDoc);
 let classFile = new ClassFile(classFileDoc);
 
 beforeEach(() => {
