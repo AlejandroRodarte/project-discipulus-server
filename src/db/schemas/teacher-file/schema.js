@@ -3,7 +3,7 @@ const { Schema } = require('mongoose');
 const teacherFileDefinition = require('./definition');
 const { teacherFile } = require('../../names');
 
-const { generatePreRemoveHook, generateSaveFileAndDocMethod } = require('../../../util/models/user-file');
+const commonModelUtils = require('../../../util/models/common');
 
 const roleTypes = require('../../../util/roles');
 
@@ -15,16 +15,13 @@ const teacherFileSchema = new Schema(teacherFileDefinition, schemaOpts);
 
 teacherFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-teacherFileSchema.pre('remove', generatePreRemoveHook({
+teacherFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
     modelName: teacherFile.modelName
 }));
 
-teacherFileSchema.methods.saveFileAndDoc = generateSaveFileAndDocMethod({
+teacherFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
     modelName: teacherFile.modelName,
-    roleOpts: {
-        check: true,
-        role: roleTypes.ROLE_TEACHER
-    }
+    validate: commonModelUtils.generateUserFileRoleValidator(roleTypes.ROLE_TEACHER)
 });
 
 module.exports = teacherFileSchema;

@@ -15,15 +15,20 @@ const classFileSchema = new Schema(classFileDefinition, schemaOpts);
 
 classFileSchema.index({ class: 1, 'file.originalname': 1 }, { unique: true });
 
-classFileSchema.pre('remove', commonModelUtils.generateCommonFilePreRemoveHook({
+classFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
     modelName: names.classFile.modelName
 }));
 
-classFileSchema.methods.saveFileAndDoc = commonModelUtils.generateCommonSaveFileAndDoc({
+classFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
+
     modelName: names.classFile.modelName,
-    parentModelName: names.class.modelName,
-    ref: 'class',
-    notFoundErrorMessage: modelErrorMessages.classNotFound
+
+    validate: commonModelUtils.generateRegularFileValidator({
+        parentModelName: names.class.modelName,
+        ref: 'class',
+        notFoundErrorMessage: modelErrorMessages.classNotFound
+    })
+    
 });
 
 module.exports = classFileSchema;

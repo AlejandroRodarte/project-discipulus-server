@@ -1,9 +1,9 @@
 const { Schema } = require('mongoose');
 
 const parentFileDefinition = require('./definition');
-const { parentFile } = require('../../names');
+const { parentFile, user } = require('../../names');
 
-const { generatePreRemoveHook, generateSaveFileAndDocMethod } = require('../../../util/models/user-file');
+const commonModelUtils = require('../../../util/models/common');
 
 const roleTypes = require('../../../util/roles');
 
@@ -15,16 +15,13 @@ const parentFileSchema = new Schema(parentFileDefinition, schemaOpts);
 
 parentFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-parentFileSchema.pre('remove', generatePreRemoveHook({
-    modelName: parentFile.modelName
+parentFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
+    modelName: parentFile.modelName,
 }));
 
-parentFileSchema.methods.saveFileAndDoc = generateSaveFileAndDocMethod({
+parentFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
     modelName: parentFile.modelName,
-    roleOpts: {
-        check: true,
-        role: roleTypes.ROLE_PARENT
-    }
+    validate: commonModelUtils.generateUserFileRoleValidator(roleTypes.ROLE_PARENT)
 });
 
 module.exports = parentFileSchema;

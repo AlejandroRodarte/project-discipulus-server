@@ -3,7 +3,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { generateSaveFileAndDocMethod } = require('../../../../../src/util/models/user-file');
+const { generateSaveFileAndDoc } = require('../../../../../src/util/models/common');
 const { generateFakeFile, getNewModelInstance, generateFakeUsers } = require('../../../../__fixtures__/functions/models');
 
 const { User, UserFile, ParentFile } = require('../../../../../src/db/models');
@@ -43,7 +43,7 @@ beforeEach(() => {
     user = getNewModelInstance(User, userDoc);
 });
 
-describe('[util/models/user-file/generate-save-file-and-doc-method] - general flow', () => {
+describe('[util/models/common/generate-save-file-and-doc-method] - general flow', () => {
 
     let userFindOneStub;
     let userHasRoleStub;
@@ -55,7 +55,7 @@ describe('[util/models/user-file/generate-save-file-and-doc-method] - general fl
 
         userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
 
-        const saveFileAndDoc = generateSaveFileAndDocMethod({
+        const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.userFile.modelName,
             roleOpts: {
                 check: false,
@@ -77,7 +77,7 @@ describe('[util/models/user-file/generate-save-file-and-doc-method] - general fl
         userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
         userHasRoleStub = sinon.stub(user, 'hasRole').resolves(false);
 
-        const saveFileAndDoc = generateSaveFileAndDocMethod({
+        const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.parentFile.modelName,
             roleOpts: {
                 check: true,
@@ -97,7 +97,7 @@ describe('[util/models/user-file/generate-save-file-and-doc-method] - general fl
         userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
         fileDocSaveStub = sinon.stub(parentFile, 'save').rejects();
 
-        const saveFileAndDoc = generateSaveFileAndDocMethod({
+        const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.parentFile.modelName,
             roleOpts: {
                 check: true,
@@ -118,7 +118,7 @@ describe('[util/models/user-file/generate-save-file-and-doc-method] - general fl
         createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').rejects();
         fileDocRemoveStub = sinon.stub(userFile, 'remove').resolves();
 
-        const saveFileAndDoc = generateSaveFileAndDocMethod({
+        const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.userFile.modelName,
             roleOpts: {
                 check: false,
@@ -148,7 +148,7 @@ describe('[util/models/user-file/generate-save-file-and-doc-method] - general fl
         fileDocSaveStub = sinon.stub(parentFile, 'save').resolves(parentFile);
         createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
 
-        const saveFileAndDoc = generateSaveFileAndDocMethod({
+        const saveFileAndDoc = generateSaveFileAndDoc({
             modelName: names.parentFile.modelName,
             roleOpts: {
                 check: true,

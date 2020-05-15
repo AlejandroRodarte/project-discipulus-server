@@ -1,7 +1,11 @@
-const generateCommonFilePreRemoveHook = require('./generate-common-file-pre-remove-hook');
-const generateCommonSaveFileAndDoc = require('./generate-common-save-file-and-doc');
+const generateFilePreRemove = require('./generate-file-pre-remove');
+const generateSaveFileAndDoc = require('./generate-save-file-and-doc');
+const generateUserFileRoleValidator = require('./generate-user-file-role-validator');
+const generateRegularFileValidator = require('./generate-regular-file-validator');
 
 module.exports = {
-    generateCommonFilePreRemoveHook,
-    generateCommonSaveFileAndDoc
+    generateFilePreRemove,
+    generateSaveFileAndDoc,
+    generateUserFileRoleValidator,
+    generateRegularFileValidator
 };

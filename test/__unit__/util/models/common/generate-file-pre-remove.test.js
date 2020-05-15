@@ -3,7 +3,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { generatePreRemoveHook } = require('../../../../../src/util/models/user-file');
+const { generateFilePreRemove } = require('../../../../../src/util/models/common');
 const { generateFakeFile, getNewModelInstance } = require('../../../../__fixtures__/functions/models');
 
 const { UserFile } = require('../../../../../src/db/models');
@@ -27,7 +27,7 @@ beforeEach(() => {
     userFile = getNewModelInstance(UserFile, userFileDoc);
 });
 
-describe('[util/models/user-file/generate-pre-remove-hook] - general flow', () => {
+describe('[util/models/common/generate-pre-remove-hook] - general flow', () => {
 
     let deleteBucketObjectsStub;
 
@@ -35,7 +35,7 @@ describe('[util/models/user-file/generate-pre-remove-hook] - general flow', () =
 
         deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').rejects();
 
-        const preRemoveHook = generatePreRemoveHook({
+        const preRemoveHook = generateFilePreRemove({
             modelName: names.userFile.modelName
         }).bind(userFile)
 
@@ -49,7 +49,7 @@ describe('[util/models/user-file/generate-pre-remove-hook] - general flow', () =
 
         deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
 
-        const preRemoveHook = generatePreRemoveHook({
+        const preRemoveHook = generateFilePreRemove({
             modelName: names.userFile.modelName
         }).bind(userFile)
 
