@@ -6,12 +6,12 @@ const names = require('../../names');
 
 const { getRolesPipeline } = require('../../aggregation/user-role');
 
-const deletionUserRules = require('../../../util/models/user/deletion-user-rules');
+const { deletionUserRules, deletionUserRulesByRole } = require('../../../util/models/user');
 
 const storageApi = require('../../../api/storage');
 const bucketNames = require('../../../api/storage/config/bucket-names');
 
-const deleteModes = require('../../../util/delete-modes');
+const { applyDeletionRules } = require('../../../db');
 
 const schemaOpts = {
     collection: names.user.collectionName
@@ -113,75 +113,12 @@ userSchema.pre('remove', async function() {
             await storageApi.deleteBucketObjects(bucketNames[names.user.modelName], [user.avatar.keyname]);
         }
         
-        await user.model(names.userRole.modelName).deleteMany({
-            user: user._id
-        });
+        await applyDeletionRules(user, deletionUserRules);
 
-        const userFiles = await user.model(names.userFile.modelName).find({
-            user: user._id
-        });
-
-        const keynames = userFiles.map(userFile => userFile.file.keyname);
-
-        await storageApi.deleteBucketObjects(bucketNames[names.userFile.modelName], keynames);
-
-        await user.model(names.userFile.modelName).deleteMany({
-            user: user._id
-        });
-
-        await user.model(names.userEvent.modelName).deleteMany({
-            user: user._id
-        });
-
-        for (const role in deletionUserRules) {
-
+        for (const role in deletionUserRulesByRole) {
             if (roles.includes(role)) {
-
-                for (const rule of deletionUserRules[role]) {
-
-                    if (rule.deleteFiles) {
-
-                        const userFiles = await user.model(rule.modelName).find({
-                            [rule.fieldName]: user._id
-                        });
-
-                        const keynames = userFiles.map(userFile => userFile.file.keyname);
-
-                        await storageApi.deleteBucketObjects(bucketNames[rule.modelName], keynames);
-
-                    }
-
-                    switch (rule.deleteMode) {
-
-                        case deleteModes.DELETE_MANY:
-
-                            await user.model(rule.modelName).deleteMany({
-                                [rule.fieldName]: user._id
-                            });
-
-                            break;
-
-                        case deleteModes.REMOVE:
-
-                            const docs = await user.model(rule.modelName).find({
-                                [rule.fieldName]: user._id
-                            });
-
-                            for (const doc of docs) {
-                                await doc.remove();
-                            }
-
-                            break;
-
-                        default:
-                            break;
-
-                    }
-
-                }
-
+                await applyDeletionRules(user, deletionUserRulesByRole[role]);
             }
-
         }
 
     } catch (e) {

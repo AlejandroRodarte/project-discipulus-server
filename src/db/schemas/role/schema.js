@@ -3,6 +3,10 @@ const { Schema } = require('mongoose');
 const roleDefinition = require('./definition');
 const { role, userRole } = require('../../names');
 
+const deletionRoleRules = require('../../../util/models/role/deletion-role-rules');
+
+const { applyDeletionRules } = require('../../../db');
+
 const schemaOpts = {
     collection: role.collectionName
 };
@@ -19,9 +23,11 @@ roleSchema.pre('remove', async function() {
 
     const role = this;
 
-    await role.model(userRole.modelName).deleteMany({
-        role: role._id
-    });
+    try {
+        await applyDeletionRules(role, deletionRoleRules);
+    } catch (e) {
+        throw e;
+    }
 
 });
 

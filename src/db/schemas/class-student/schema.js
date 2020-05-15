@@ -7,8 +7,9 @@ const roleTypes = require('../../../util/roles');
 
 const { modelErrorMessages } = require('../../../util/errors');
 
-const storageApi = require('../../../api/storage');
-const bucketNames = require('../../../api/storage/config/bucket-names');
+const deletionClassStudentRules = require('../../../util/models/class-student/deletion-class-student-rules');
+
+const { applyDeletionRules } = require('../../../db');
 
 const schemaOpts = {
     collection: names.classStudent.collectionName
@@ -22,20 +23,8 @@ classStudentSchema.pre('remove', async function() {
 
     const classStudent = this;
 
-    const classStudentFiles = await classStudent.model(names.classStudentFile.modelName).find({
-        classStudent: classStudent._id
-    });
-
-    const keynames = classStudentFiles.map(fileDoc => fileDoc.file.keyname);
-
     try {
-
-        await storageApi.deleteBucketObjects(bucketNames[names.classStudentFile.modelName], keynames);
-
-        await classStudent.model(names.classStudentFile.modelName).deleteMany({
-            classStudent: classStudent._id
-        });
-
+        await applyDeletionRules(classStudent, deletionClassStudentRules);
     } catch {
         throw e;
     }
