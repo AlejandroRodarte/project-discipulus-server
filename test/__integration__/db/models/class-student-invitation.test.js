@@ -14,7 +14,7 @@ const { modelErrorMessages } = require('../../../../src/util/errors');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe('[db/models/class-student-invitation] - uniqueClassStudentInvitationContext', () => {
+describe('[db/models/class-student-invitation] - uniqueClassStudentInvitation context', () => {
 
     beforeEach(db.init(uniqueClassStudentInvitationContext.persisted));
 
