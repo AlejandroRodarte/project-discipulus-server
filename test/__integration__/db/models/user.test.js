@@ -709,7 +709,7 @@ describe('[db/models/user] - baseClass context', () => {
 
     });
 
-    afterEach(db.teardown(baseUserEventContext.persisted));
+    afterEach(db.teardown(baseClassContext.persisted));
 
 });
 
