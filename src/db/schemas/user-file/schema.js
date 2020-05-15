@@ -29,12 +29,12 @@ userFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc(
 
         const { user: userId } = fileDoc;
 
-        const userDoc = await User.findOne({ 
+        const userExists = await User.exists({ 
             _id: userId,
             enabled: true
         });
 
-        if (!userDoc) {
+        if (!userExists) {
             throw new Error(modelErrorMessages.userNotFoundOrDisabled);
         }
 
