@@ -2,7 +2,7 @@ const generateRegularFileValidator = ({ parentModelName, ref, notFoundErrorMessa
         
     const ParentModel = fileDoc.model(parentModelName);
 
-    const parentDocExists = await ParentModel.findOne({
+    const parentDocExists = await ParentModel.exists({
         _id: fileDoc[ref]
     });
 
