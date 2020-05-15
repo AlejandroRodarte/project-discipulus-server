@@ -12,3 +12,5 @@ const generateCommonFilePreRemoveHook = ({ modelName }) => async function() {
     }
 
 };
+
+module.exports = generateCommonFilePreRemoveHook;

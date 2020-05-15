@@ -14,5 +14,6 @@ module.exports = {
     selfTeaching: 'You can not be a student of your own class',
     classNotFound: 'The class was not found',
     classStudentInvitationRequired: 'An invitation is required before performing a student/class association',
-    classUnknownStudentInvitationRequired: 'An invitation is required before performing a student/class association'
+    classUnknownStudentInvitationRequired: 'An invitation is required before performing a student/class association',
+    classStudentNotFound: 'The class-student relation was not found'
 };
