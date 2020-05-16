@@ -42,6 +42,11 @@ describe('[db/models/user-event] - Invalid title', () => {
         testForInvalidModel(userEvent, userEventDefinition.title.required);
     });
 
+    it('Should not validate if title has bad words', () => {
+        userEvent.title = 'Fuck bitches';
+        testForInvalidModel(userEvent, userEventDefinition.title.validate);
+    });
+
     it(`Should not validate if title is shorter than ${ titleMinLength } characters`, () => {
         userEvent.title = 'do';
         testForInvalidModel(userEvent, userEventDefinition.title.minlength);
@@ -54,7 +59,7 @@ describe('[db/models/user-event] - Invalid title', () => {
 
 });
 
-describe('[db/models/user-event] - Invalid title', () => {
+describe('[db/models/user-event] - Valid title', () => {
 
     it('Should trim event title redundant spaces', () => {
         userEvent.title = '  my  super     event ';
@@ -76,6 +81,11 @@ describe('[db/models/user-event] - Undefined description', () => {
 describe('[db/models/user-event] - Invalid description', () => {
 
     const [descriptionMaxLength] = userEventDefinition.description.maxlength;
+
+    it('Should not validate if description has bad words', () => {
+        userEvent.description = 'Homies to bang a whore';
+        testForInvalidModel(userEvent, userEventDefinition.description.validate);
+    });
 
     it(`Should not validate description if its longer than ${ descriptionMaxLength } characters`, () => {
         userEvent.description = lorem.generateWords(60);
