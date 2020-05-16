@@ -1,11 +1,9 @@
 const { Schema } = require('mongoose');
 
 const userFileDefinition = require('./definition');
-const { userFile, user } = require('../../names');
+const { userFile } = require('../../names');
 
 const commonModelUtils = require('../../../util/models/common');
-
-const { modelErrorMessages } = require('../../../util/errors');
 
 const schemaOpts = {
     collection: userFile.collectionName
@@ -20,26 +18,8 @@ userFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
 }));
 
 userFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
-
     modelName: userFile.modelName,
-    
-    validate: async (fileDoc) => {
-
-        const User = fileDoc.model(user.modelName);
-
-        const { user: userId } = fileDoc;
-
-        const userExists = await User.exists({ 
-            _id: userId,
-            enabled: true
-        });
-
-        if (!userExists) {
-            throw new Error(modelErrorMessages.userNotFoundOrDisabled);
-        }
-
-    }
-
+    validate: commonModelUtils.userFileNoteValidator
 });
 
 module.exports = userFileSchema;
