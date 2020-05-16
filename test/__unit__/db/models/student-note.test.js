@@ -26,7 +26,7 @@ const studentNoteDoc = {
 };
 
 let studentNote = new StudentNote(studentNoteDoc);
-let student = new StudentNote(studentDoc);
+let student = new User(studentDoc);
 
 beforeEach(() => {
     studentNote = modelFunctions.getNewModelInstance(StudentNote, studentNoteDoc);
