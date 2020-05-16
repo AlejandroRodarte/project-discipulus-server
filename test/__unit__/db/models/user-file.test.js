@@ -35,25 +35,18 @@ describe('[db/models/user-file] - methods.saveFileAndDoc', () => {
 
     const buffer = Buffer.alloc(10);
 
-    it('Should throw error if User.exists (called with correct args) resolves to false', async () => {
-        
-        userExistsStub = sinon.stub(User, 'exists').resolves(false);     
-        await expect(userFile.saveFileAndDoc(buffer)).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
-   
-        sinon.assert.calledOnceWithExactly(userExistsStub, {
-            _id: userFile.user,
-            enabled: true
-        });
-
-    });
-
-    it('Should call storageApi.createMultipartObject with right arguments and return fileDoc on success', async () => {
+    it('Should call all required methods with the correct arguments on correct flow', async () => {
         
         userExistsStub = sinon.stub(User, 'exists').resolves(true);
         userFileSaveStub = sinon.stub(userFile, 'save').resolves(userFile);
         createMultiPartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
 
         await expect(userFile.saveFileAndDoc(buffer)).to.eventually.eql(userFile);
+
+        sinon.assert.calledOnceWithExactly(userExistsStub, {
+            _id: userFile.user,
+            enabled: true
+        });
 
         sinon.assert.calledOnce(userFileSaveStub);
 
