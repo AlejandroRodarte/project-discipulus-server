@@ -16,6 +16,10 @@ const userEventDefinition = {
     title: {
         type: String,
         required: [true, 'An event title is required'],
+        validate: [
+            (value) => !utilFunctions.isSentenceProfane(value),
+            'Please do not use bad words on your event title'
+        ],
         minlength: [3, 'Event title must be at least 3 characters long'],
         maxlength: [50, 'Event title must be shorter than 50 characters'],
         set: (value) => {
@@ -28,6 +32,10 @@ const userEventDefinition = {
     description: {
         type: String,
         required: false,
+        validate: [
+            (value) => !utilFunctions.isSentenceProfane(value),
+            'Please do not use bad words on your event description'
+        ],
         maxlength: [200, 'Event description must be shorter than 200 characters'],
         set: (value) => {
             if (value) {
