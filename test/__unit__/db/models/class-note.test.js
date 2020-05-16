@@ -7,11 +7,6 @@ const { Class, ClassNote } = require('../../../../src/db/models');
 const { classNoteDefinition } = require('../../../../src/db/schemas/class-note');
 const modelFunctions = require('../../../__fixtures__/functions/models');
 
-const storageApi = require('../../../../src/api/storage');
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const names = require('../../../../src/db/names');
-
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 

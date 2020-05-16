@@ -19,6 +19,7 @@ const ParentNote = require('./parent-note');
 const StudentNote = require('./student-note');
 const TeacherNote = require('./teacher-note');
 const ClassNote = require('./class-note');
+const ClassStudentNote = require('./class-student-note');
 const Shared = require('./shared');
 
 module.exports = {
@@ -43,5 +44,6 @@ module.exports = {
     StudentNote,
     TeacherNote,
     ClassNote,
+    ClassStudentNote,
     Shared
 };

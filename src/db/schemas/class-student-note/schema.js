@@ -11,14 +11,14 @@ const schemaOpts = {
     collection: names.classStudentNote.collectionName
 };
 
-const classStudentNoteDefinition = new Schema(classStudentNoteDefinition, schemaOpts);
+const classStudentNoteSchema = new Schema(classStudentNoteDefinition, schemaOpts);
 
-classStudentNoteDefinition.index({ classStudent: 1, 'note.title': 1 }, { unique: true });
+classStudentNoteSchema.index({ classStudent: 1, 'note.title': 1 }, { unique: true });
 
-classStudentNoteDefinition.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateParentDocExistsValidator({
+classStudentNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateParentDocExistsValidator({
     parentModelName: names.classStudent.modelName,
     ref: 'classStudent',
     notFoundErrorMessage: modelErrorMessages.classStudentNotFound
 }));
 
-module.exports = classStudentNoteDefinition;
+module.exports = classStudentNoteSchema;
