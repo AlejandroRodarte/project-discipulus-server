@@ -26,7 +26,7 @@ const sharedNoteDefinition = {
             (value) => !utilFunctions.isSentenceProfane(value),
             'Please do not use bad words on your note description'
         ],
-        maxlength: [500, 'Note title must not exceed 500 characters'],
+        maxlength: [500, 'Note description must not exceed 500 characters'],
         set: (value) => {
             if (value) {
                 return utilFunctions.trimRedundantSpaces(value);
@@ -41,8 +41,8 @@ const sharedNoteDefinition = {
             (value) => !utilFunctions.isSentenceProfane(value),
             'Please do not use bad words on your note markdown'
         ],
-        minlength: [5, 'Note title must be at least 5 characters long'],
-        maxlength: [10000, 'Note title must not exceed 10000 characters'],
+        minlength: [5, 'Note markdown must be at least 5 characters long'],
+        maxlength: [10000, 'Note markdown must not exceed 10000 characters'],
         trim: true
     }
 
