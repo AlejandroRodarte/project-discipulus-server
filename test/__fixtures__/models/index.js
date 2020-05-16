@@ -26,7 +26,7 @@ const baseClassStudentContext = require('./base-class-student');
 const baseClassUnknownStudentInvitationContext = require('./base-class-unknown-student-invitation');
 const uniqueClassFileContext = require('./unique-class-file');
 const uniqueClassStudentFileContext = require('./unique-class-student-file');
-const uniqueUserNote = require('./unique-user-note');
+const uniqueUserNoteContext = require('./unique-user-note');
 
 module.exports = {
     sampleFileContext,
@@ -57,5 +57,5 @@ module.exports = {
     baseClassUnknownStudentInvitationContext,
     uniqueClassFileContext,
     uniqueClassStudentFileContext,
-    uniqueUserNote
+    uniqueUserNoteContext
 };
