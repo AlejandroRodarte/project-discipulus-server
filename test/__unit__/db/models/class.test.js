@@ -59,6 +59,16 @@ describe('[db/models/class] - Invalid title', () => {
     const [titleMinLength] = classDefinition.title.minlength;
     const [titleMaxLength] = classDefinition.title.maxlength;
 
+    it('Should not validate if title is undefined', () => {
+        clazz.title = undefined;
+        testForInvalidModel(clazz, classDefinition.title.required);
+    });
+
+    it('Should not validate if title has a profane word', () => {
+        clazz.title = 'Some good thermodynamic shit';
+        testForInvalidModel(clazz, classDefinition.title.validate);
+    });
+
     it(`Should not validate if title is shorter than ${ titleMinLength } characters`, () => {
         clazz.title = 'bo';
         testForInvalidModel(clazz, classDefinition.title.minlength);
@@ -93,6 +103,11 @@ describe('[db/models/class] - Undefined description', () => {
 describe('[db/models/class] - Invalid description', () => {
 
     const [descriptionMaxLength] = classDefinition.description.maxlength;
+
+    it('Should not validate if class description has bad words', () => {
+        clazz.description = 'You better pass this fucking class';
+        testForInvalidModel(clazz, classDefinition.description.validate);
+    });
 
     it(`Should not validate class description longer than ${ descriptionMaxLength } characters`, () => {
         clazz.description = lorem.generateWords(250);

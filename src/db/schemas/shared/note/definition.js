@@ -18,7 +18,6 @@ const sharedNoteDefinition = {
     description: {
         type: String,
         required: false,
-        minlength: [5, 'Note title must be at least 5 characters long'],
         maxlength: [500, 'Note title must not exceed 500 characters'],
         set: (value) => {
             if (value) {

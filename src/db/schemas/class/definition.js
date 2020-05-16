@@ -19,7 +19,7 @@ const classDefinition = {
         type: String,
         required: [true, 'An event title is required'],
         validate: [
-            (value) => utilFunctions.isSentenceProfane(value),
+            (value) => !utilFunctions.isSentenceProfane(value),
             'Do not use profane words on your class title'
         ],
         minlength: [3, 'Event title must be at least 3 characters long'],
@@ -35,7 +35,7 @@ const classDefinition = {
         type: String,
         required: false,
         validate: [
-            (value) => utilFunctions.isSentenceProfane(value),
+            (value) => !utilFunctions.isSentenceProfane(value),
             'Do not use profane words on your class description'
         ],
         maxlength: [500, 'Event description must be shorter than 500 characters'],
