@@ -13,6 +13,7 @@ const { classStudentInvitationDefinition, classStudentInvitationSchema } = requi
 const { classUnknownStudentInvitationDefinition, classUnknownStudentInvitationSchema } = require('./class-unknown-student-invitation');
 const { classFileDefinition, classFileSchema } = require('./class-file');
 const { classStudentFileDefinition, classStudentFileSchema } = require('./class-student-file');
+const { userNoteDefinition, userNoteSchema } = require('./user-note');
 const shared = require('./shared');
 
 module.exports = {
@@ -33,7 +34,8 @@ module.exports = {
         classStudentInvitationDefinition,
         classUnknownStudentInvitationDefinition,
         classFileDefinition,
-        classStudentFileDefinition
+        classStudentFileDefinition,
+        userNoteDefinition
     },
 
     schemas: {
@@ -52,7 +54,8 @@ module.exports = {
         classStudentInvitationSchema,
         classUnknownStudentInvitationSchema,
         classFileSchema,
-        classStudentFileSchema
+        classStudentFileSchema,
+        userNoteSchema
     },
 
     shared
