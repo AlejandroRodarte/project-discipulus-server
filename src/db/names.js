@@ -98,6 +98,41 @@ const names = {
     classStudentFile: {
         collectionName: 'classStudentFiles',
         modelName: 'ClassStudentFile'
+    },
+
+    sharedNote: {
+        collectionName: 'sharedNotes',
+        modelName: 'SharedNote'
+    },
+
+    userNote: {
+        collectionName: 'userNotes',
+        modelName: 'UserNote'
+    },
+
+    parentNote: {
+        collectionName: 'parentNotes',
+        modelName: 'ParentNote'
+    },
+
+    teacherNote: {
+        collectionName: 'teacherNotes',
+        modelName: 'TeacherNote'
+    },
+
+    studentNote: {
+        collectionName: 'studentNotes',
+        modelName: 'StudentNote'
+    },
+
+    classNote: {
+        collectionName: 'classNotes',
+        modelName: 'ClassNote'
+    },
+
+    classStudentNote: {
+        collectionName: 'classStudentNotes',
+        modelName: 'ClassStudentNote'
     }
 
 };
