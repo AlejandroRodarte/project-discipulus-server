@@ -19,6 +19,12 @@ const deletionUserRules = [
         fieldName: 'user',
         deleteFiles: false,
         deleteMode: deleteModes.DELETE_MANY
+    },
+    {
+        modelName: names.userNote.modelName,
+        fieldName: 'user',
+        deleteFiles: false,
+        deleteMode: deleteModes.DELETE_MANY
     }
 ];
 

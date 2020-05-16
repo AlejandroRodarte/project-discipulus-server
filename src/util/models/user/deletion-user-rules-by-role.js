@@ -24,6 +24,12 @@ const deletionUserRulesByRole = {
             fieldName: 'user',
             deleteFiles: true,
             deleteMode: deleteModes.DELETE_MANY
+        },
+        {
+            modelName: names.parentNote.modelName,
+            fieldName: 'user',
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
         }
     ],
 
@@ -57,6 +63,12 @@ const deletionUserRulesByRole = {
             fieldName: 'user',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY
+        },
+        {
+            modelName: names.studentNote.modelName,
+            fieldName: 'user',
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
         }
     ],
 
@@ -72,6 +84,12 @@ const deletionUserRulesByRole = {
             fieldName: 'user',
             deleteFiles: false,
             deleteMode: deleteModes.REMOVE
+        },
+        {
+            modelName: names.teacherNote.modelName,
+            fieldName: 'user',
+            deleteFiles: false,
+            deleteMode: deleteModes.DELETE_MANY
         }
     ]
 

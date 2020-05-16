@@ -7,6 +7,12 @@ const deletionClassStudentRules = [
         fieldName: 'classStudent',
         deleteFiles: true,
         deleteMode: deleteModes.DELETE_MANY
+    },
+    {
+        modelName: names.classStudentNote.modelName,
+        fieldName: 'user',
+        deleteFiles: false,
+        deleteMode: deleteModes.DELETE_MANY
     }
 ];
 
