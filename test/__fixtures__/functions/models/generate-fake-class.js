@@ -2,10 +2,10 @@ const lorem = require('../../util/lorem');
 const generateFakeImageFile = require('./generate-fake-image-file');
 
 const generateFakeClass = ({
-    titleWords,
-    descriptionWords,
+    titleWords = 5,
+    descriptionWords = 10,
     noAvatar = false,
-    sessions
+    sessions = [[0, 10]]
 }) => ({
     title: lorem.generateWords(titleWords),
     description: lorem.generateWords(descriptionWords),
