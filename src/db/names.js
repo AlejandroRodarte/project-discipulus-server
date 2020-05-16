@@ -105,6 +105,11 @@ const names = {
         modelName: 'SharedNote'
     },
 
+    sharedUserNote: {
+        collectionName: 'sharedUserNotes',
+        modelName: 'SharedUserNote'
+    },
+
     userNote: {
         collectionName: 'userNotes',
         modelName: 'UserNote'

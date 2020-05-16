@@ -3,6 +3,7 @@ const { sharedParentStudentDefinition, sharedParentStudentSchema } = require('./
 const { sharedUserFileDefinition, sharedUserFileSchema } = require('./user-file');
 const { sharedTimeRangeDefinition, sharedTimeRangeSchema } = require('./time-range');
 const { sharedNoteDefinition, sharedNoteSchema } = require('./note');
+const { sharedUserNoteDefinition, sharedUserNoteSchema } = require('./user-note');
 
 module.exports = {
     definitions: {
@@ -10,13 +11,15 @@ module.exports = {
         sharedParentStudentDefinition,
         sharedUserFileDefinition,
         sharedTimeRangeDefinition,
-        sharedNoteDefinition
+        sharedNoteDefinition,
+        sharedUserNoteDefinition
     },
     schemas: {
         sharedFileSchema,
         sharedParentStudentSchema,
         sharedUserFileSchema,
         sharedTimeRangeSchema,
-        sharedNoteSchema
+        sharedNoteSchema,
+        sharedUserNoteSchema
     }
 };
