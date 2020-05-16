@@ -30,6 +30,7 @@ const uniqueUserNoteContext = require('./unique-user-note');
 const uniqueStudentNoteContext = require('./unique-student-note');
 const uniqueTeacherNoteContext = require('./unique-teacher-note');
 const uniqueParentNoteContext = require('./unique-parent-note');
+const uniqueClassNoteContext = require('./unique-class-note');
 
 module.exports = {
     sampleFileContext,
@@ -63,5 +64,6 @@ module.exports = {
     uniqueUserNoteContext,
     uniqueParentNoteContext,
     uniqueStudentNoteContext,
-    uniqueTeacherNoteContext
+    uniqueTeacherNoteContext,
+    uniqueClassNoteContext
 };

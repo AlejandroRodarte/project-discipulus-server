@@ -18,16 +18,16 @@ describe('[db/models/student-note] - uniqueStudentNote context', () => {
 
     beforeEach(db.init(uniqueStudentNoteContext.persisted));
 
-    describe('[db/models/student-note] - user/file.originalname index', () => {
+    describe('[db/models/student-note] - user/note.title index', () => {
 
         const unpersistedStudentNotes = uniqueStudentNoteContext.unpersisted[names.studentNote.modelName];
 
-        it('Should fail on duplicate user/file.originalname index', async () => {
+        it('Should fail on duplicate user/note.title index', async () => {
             const studentNote = new StudentNote(unpersistedStudentNotes[0]);
             await expect(studentNote.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
 
-        it('Should persist on unique user/file.originalname index', async () => {
+        it('Should persist on unique user/note.title index', async () => {
             const studentNote = new StudentNote(unpersistedStudentNotes[1]);
             await expect(studentNote.save()).to.eventually.be.eql(studentNote);
         });

@@ -18,16 +18,16 @@ describe('[db/models/parent-note] - uniqueParentNote context', () => {
 
     beforeEach(db.init(uniqueParentNoteContext.persisted));
 
-    describe('[db/models/parent-note] - user/file.originalname index', () => {
+    describe('[db/models/parent-note] - user/note.title index', () => {
 
         const unpersistedParentNotes = uniqueParentNoteContext.unpersisted[names.parentNote.modelName];
 
-        it('Should fail on duplicate user/file.originalname index', async () => {
+        it('Should fail on duplicate user/note.title index', async () => {
             const parentNote = new ParentNote(unpersistedParentNotes[0]);
             await expect(parentNote.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
 
-        it('Should persist on unique user/file.originalname index', async () => {
+        it('Should persist on unique user/note.title index', async () => {
             const parentNote = new ParentNote(unpersistedParentNotes[1]);
             await expect(parentNote.save()).to.eventually.be.eql(parentNote);
         });
