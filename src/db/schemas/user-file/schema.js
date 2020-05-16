@@ -19,7 +19,7 @@ userFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
 
 userFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
     modelName: userFile.modelName,
-    validate: commonModelUtils.userFileNoteValidator
+    validate: commonModelUtils.userExistsValidator
 });
 
 module.exports = userFileSchema;

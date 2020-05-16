@@ -2,7 +2,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { generateUserFileRoleValidator } = require('../../../../../src/util/models/common');
+const { generateUserAndRoleValidator } = require('../../../../../src/util/models/common');
 const { generateFakeFile, getNewModelInstance, generateFakeUsers } = require('../../../../__fixtures__/functions/models');
 
 const { User, ParentFile } = require('../../../../../src/db/models');
@@ -28,7 +28,7 @@ beforeEach(() => {
     user = getNewModelInstance(User, userDoc);
 });
 
-describe('[util/models/common/generate-user-file-role-validator] - general flow', () => {
+describe('[util/models/common/generate-user-and-role-validator] - general flow', () => {
 
     let userFindByIdAndValidateRole;
 
@@ -36,7 +36,7 @@ describe('[util/models/common/generate-user-file-role-validator] - general flow'
 
         userFindByIdAndValidateRole = sinon.stub(User, 'findByIdAndValidateRole').rejects();
 
-        const validatorFn = generateUserFileRoleValidator(roleTypes.ROLE_PARENT);
+        const validatorFn = generateUserAndRoleValidator(roleTypes.ROLE_PARENT);
 
         await expect(validatorFn(parentFile)).to.eventually.be.rejectedWith(Error);
 
@@ -51,7 +51,7 @@ describe('[util/models/common/generate-user-file-role-validator] - general flow'
 
         userFindByIdAndValidateRole = sinon.stub(User, 'findByIdAndValidateRole').resolves(user);
 
-        const validatorFn = generateUserFileRoleValidator(roleTypes.ROLE_PARENT);
+        const validatorFn = generateUserAndRoleValidator(roleTypes.ROLE_PARENT);
         await expect(validatorFn(parentFile)).to.eventually.be.fulfilled;
 
     });

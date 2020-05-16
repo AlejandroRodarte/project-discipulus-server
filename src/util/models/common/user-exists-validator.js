@@ -1,7 +1,7 @@
 const { user } = require('../../../db/names');
 const { modelErrorMessages } = require('../../errors');
 
-const userFileNoteValidator = async (doc) => {
+const userExistsValidator = async (doc) => {
 
     const User = doc.model(user.modelName);
 
@@ -18,4 +18,4 @@ const userFileNoteValidator = async (doc) => {
 
 };
 
-module.exports = userFileNoteValidator;
+module.exports = userExistsValidator;

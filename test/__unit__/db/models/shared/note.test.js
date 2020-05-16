@@ -105,7 +105,9 @@ describe('[db/models/shared/note] - Valid description', () => {
 
 });
 
-describe('[db/models/shared/note] - Invalid markdown', () => {
+describe('[db/models/shared/note] - Invalid markdown', function() {
+
+    this.timeout(5000);
 
     const [noteMarkdownMinLength] = sharedNoteDefinition.markdown.minlength;
     const [noteMarkdownMaxLength] = sharedNoteDefinition.markdown.maxlength;

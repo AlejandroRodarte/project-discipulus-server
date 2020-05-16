@@ -2,7 +2,7 @@ const { user } = require('../../../db/names');
 
 const { modelErrorMessages } = require('../../errors');
 
-const generateUserFileRoleValidator = (role) => async (fileDoc) => {
+const generateUserAndRoleValidator = (role) => async (fileDoc) => {
         
     const User = fileDoc.model(user.modelName);
     const { user: userId } = fileDoc;
@@ -18,4 +18,4 @@ const generateUserFileRoleValidator = (role) => async (fileDoc) => {
 
 };
 
-module.exports = generateUserFileRoleValidator;
+module.exports = generateUserAndRoleValidator;

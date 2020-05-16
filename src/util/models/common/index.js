@@ -1,15 +1,15 @@
 const generateFilePreRemove = require('./generate-file-pre-remove');
 const generateSaveFileAndDoc = require('./generate-save-file-and-doc');
-const generateUserFileRoleValidator = require('./generate-user-file-role-validator');
-const generateRegularFileValidator = require('./generate-regular-file-validator');
+const generateUserAndRoleValidator = require('./generate-user-and-role-validator');
+const generateParentDocExistsValidator = require('./generate-parent-doc-exists-validator');
 const generateNoteCheckAndSave = require('./generate-note-check-and-save');
-const userFileNoteValidator = require('./user-file-note-validator');
+const userExistsValidator = require('./user-exists-validator');
 
 module.exports = {
     generateFilePreRemove,
     generateSaveFileAndDoc,
-    generateUserFileRoleValidator,
-    generateRegularFileValidator,
+    generateUserAndRoleValidator,
+    generateParentDocExistsValidator,
     generateNoteCheckAndSave,
-    userFileNoteValidator
+    userExistsValidator
 };

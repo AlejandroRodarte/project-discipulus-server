@@ -3,7 +3,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { generateRegularFileValidator } = require('../../../../../src/util/models/common');
+const { generateParentDocExistsValidator } = require('../../../../../src/util/models/common');
 const { generateFakeFile, getNewModelInstance, generateFakeClass } = require('../../../../__fixtures__/functions/models');
 
 const { Class, ClassFile } = require('../../../../../src/db/models');
@@ -37,7 +37,7 @@ beforeEach(() => {
     classFile = getNewModelInstance(ClassFile, classFileDoc);
 });
 
-describe('[util/models/common/generate-regular-file-validator] - general flow', () => {
+describe('[util/models/common/generate-parent-doc-exists-validator] - general flow', () => {
 
     let classExistsStub;
 
@@ -45,7 +45,7 @@ describe('[util/models/common/generate-regular-file-validator] - general flow', 
 
         classExistsStub = sinon.stub(Class, 'exists').resolves(false);
 
-        const validatorFn = generateRegularFileValidator({
+        const validatorFn = generateParentDocExistsValidator({
             parentModelName: names.class.modelName,
             ref: 'class',
             notFoundErrorMessage: modelErrorMessages.classNotFound
@@ -63,7 +63,7 @@ describe('[util/models/common/generate-regular-file-validator] - general flow', 
 
         classExistsStub = sinon.stub(Class, 'exists').resolves(true);
 
-        const validatorFn = generateRegularFileValidator({
+        const validatorFn = generateParentDocExistsValidator({
             parentModelName: names.class.modelName,
             ref: 'class',
             notFoundErrorMessage: modelErrorMessages.classNotFound

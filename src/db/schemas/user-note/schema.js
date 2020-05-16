@@ -13,6 +13,6 @@ const userNoteSchema = new Schema(userNoteDefinition, schemaOpts);
 
 userNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-userNoteSchema.methods.saveFileAndDoc = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.userFileNoteValidator);
+userNoteSchema.methods.saveFileAndDoc = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.userExistsValidator);
 
 module.exports = userNoteSchema;

@@ -1,4 +1,4 @@
-const generateRegularFileValidator = ({ parentModelName, ref, notFoundErrorMessage }) => async (fileDoc) => {
+const generateParentDocExistsValidator = ({ parentModelName, ref, notFoundErrorMessage }) => async (fileDoc) => {
         
     const ParentModel = fileDoc.model(parentModelName);
 
@@ -12,4 +12,4 @@ const generateRegularFileValidator = ({ parentModelName, ref, notFoundErrorMessa
 
 };
 
-module.exports = generateRegularFileValidator;
+module.exports = generateParentDocExistsValidator;

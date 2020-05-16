@@ -23,7 +23,7 @@ classStudentFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFil
 
     modelName: names.classStudentFile.modelName,
     
-    validate: commonModelUtils.generateRegularFileValidator({
+    validate: commonModelUtils.generateParentDocExistsValidator({
         parentModelName: names.classStudent.modelName,
         ref: 'classStudent',
         notFoundErrorMessage: modelErrorMessages.classStudentNotFound

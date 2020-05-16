@@ -21,7 +21,7 @@ studentFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
 
 studentFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
     modelName: studentFile.modelName,
-    validate: commonModelUtils.generateUserFileRoleValidator(roleTypes.ROLE_STUDENT)
+    validate: commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_STUDENT)
 });
 
 module.exports = studentFileSchema;

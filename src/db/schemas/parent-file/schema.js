@@ -21,7 +21,7 @@ parentFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
 
 parentFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
     modelName: parentFile.modelName,
-    validate: commonModelUtils.generateUserFileRoleValidator(roleTypes.ROLE_PARENT)
+    validate: commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_PARENT)
 });
 
 module.exports = parentFileSchema;
