@@ -14,6 +14,6 @@ const studentNoteSchema = new Schema(studentNoteDefinition, schemaOpts);
 
 studentNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-studentNoteSchema.methods.saveFileAndDoc = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_STUDENT));
+studentNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_STUDENT));
 
 module.exports = studentNoteSchema;

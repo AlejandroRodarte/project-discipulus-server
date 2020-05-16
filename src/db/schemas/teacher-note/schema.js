@@ -14,6 +14,6 @@ const teacherNoteSchema = new Schema(teacherNoteDefinition, schemaOpts);
 
 teacherNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-teacherNoteSchema.methods.saveFileAndDoc = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_TEACHER));
+teacherNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_TEACHER));
 
 module.exports = teacherNoteSchema;

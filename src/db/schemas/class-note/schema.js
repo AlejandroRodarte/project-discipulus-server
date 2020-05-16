@@ -15,7 +15,7 @@ const classNoteSchema = new Schema(classNoteDefinition, schemaOpts);
 
 classNoteSchema.index({ class: 1, 'note.title': 1 }, { unique: true });
 
-classNoteSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc(commonModelUtils.generateParentDocExistsValidator({
+classNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateParentDocExistsValidator({
     parentModelName: names.class.modelName,
     ref: 'class',
     notFoundErrorMessage: modelErrorMessages.classNotFound

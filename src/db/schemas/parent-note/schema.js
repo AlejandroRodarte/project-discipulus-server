@@ -14,6 +14,6 @@ const parentNoteSchema = new Schema(parentNoteDefinition, schemaOpts);
 
 parentNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-parentNoteSchema.methods.saveFileAndDoc = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_PARENT));
+parentNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_PARENT));
 
 module.exports = parentNoteSchema;
