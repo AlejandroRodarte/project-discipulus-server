@@ -8,6 +8,6 @@ const schemaOpts = {
     collection: sharedUserNote.collectionName
 };
 
-const sharedUserNoteDefinition = new Schema(sharedUserNoteDefinition, schemaOpts);
+const sharedUserNoteSchema = new Schema(sharedUserNoteDefinition, schemaOpts);
 
-module.exports = sharedUserNoteDefinition;
+module.exports = sharedUserNoteSchema;
