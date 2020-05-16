@@ -6,7 +6,7 @@ const generateFakeEvent = ({
     start = 100, 
     end = 1000, 
     before = 100
-}) => ({
+} = {}) => ({
     title: lorem.generateWords(titleWords),
     description: lorem.generateWords(descriptionWords),
     timerange: {

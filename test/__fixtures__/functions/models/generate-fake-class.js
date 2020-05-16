@@ -6,7 +6,7 @@ const generateFakeClass = ({
     descriptionWords = 10,
     noAvatar = false,
     sessions = [[0, 10]]
-}) => ({
+} = {}) => ({
     title: lorem.generateWords(titleWords),
     description: lorem.generateWords(descriptionWords),
     avatar: noAvatar ? undefined : generateFakeImageFile(),
