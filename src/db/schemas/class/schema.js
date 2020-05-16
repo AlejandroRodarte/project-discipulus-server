@@ -46,6 +46,12 @@ classSchema.virtual('classFiles', {
     foreignField: 'class'
 });
 
+classSchema.virtual('classNotes', {
+    ref: names.classNote.modelName,
+    localField: '_id',
+    foreignField: 'class'
+});
+
 classSchema.pre('remove', async function() {
 
     const clazz = this;

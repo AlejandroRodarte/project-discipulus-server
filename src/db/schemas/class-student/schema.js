@@ -37,6 +37,12 @@ classStudentSchema.virtual('classStudentFiles', {
     foreignField: 'classStudent'
 });
 
+classSchema.virtual('classStudentNotes', {
+    ref: names.classStudentNote.modelName,
+    localField: '_id',
+    foreignField: 'classStudent'
+});
+
 classStudentSchema.methods.checkUser = async function() {
 
     const classStudent = this;

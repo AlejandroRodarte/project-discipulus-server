@@ -91,6 +91,30 @@ userSchema.virtual('studentClassInvitations', {
     foreignField: 'user'
 });
 
+userSchema.virtual('userNotes', {
+    ref: names.userNote.modelName,
+    localField: '_id',
+    foreignField: 'user'
+});
+
+userSchema.virtual('parentNotes', {
+    ref: names.parentNote.modelName,
+    localField: '_id',
+    foreignField: 'user'
+});
+
+userSchema.virtual('studentNotes', {
+    ref: names.studentNote.modelName,
+    localField: '_id',
+    foreignField: 'user'
+});
+
+userSchema.virtual('teacherNotes', {
+    ref: names.teacherNote.modelName,
+    localField: '_id',
+    foreignField: 'user'
+});
+
 userSchema.pre('save', async function() {
 
     const user = this;
