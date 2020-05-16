@@ -37,7 +37,7 @@ classStudentSchema.virtual('classStudentFiles', {
     foreignField: 'classStudent'
 });
 
-classSchema.virtual('classStudentNotes', {
+classStudentSchema.virtual('classStudentNotes', {
     ref: names.classStudentNote.modelName,
     localField: '_id',
     foreignField: 'classStudent'
