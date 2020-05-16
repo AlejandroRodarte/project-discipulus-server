@@ -16,6 +16,7 @@ const { classStudentFileDefinition, classStudentFileSchema } = require('./class-
 const { userNoteDefinition, userNoteSchema } = require('./user-note');
 const { parentNoteDefinition, parentNoteSchema } = require('./parent-note');
 const { studentNoteDefinition, studentNoteSchema } = require('./student-note');
+const { teacherNoteDefinition, teacherNoteSchema } = require('./teacher-note');
 const shared = require('./shared');
 
 module.exports = {
@@ -39,7 +40,8 @@ module.exports = {
         classStudentFileDefinition,
         userNoteDefinition,
         parentNoteDefinition,
-        studentNoteDefinition
+        studentNoteDefinition,
+        teacherNoteDefinition
     },
 
     schemas: {
@@ -61,7 +63,8 @@ module.exports = {
         classStudentFileSchema,
         userNoteSchema,
         parentNoteSchema,
-        studentNoteSchema
+        studentNoteSchema,
+        teacherNoteSchema
     },
 
     shared
