@@ -12,6 +12,7 @@ const classAvatarContext = require('./class-avatar');
 const removeClassFilesContext = require('./remove-class-files');
 const removeClassFileContext = require('./remove-class-file');
 const removeClassStudentFilesContext = require('./remove-class-student-files');
+const removeClassStudentFileContext = require('./remove-class-student-file');
 
 module.exports = {
     userAvatarContext,
@@ -27,5 +28,6 @@ module.exports = {
     classAvatarContext,
     removeClassFilesContext,
     removeClassFileContext,
-    removeClassStudentFilesContext
+    removeClassStudentFilesContext,
+    removeClassStudentFileContext
 };
