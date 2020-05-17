@@ -17,9 +17,14 @@ const {
     baseClassStudentFileContext,
     baseClassStudentNoteContext
 } = require('../../../__fixtures__/models');
+
+const { removeClassStudentFilesContext } = require('../../../__fixtures__/models-storage');
+
 const db = require('../../../__fixtures__/functions/db');
+const dbStorage = require('../../../__fixtures__/functions/db-storage');
 
 const storageApi = require('../../../../src/api/storage');
+const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 
 const names = require('../../../../src/db/names');
 
@@ -341,5 +346,36 @@ describe('[db/models/class-student] - baseClassStudentNote context', () => {
     });
 
     afterEach(db.teardown(baseClassStudentNoteContext.persisted));
+
+});
+
+describe('[db/models/class-student] - removeClassStudentFiles context', function() {
+
+    this.timeout(20000);
+
+    this.beforeEach(dbStorage.init(removeClassStudentFilesContext.persisted));
+
+    const persistedClassStudents = removeClassStudentFilesContext.persisted.db[names.classStudent.modelName];
+    const persistedStorageClassStudentFiles = removeClassStudentFilesContext.persisted.storage[names.classStudentFile.modelName];
+
+    describe('[db/models/class-student] - pre remove hook', () => {
+
+        it('Should delete actual class-student files from storage upon class-student deletion', async () => {
+
+            const classStudentFileOneKeyname = persistedStorageClassStudentFiles[0].keyname;
+
+            const classStudentOneId = persistedClassStudents[0]._id;
+            const classStudentOne = await ClassStudent.findOne({ _id: classStudentOneId });
+
+            await classStudentOne.remove();
+
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.classStudentFile.modelName]);
+            expect(bucketKeys).to.not.include(classStudentFileOneKeyname);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(removeClassStudentFilesContext.persisted));
 
 });
