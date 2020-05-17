@@ -3,9 +3,23 @@ const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo, Error: MongooseError } = require('mongoose');
 
-const { Class, ClassStudent, ClassStudentInvitation, ClassUnknownStudentInvitation, ClassFile } = require('../../../../src/db/models');
+const { 
+    Class, 
+    ClassStudent, 
+    ClassStudentInvitation, 
+    ClassUnknownStudentInvitation, 
+    ClassFile,
+    ClassNote
+} = require('../../../../src/db/models');
 
-const { uniqueClassContext, baseClassContext, baseClassStudentContext, baseClassFileContext } = require('../../../__fixtures__/models');
+const { 
+    uniqueClassContext, 
+    baseClassContext, 
+    baseClassStudentContext, 
+    baseClassFileContext, 
+    baseClassNoteContext 
+} = require('../../../__fixtures__/models');
+
 const { classAvatarContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
@@ -302,5 +316,42 @@ describe('[db/models/class] - baseClassFile context', () => {
     });
 
     afterEach(db.teardown(baseClassFileContext.persisted));
+
+});
+
+describe('[db/models/class] - baseClassNote context', () => {
+
+    beforeEach(db.init(baseClassNoteContext.persisted));
+    
+    const persistedClasses = baseClassNoteContext.persisted[names.class.modelName];
+
+    describe('[db/models/class] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated class notes upon class deletion', async () => {
+
+            const classOneId = persistedClasses[0]._id;
+            const clazz = await Class.findOne({ _id: classOneId });
+
+            await clazz.remove();
+
+            const docCount = await ClassNote.countDocuments({
+                class: classOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseClassNoteContext.persisted));
 
 });
