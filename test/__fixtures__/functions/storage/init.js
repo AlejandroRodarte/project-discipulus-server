@@ -4,7 +4,7 @@ const { createMultipartObject } = require('../../../../src/api/storage');
 
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');
 
-const { BASE_ASSETS_PATH } = require('../../../__fixtures__/config/config');
+const { BASE_ASSETS_PATH } = require('../../config/values');
 
 const init = (persistedContext) => async () => {
 

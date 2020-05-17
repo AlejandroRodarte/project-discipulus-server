@@ -9,6 +9,8 @@ const generateFakeFile = require('./generate-fake-file');
 const generateFakeEvent = require('./generate-fake-event');
 const generateFakeClass = require('./generate-fake-class');
 const generateFakeNote = require('./generate-fake-note');
+const generateFakeImageFile = require('./generate-fake-image-file');
+const setup = require('./setup');
 
 module.exports = {
     testForInvalidModel,
@@ -21,5 +23,7 @@ module.exports = {
     generateFakeFile,
     generateFakeEvent,
     generateFakeClass,
-    generateFakeNote
+    generateFakeNote,
+    generateFakeImageFile,
+    setup
 };

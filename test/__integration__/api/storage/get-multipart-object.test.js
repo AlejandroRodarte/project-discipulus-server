@@ -2,7 +2,7 @@ const fs = require('fs');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 
-const { BASE_ASSETS_PATH } = require('../../../__fixtures__/config/config');
+const { BASE_ASSETS_PATH } = require('../../../__fixtures__/config/values');
 const { getMultipartObject } = require('../../../../src/api/storage');
 const sampleFiles = require('../../../__fixtures__/shared/sample-files');
 const attachKeynames = require('../../../__fixtures__/functions/util/attach-keynames');
