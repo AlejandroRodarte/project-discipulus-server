@@ -6,7 +6,7 @@ const { mongo, Error: MongooseError } = require('mongoose');
 const { Class, ClassFile } = require('../../../../src/db/models');
 
 const { uniqueClassFileContext, baseClassFileContext } = require('../../../__fixtures__/models');
-const { removeClassFileContext } = require('../../../__fixtures__/models-storage');
+const { removeClassFileContext, saveClassFileContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
@@ -80,5 +80,57 @@ describe('[db/models/class-file] - removeClassFile context', function() {
     });
 
     this.afterEach(dbStorage.teardown(removeClassFileContext.persisted));
+
+});
+
+describe('[db/models/class-file] - saveClassFile context', function() {
+
+    this.beforeEach(dbStorage.init(saveClassFileContext.persisted));
+
+    const unpersistedClassFiles = saveClassFileContext.unpersisted.db[names.classFile.modelName];
+
+    describe('[db/models/class-file] - methods.saveFileAndDoc', () => {
+
+        it('Should not upload file if associated class does not exist', async () => {
+
+            const classFileDoc = unpersistedClassFiles[0];
+            const classFile = new ClassFile(classFileDoc);
+
+            const buffer = getAssetBuffer(classFile.file.originalname);
+
+            await expect(classFile.saveFileAndDoc(buffer)).to.eventually.be.rejectedWith(Error, modelErrorMessages.classNotFound);
+
+        });
+
+        it('Should not upload file if class-file fails on model instance save (non-unique)', async () => {
+
+            const classFileDoc = unpersistedClassFiles[1];
+            const classFile = new ClassFile(classFileDoc);
+
+            const buffer = getAssetBuffer(classFile.file.originalname);
+
+            await expect(classFile.saveFileAndDoc(buffer)).to.eventually.be.rejectedWith(mongo.MongoError);
+
+        });
+
+        it('Should properly upload correct class file', async () => {
+
+            const classFileDoc = unpersistedClassFiles[2];
+            const classFile = new ClassFile(classFileDoc);
+
+            const buffer = getAssetBuffer(classFile.file.originalname);
+
+            await expect(classFile.saveFileAndDoc(buffer)).to.eventually.eql(classFile);
+
+            const res = await storageApi.getMultipartObject(bucketNames[names.classFile.modelName], classFile.file.keyname);
+
+            expect(res.buffer).to.eql(buffer);
+            expect(res.contentType).to.equal(classFile.file.mimetype);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(saveClassFileContext.persisted));
 
 });
