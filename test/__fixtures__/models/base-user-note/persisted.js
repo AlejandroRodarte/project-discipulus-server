@@ -3,8 +3,18 @@ const utilFunctions = require('../../functions/util');
 
 const { user, userNote } = require('../../../../src/db/names');
 
-// 0: sample user
-const users = modelFunctions.generateFakeUsers(1, { fakeToken: true });
+const users = [
+
+    // 0: enabled user
+    ...modelFunctions.generateFakeUsers(1, { fakeToken: true }),
+
+    // 1: disabled user
+    ...modelFunctions.generateFakeUsers(1, {
+        fakeToken: true,
+        enabled: false
+    })
+
+];
 
 const userNotes = [
     // 0-1: user[0] with two notes
