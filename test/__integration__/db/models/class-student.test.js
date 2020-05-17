@@ -1,11 +1,14 @@
 const chai = require('chai');
+const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo } = require('mongoose');
 
-const { ClassStudent, ClassStudentInvitation, ClassUnknownStudentInvitation } = require('../../../../src/db/models');
+const { ClassStudent, ClassStudentInvitation, ClassUnknownStudentInvitation, ClassStudentFile } = require('../../../../src/db/models');
 
-const { uniqueClassStudentContext, baseClassStudentContext } = require('../../../__fixtures__/models');
+const { uniqueClassStudentContext, baseClassStudentContext, baseClassStudentFileContext } = require('../../../__fixtures__/models');
 const db = require('../../../__fixtures__/functions/db');
+
+const storageApi = require('../../../../src/api/storage');
 
 const names = require('../../../../src/db/names');
 
@@ -253,5 +256,42 @@ describe('[db/models/class-student] - baseClassStudent context', () => {
     });
 
     afterEach(db.teardown(baseClassStudentContext.persisted));
+
+});
+
+describe('[db/models/class-student] - baseClassStudentFile context', () => {
+
+    beforeEach(db.init(baseClassStudentFileContext.persisted));
+    
+    const persistedClassStudents = baseClassStudentFileContext.persisted[names.classStudent.modelName];
+
+    describe('[db/models/class-student] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated class-student files upon class-student deletion', async () => {
+
+            const classStudentOne = persistedClassStudents[0]._id;
+            const classStudent = await ClassStudent.findOne({ _id: classStudentOne });
+
+            await classStudent.remove();
+
+            const docCount = await ClassStudentFile.countDocuments({
+                classStudent: classStudentOne
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseClassStudentFileContext.persisted));
 
 });
