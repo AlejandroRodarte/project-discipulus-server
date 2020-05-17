@@ -3,9 +3,9 @@ const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo, Error: MongooseError } = require('mongoose');
 
-const { ClassStudentFile } = require('../../../../src/db/models');
+const { ClassStudent, ClassStudentFile } = require('../../../../src/db/models');
 
-const { uniqueClassStudentFileContext } = require('../../../__fixtures__/models');
+const { uniqueClassStudentFileContext, baseClassStudentFileContext } = require('../../../__fixtures__/models');
 const { } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
@@ -52,5 +52,42 @@ describe('[db/models/class-student-file] - uniqueClassStudentFile context', () =
     });
 
     afterEach(db.teardown(uniqueClassStudentFileContext.persisted));
+
+});
+
+describe('[db/models/class-student-file] - baseClassStudentFile context', () => {
+
+    beforeEach(db.init(baseClassStudentFileContext.persisted));
+    
+    const persistedClassStudents = baseClassStudentFileContext.persisted[names.classStudent.modelName];
+
+    describe('[db/models/class-student-file] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated class-student files upon class-student deletion', async () => {
+
+            const classStudentOne = persistedClassStudents[0]._id;
+            const classStudent = await ClassStudent.findOne({ _id: classStudentOne });
+
+            await classStudent.remove();
+
+            const docCount = await ClassStudentFile.countDocuments({
+                classStudent: classStudentOne
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseClassStudentFileContext.persisted));
 
 });
