@@ -1,7 +1,7 @@
-const { badWordsFilter } = require('../filter/bad-words-filter');
+const { badWordsFilter } = require('../filter');
 
 const isSentenceProfane = (sentence) => {
-    return sentence.split(' ').some(word => badWordsFilter.isProfane(word));
+    return sentence.split(' ').some(word => badWordsFilter.filter.isProfane(word));
 };
 
 module.exports = isSentenceProfane;

@@ -1,7 +1,6 @@
+const { names } = require('../../../db');
+
 const roles = require('../../roles');
-
-const names = require('../../../db/names');
-
 const deleteModes = require('../../delete-modes');
 
 const deletionUserRulesByRole = {

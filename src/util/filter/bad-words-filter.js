@@ -1,13 +1,13 @@
 const Filter = require('bad-words');
 
-const badWordsFilter = new Filter();
+const filter = new Filter();
 
-badWordsFilter.removeWords('Gaylord', 'Willy', 'Fanny', 'sexy', 'pula')
+filter.removeWords('Gaylord', 'Willy', 'Fanny', 'sexy', 'pula')
 
-const includesProfaneWord = word => badWordsFilter.list.some(badWord => word.toLowerCase().includes(badWord.toLowerCase()));
+const includesProfaneWord = word => filter.list.some(badWord => word.toLowerCase().includes(badWord.toLowerCase()));
 
 module.exports = {
-    badWordsFilter,
+    filter,
     utils: {
         includesProfaneWord
     }

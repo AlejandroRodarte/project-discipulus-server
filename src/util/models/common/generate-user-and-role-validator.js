@@ -1,10 +1,10 @@
-const { user } = require('../../../db/names');
+const { names } = require('../../../db');
 
 const { modelErrorMessages } = require('../../errors');
 
 const generateUserAndRoleValidator = (role) => async (fileDoc) => {
         
-    const User = fileDoc.model(user.modelName);
+    const User = fileDoc.model(names.user.modelName);
     const { user: userId } = fileDoc;
 
     try {

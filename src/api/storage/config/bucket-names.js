@@ -1,4 +1,4 @@
-const { names } = require('../../../db');
+const names = require('../../../db/names');
 
 module.exports = {
     test: `${process.env.BUCKET_PREFIX_NAME}-test`,

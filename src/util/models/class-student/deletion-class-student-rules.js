@@ -1,4 +1,5 @@
-const names = require('../../../db/names');
+const { names } = require('../../../db');
+
 const deleteModes = require('../../delete-modes');
 
 const deletionClassStudentRules = [
