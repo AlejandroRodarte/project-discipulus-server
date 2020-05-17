@@ -16,7 +16,10 @@ const {
     Class,
     ClassStudent,
     ClassStudentInvitation,
-    UserNote
+    UserNote,
+    ParentNote,
+    TeacherNote,
+    StudentNote
 } = require('../../../../src/db/models');
 
 const { 
@@ -31,7 +34,10 @@ const {
     baseUserEventContext,
     baseClassContext,
     baseClassStudentContext,
-    baseUserNoteContext
+    baseUserNoteContext,
+    baseParentNoteContext,
+    baseTeacherNoteContext,
+    baseStudentNoteContext
 } = require('../../../__fixtures__/models');
 
 const { userAvatarContext, removeAllUserFilesContext } = require('../../../__fixtures__/models-storage');
@@ -805,5 +811,122 @@ describe('[db/models/user] - baseUserNote context', () => {
     });
 
     afterEach(db.teardown(baseUserNoteContext.persisted));
+
+});
+
+describe('[db/models/user] - baseParentNote context', () => {
+
+    beforeEach(db.init(baseParentNoteContext.persisted));
+
+    describe('[db/models/user] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
+        const persistedUsers = baseParentNoteContext.persisted[names.user.modelName];
+
+        it('Should delete all associated parent-notes upon parent deletion', async () => {
+
+            const userOneId = persistedUsers[0]._id;
+            const userOne = await User.findOne({ _id: userOneId });
+
+            await userOne.remove();
+            
+            const docCount = await ParentNote.countDocuments({
+                user: userOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseParentNoteContext.persisted));
+
+});
+
+describe('[db/models/user] - baseStudentNote context', () => {
+
+    beforeEach(db.init(baseStudentNoteContext.persisted));
+
+    describe('[db/models/user] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
+        const persistedUsers = baseStudentNoteContext.persisted[names.user.modelName];
+
+        it('Should delete all associated student-notes upon student deletion', async () => {
+
+            const userOneId = persistedUsers[0]._id;
+            const userOne = await User.findOne({ _id: userOneId });
+
+            await userOne.remove();
+            
+            const docCount = await StudentNote.countDocuments({
+                user: userOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseStudentNoteContext.persisted));
+
+});
+
+describe('[db/models/user] - baseTeacherNote context', () => {
+
+    beforeEach(db.init(baseTeacherNoteContext.persisted));
+
+    describe('[db/models/user] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
+        const persistedUsers = baseTeacherNoteContext.persisted[names.user.modelName];
+
+        it('Should delete all associated teacher-notes upon teacher deletion', async () => {
+
+            const userOneId = persistedUsers[0]._id;
+            const userOne = await User.findOne({ _id: userOneId });
+
+            await userOne.remove();
+            
+            const docCount = await TeacherNote.countDocuments({
+                user: userOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseTeacherNoteContext.persisted));
 
 });
