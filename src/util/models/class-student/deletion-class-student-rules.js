@@ -10,7 +10,7 @@ const deletionClassStudentRules = [
     },
     {
         modelName: names.classStudentNote.modelName,
-        fieldName: 'user',
+        fieldName: 'classStudent',
         deleteFiles: false,
         deleteMode: deleteModes.DELETE_MANY
     }
