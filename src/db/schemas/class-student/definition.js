@@ -16,13 +16,6 @@ const classStudentDefinition = {
         ref: user.modelName
     },
 
-    grade: {
-        type: Number,
-        default: 0,
-        min: [0, 'Negative grades are not allowed'],
-        max: [100, 'Grades superior to 100 are not allowed']
-    },
-
     write: {
         type: Boolean,
         default: false

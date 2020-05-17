@@ -77,31 +77,6 @@ describe('[db/models/class-student] - Invalid user', () => {
 
 });
 
-describe('[db/models/class-student] - Default grade', () => {
-
-    it('Should default grade to 0 if not specified', () => {
-        expect(classStudent.grade).to.equal(0);
-    });
-
-});
-
-describe('[db/models/class-student] - Invalid grade', () => {
-
-    const [minGrade] = classStudentDefinition.grade.min;
-    const [maxGrade] = classStudentDefinition.grade.max;
-
-    it(`Should not validate grade lower than ${ minGrade }`, () => {
-        classStudent.grade = -10;
-        modelFunctions.testForInvalidModel(classStudent, classStudentDefinition.grade.min);
-    });
-
-    it(`Should not validate grade higher than ${ maxGrade }`, () => {
-        classStudent.grade = 110;
-        modelFunctions.testForInvalidModel(classStudent, classStudentDefinition.grade.max);
-    });
-
-});
-
 describe('[db/models/class-student] - Default write', () => {
 
     it('Should default write flag to false', () => {
