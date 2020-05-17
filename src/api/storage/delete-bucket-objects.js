@@ -1,4 +1,4 @@
-const cos = require('./config/cos');
+const { cos } = require('./config');
 
 const deleteBucketObjects = async (bucketName, keynames) => {
 
