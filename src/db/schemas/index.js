@@ -22,6 +22,7 @@ const { classStudentNoteDefinition, classStudentNoteSchema } = require('./class-
 const { sessionDefinition, sessionSchema } = require('./session');
 const { sessionFileDefinition, sessionFileSchema } = require('./session-file');
 const { sessionNoteDefinition, sessionNoteSchema } = require('./session-note');
+const { sessionStudentDefinition, sessionStudentSchema } = require('./session-student');
 const shared = require('./shared');
 
 module.exports = {
@@ -51,7 +52,8 @@ module.exports = {
         classStudentNoteDefinition,
         sessionDefinition,
         sessionFileDefinition,
-        sessionNoteDefinition
+        sessionNoteDefinition,
+        sessionStudentDefinition
     },
 
     schemas: {
@@ -79,7 +81,8 @@ module.exports = {
         classStudentNoteSchema,
         sessionSchema,
         sessionFileSchema,
-        sessionNoteSchema
+        sessionNoteSchema,
+        sessionStudentSchema
     },
 
     shared

@@ -23,6 +23,7 @@ const ClassStudentNote = require('./class-student-note');
 const Session = require('./session');
 const SessionFile = require('./session-file');
 const SessionNote = require('./session-note');
+const SessionStudent = require('./session-student');
 const Shared = require('./shared');
 
 module.exports = {
@@ -51,5 +52,6 @@ module.exports = {
     Session,
     SessionFile,
     SessionNote,
+    SessionStudent,
     Shared
 };
