@@ -138,6 +138,36 @@ const names = {
     classStudentNote: {
         collectionName: 'classStudentNotes',
         modelName: 'ClassStudentNote'
+    },
+
+    session: {
+        collectionName: 'sessions',
+        modelName: 'Session'
+    },
+
+    sessionFile: {
+        collectionName: 'sessionFiles',
+        modelName: 'SessionFile'
+    },
+
+    sessionNote: {
+        collectionName: 'sessionNotes',
+        modelName: 'SessionNote'
+    },
+
+    sessionStudent: {
+        collectionName: 'sessionStudents',
+        modelName: 'SessionStudent'
+    },
+
+    sessionStudentFile: {
+        collectionName: 'sessionStudentFiles',
+        modelName: 'SessionStudentFile'
+    },
+
+    sessionStudentNote: {
+        collectionName: 'sessionStudentNotes',
+        modelName: 'SessionStudentNote'
     }
 
 };
