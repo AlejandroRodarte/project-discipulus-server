@@ -1,8 +1,7 @@
-const db = require('../../../db');
-const { sharedNoteSchema } = require('../../schemas/shared/note');
-
+const { shared } = require('../../schemas');
 const { sharedNote } = require('../../names');
+const getModel = require('../../get-model');
 
-const SharedNote = db.getModel(sharedNote.modelName, sharedNoteSchema);
+const SharedNote = getModel(sharedNote.modelName, shared.schemas.sharedNoteSchema);
 
 module.exports = SharedNote;

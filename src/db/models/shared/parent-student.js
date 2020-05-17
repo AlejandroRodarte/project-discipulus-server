@@ -1,8 +1,7 @@
-const db = require('../../../db');
-const { sharedParentStudentSchema } = require('../../schemas/shared/parent-student');
-
+const { shared } = require('../../schemas');
 const { sharedParentStudent } = require('../../names');
+const getModel = require('../../get-model');
 
-const SharedParentStudent = db.getModel(sharedParentStudent.modelName, sharedParentStudentSchema);
+const SharedParentStudent = getModel(sharedParentStudent.modelName, shared.schemas.sharedParentStudentSchema);
 
 module.exports = SharedParentStudent;

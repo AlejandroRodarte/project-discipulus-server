@@ -1,8 +1,8 @@
-const db = require('../');
-const { parentFileSchema } = require('../schemas/parent-file');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { parentFile } = require('../names');
 
-const ParentFile = db.getModel(parentFile.modelName, parentFileSchema);
+const ParentFile = getModel(parentFile.modelName, schemas.parentFileSchema);
 
 module.exports = ParentFile;

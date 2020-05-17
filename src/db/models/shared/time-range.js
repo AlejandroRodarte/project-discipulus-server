@@ -1,8 +1,7 @@
-const db = require('../../../db');
-const { sharedTimeRangeSchema } = require('../../schemas/shared/time-range');
-
+const { shared } = require('../../schemas');
 const { sharedTimeRange } = require('../../names');
+const getModel = require('../../get-model');
 
-const SharedTimeRange = db.getModel(sharedTimeRange.modelName, sharedTimeRangeSchema);
+const SharedTimeRange = getModel(sharedTimeRange.modelName, shared.schemas.sharedTimeRangeSchema);
 
 module.exports = SharedTimeRange;

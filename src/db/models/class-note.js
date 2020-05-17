@@ -1,8 +1,8 @@
-const db = require('..');
-const { classNoteSchema } = require('../schemas/class-note');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { classNote } = require('../names');
 
-const ClassNote = db.getModel(classNote.modelName, classNoteSchema);
+const ClassNote = getModel(classNote.modelName, schemas.classNoteSchema);
 
 module.exports = ClassNote;

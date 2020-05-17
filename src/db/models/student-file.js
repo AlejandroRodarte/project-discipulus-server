@@ -1,8 +1,8 @@
-const db = require('../');
-const { studentFileSchema } = require('../schemas/student-file');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { studentFile } = require('../names');
 
-const StudentFile = db.getModel(studentFile.modelName, studentFileSchema);
+const StudentFile = getModel(studentFile.modelName, schemas.studentFileSchema);
 
 module.exports = StudentFile;

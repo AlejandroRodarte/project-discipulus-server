@@ -1,8 +1,8 @@
-const db = require('../');
-const { userRoleSchema } = require('../schemas/user-role');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { userRole } = require('../names');
 
-const UserRole = db.getModel(userRole.modelName, userRoleSchema);
+const UserRole = getModel(userRole.modelName, schemas.userRoleSchema);
 
 module.exports = UserRole;

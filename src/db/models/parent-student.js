@@ -1,8 +1,8 @@
-const db = require('../');
-const { parentStudentSchema } = require('../schemas/parent-student');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { parentStudent } = require('../names');
 
-const ParentStudent = db.getModel(parentStudent.modelName, parentStudentSchema);
+const ParentStudent = getModel(parentStudent.modelName, schemas.parentStudentSchema);
 
 module.exports = ParentStudent;

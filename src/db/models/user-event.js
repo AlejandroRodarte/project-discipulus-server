@@ -1,8 +1,8 @@
-const db = require('..');
-const { userEventSchema } = require('../schemas/user-event');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { userEvent } = require('../names');
 
-const UserEvent = db.getModel(userEvent.modelName, userEventSchema);
+const UserEvent = getModel(userEvent.modelName, schemas.userEventSchema);
 
 module.exports = UserEvent;

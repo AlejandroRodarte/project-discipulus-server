@@ -1,8 +1,8 @@
-const db = require('..');
-const { classUnknownStudentInvitationSchema } = require('../schemas/class-unknown-student-invitation');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { classUnknownStudentInvitation } = require('../names');
 
-const ClassUnknownStudentInvitation = db.getModel(classUnknownStudentInvitation.modelName, classUnknownStudentInvitationSchema);
+const ClassUnknownStudentInvitation = getModel(classUnknownStudentInvitation.modelName, schemas.classUnknownStudentInvitationSchema);
 
 module.exports = ClassUnknownStudentInvitation;

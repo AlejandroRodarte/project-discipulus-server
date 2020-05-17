@@ -1,8 +1,9 @@
-const db = require('../');
-const { userSchema } = require('../schemas/user');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { user } = require('../names');
 
-const User = db.getModel(user.modelName, userSchema);
+const User = getModel(user.modelName, schemas.userSchema);
 
 module.exports = User;
+

@@ -1,8 +1,7 @@
-const db = require('../../../db');
-const { sharedUserFileSchema } = require('../../schemas/shared/user-file');
-
+const { shared } = require('../../schemas');
 const { sharedUserFile } = require('../../names');
+const getModel = require('../../get-model');
 
-const SharedUserFile = db.getModel(sharedUserFile.modelName, sharedUserFileSchema);
+const SharedUserFile = getModel(sharedUserFile.modelName, shared.schemas.sharedUserFileSchema);
 
 module.exports = SharedUserFile;

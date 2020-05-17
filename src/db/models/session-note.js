@@ -1,8 +1,8 @@
-const db = require('..');
-const { sessionNoteSchema } = require('../schemas/session-note');
+const { schemas } = require('../schemas');
 
+const getModel = require('../get-model');
 const { sessionNote } = require('../names');
 
-const SessionNote = db.getModel(sessionNote.modelName, sessionNoteSchema);
+const SessionNote = getModel(sessionNote.modelName, schemas.sessionNoteSchema);
 
 module.exports = SessionNote;
