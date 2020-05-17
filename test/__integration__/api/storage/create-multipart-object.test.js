@@ -3,7 +3,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 
 const { BASE_ASSETS_PATH } = require('../../../__fixtures__/config/config');
-const { createMultipartObject, listBucketKeys } = require('../../../../src/api/storage');
+const { createMultipartObject } = require('../../../../src/api/storage');
 const sampleFiles = require('../../../__fixtures__/shared/sample-files');
 const attachKeynames = require('../../../__fixtures__/functions/util/attach-keynames');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');

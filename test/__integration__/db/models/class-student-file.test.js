@@ -1,11 +1,10 @@
 const chai = require('chai');
-const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo, Error: MongooseError } = require('mongoose');
+const { mongo } = require('mongoose');
 
-const { ClassStudent, ClassStudentFile } = require('../../../../src/db/models');
+const { ClassStudentFile } = require('../../../../src/db/models');
 
-const { uniqueClassStudentFileContext, baseClassStudentFileContext } = require('../../../__fixtures__/models');
+const { uniqueClassStudentFileContext } = require('../../../__fixtures__/models');
 const { removeClassStudentFileContext, saveClassStudentFileContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
@@ -57,6 +56,8 @@ describe('[db/models/class-student-file] - uniqueClassStudentFile context', () =
 
 describe('[db/models/class-student-file] - removeClassStudentFile context', function() {
 
+    this.timeout(20000);
+
     this.beforeEach(dbStorage.init(removeClassStudentFileContext.persisted));
 
     const persistedClassStudentFiles = removeClassStudentFileContext.persisted.db[names.classStudentFile.modelName];
@@ -84,6 +85,8 @@ describe('[db/models/class-student-file] - removeClassStudentFile context', func
 });
 
 describe('[db/models/class-student-file] - saveClassStudentFile context', function() {
+
+    this.timeout(20000);
 
     this.beforeEach(dbStorage.init(saveClassStudentFileContext.persisted));
 

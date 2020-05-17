@@ -1,7 +1,7 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 
-const { deleteBucketObjects, listBucketKeys } = require('../../../../src/api/storage');
+const { listBucketKeys } = require('../../../../src/api/storage');
 const sampleFiles = require('../../../__fixtures__/shared/sample-files');
 const attachKeynames = require('../../../__fixtures__/functions/util/attach-keynames');
 const bucketNames = require('../../../../src/api/storage/config/bucket-names');

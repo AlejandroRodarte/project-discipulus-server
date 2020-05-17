@@ -1,6 +1,5 @@
 const expect = require('chai').expect;
 
-const { Types } = require('mongoose');
 const moment = require('moment');
 
 const { sharedTimeRangeDefinition } = require('../../../../../src/db/schemas/shared/time-range');
