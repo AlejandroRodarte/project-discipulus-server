@@ -15,7 +15,8 @@ const {
     UserEvent,
     Class,
     ClassStudent,
-    ClassStudentInvitation
+    ClassStudentInvitation,
+    UserNote
 } = require('../../../../src/db/models');
 
 const { 
@@ -29,7 +30,8 @@ const {
     baseParentStudentInvitationContext,
     baseUserEventContext,
     baseClassContext,
-    baseClassStudentContext
+    baseClassStudentContext,
+    baseUserNoteContext
 } = require('../../../__fixtures__/models');
 
 const { userAvatarContext, removeAllUserFilesContext } = require('../../../__fixtures__/models-storage');
@@ -764,5 +766,44 @@ describe('[db/models/user] - baseClassStudent context', () => {
     });
 
     afterEach(db.teardown(baseClassStudentContext.persisted));
+
+});
+
+describe('[db/models/user] - baseUserNote context', () => {
+
+    beforeEach(db.init(baseUserNoteContext.persisted));
+
+    describe('[db/models/user] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => {
+            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        });
+
+        const persistedUsers = baseUserNoteContext.persisted[names.user.modelName];
+
+        it('Should delete all associated user-notes upon user deletion', async () => {
+
+            const userOneId = persistedUsers[0]._id;
+            const userOne = await User.findOne({ _id: userOneId });
+
+            await userOne.remove();
+            
+            const docCount = await UserNote.countDocuments({
+                user: userOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(db.teardown(baseUserNoteContext.persisted));
 
 });
