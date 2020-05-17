@@ -6,7 +6,7 @@ const { mongo, Error: MongooseError } = require('mongoose');
 const { Class, ClassFile } = require('../../../../src/db/models');
 
 const { uniqueClassFileContext, baseClassFileContext } = require('../../../__fixtures__/models');
-const { } = require('../../../__fixtures__/models-storage');
+const { removeClassFileContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
@@ -52,5 +52,33 @@ describe('[db/models/class-file] - uniqueClassFile context', () => {
     });
 
     afterEach(db.teardown(uniqueClassFileContext.persisted));
+
+});
+
+describe('[db/models/class-file] - removeClassFile context', function() {
+
+    this.beforeEach(dbStorage.init(removeClassFileContext.persisted));
+
+    const persistedClassFiles = removeClassFileContext.persisted.db[names.classFile.modelName];
+
+    describe('[db/models/class-file] - pre remove hook', () => {
+
+        it('Should remove associated file upon model instance deletion', async () => {
+
+            const classFileOneId = persistedClassFiles[0]._id;
+            const classFile = await ClassFile.findOne({ _id: classFileOneId });
+
+            const classFileOneKeyname = classFile.file.keyname;
+
+            await classFile.remove();
+
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.classFile.modelName]);
+            expect(bucketKeys).to.not.include(classFileOneKeyname);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(removeClassFileContext.persisted));
 
 });
