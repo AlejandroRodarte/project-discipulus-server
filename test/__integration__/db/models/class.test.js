@@ -20,7 +20,7 @@ const {
     baseClassNoteContext 
 } = require('../../../__fixtures__/models');
 
-const { classAvatarContext } = require('../../../__fixtures__/models-storage');
+const { classAvatarContext, removeClassFilesContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
@@ -353,5 +353,37 @@ describe('[db/models/class] - baseClassNote context', () => {
     });
 
     afterEach(db.teardown(baseClassNoteContext.persisted));
+
+});
+
+describe('[db/models/class] - removeClassFiles context', function() {
+
+    this.timeout(20000);
+
+    this.beforeEach(dbStorage.init(removeClassFilesContext.persisted));
+
+    const persistedClasses = removeClassFilesContext.persisted.db[names.class.modelName];
+    const persistedStorageClassFiles = removeClassFilesContext.persisted.storage[names.classFile.modelName];
+
+    describe('[db/models/class] - pre remove hook', () => {
+
+        it('Should delete actual class-files from storage upon class deletion', async () => {
+
+            const classFileOneKeyname = persistedStorageClassFiles[0].keyname;
+
+            const classOneId = persistedClasses[0]._id;
+            const clazzOne = await Class.findOne({ _id: classOneId });
+
+            await clazzOne.remove();
+
+            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.classFile.modelName]);
+
+            expect(bucketKeys).to.not.include(classFileOneKeyname);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(removeClassFilesContext.persisted));
 
 });

@@ -18,6 +18,7 @@ const classFiles = [
 ];
 
 const storageClassFiles = utilFunctions.attachKeynames([
+    // 0: doc file that associates class[0] with classFile[0]
     shared.sampleFiles.documentFile
 ]);
 
