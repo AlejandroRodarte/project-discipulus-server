@@ -22,8 +22,8 @@ const classDefinition = {
             (value) => !utilFunctions.isSentenceProfane(value),
             'Do not use profane words on your class title'
         ],
-        minlength: [3, 'Event title must be at least 3 characters long'],
-        maxlength: [80, 'Event title must be shorter than 80 characters'],
+        minlength: [3, 'Class title must be at least 3 characters long'],
+        maxlength: [80, 'Class title must be shorter than 80 characters'],
         set: (value) => {
             if (value) {
                 return utilFunctions.trimRedundantSpaces(value);
@@ -38,7 +38,7 @@ const classDefinition = {
             (value) => !utilFunctions.isSentenceProfane(value),
             'Do not use profane words on your class description'
         ],
-        maxlength: [500, 'Event description must be shorter than 500 characters'],
+        maxlength: [500, 'Class description must be shorter than 500 characters'],
         set: (value) => {
             if (value) {
                 return utilFunctions.trimRedundantSpaces(value);
