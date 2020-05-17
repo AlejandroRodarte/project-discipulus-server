@@ -1,6 +1,5 @@
 const { Types } = require('mongoose');
 
-const modelFunctions = require('../../functions/models');
 const utilFunctions = require('../../functions/util');
 
 const shared = require('../../shared');

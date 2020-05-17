@@ -6,7 +6,7 @@ const { mongo, Error: MongooseError } = require('mongoose');
 const { ClassStudent, ClassStudentFile } = require('../../../../src/db/models');
 
 const { uniqueClassStudentFileContext, baseClassStudentFileContext } = require('../../../__fixtures__/models');
-const { removeClassStudentFileContext } = require('../../../__fixtures__/models-storage');
+const { removeClassStudentFileContext, saveClassStudentFileContext } = require('../../../__fixtures__/models-storage');
 
 const db = require('../../../__fixtures__/functions/db');
 const dbStorage = require('../../../__fixtures__/functions/db-storage');
@@ -80,5 +80,57 @@ describe('[db/models/class-student-file] - removeClassStudentFile context', func
     });
 
     this.afterEach(dbStorage.teardown(removeClassStudentFileContext.persisted));
+
+});
+
+describe('[db/models/class-student-file] - saveClassStudentFile context', function() {
+
+    this.beforeEach(dbStorage.init(saveClassStudentFileContext.persisted));
+
+    const unpersistedClassStudentFiles = saveClassStudentFileContext.unpersisted.db[names.classStudentFile.modelName];
+
+    describe('[db/models/class-student-file] - methods.saveFileAndDoc', () => {
+
+        it('Should not upload file if associated class-student does not exist', async () => {
+
+            const classStudentFileDoc = unpersistedClassStudentFiles[0];
+            const classStudentFile = new ClassStudentFile(classStudentFileDoc);
+
+            const buffer = getAssetBuffer(classStudentFile.file.originalname);
+
+            await expect(classStudentFile.saveFileAndDoc(buffer)).to.eventually.be.rejectedWith(Error, modelErrorMessages.classStudentNotFound);
+
+        });
+
+        it('Should not upload file if class-student-file fails on model instance save (non-unique)', async () => {
+
+            const classStudentFileDoc = unpersistedClassStudentFiles[1];
+            const classStudentFile = new ClassStudentFile(classStudentFileDoc);
+
+            const buffer = getAssetBuffer(classStudentFile.file.originalname);
+
+            await expect(classStudentFile.saveFileAndDoc(buffer)).to.eventually.be.rejectedWith(mongo.MongoError);
+
+        });
+
+        it('Should properly upload correct class file', async () => {
+
+            const classStudentFileDoc = unpersistedClassStudentFiles[2];
+            const classStudentFile = new ClassStudentFile(classStudentFileDoc);
+
+            const buffer = getAssetBuffer(classStudentFile.file.originalname);
+
+            await expect(classStudentFile.saveFileAndDoc(buffer)).to.eventually.eql(classStudentFile);
+
+            const res = await storageApi.getMultipartObject(bucketNames[names.classStudentFile.modelName], classStudentFile.file.keyname);
+
+            expect(res.buffer).to.eql(buffer);
+            expect(res.contentType).to.equal(classStudentFile.file.mimetype);
+
+        });
+
+    });
+
+    this.afterEach(dbStorage.teardown(saveClassStudentFileContext.persisted));
 
 });
