@@ -729,13 +729,13 @@ describe('[db/models/user] - baseClassStudent context', () => {
 
         it('Should delete all associated class-student records upon student deletion', async () => {
 
-            const userTwoId = persistedUsers[2]._id;
-            const userTwo = await User.findOne({ _id: userTwoId });
+            const userFourId = persistedUsers[3]._id;
+            const userFour = await User.findOne({ _id: userFourId });
 
-            await userTwo.remove();
+            await userFour.remove();
 
             const docCount = await ClassStudent.countDocuments({
-                user: userTwo._id
+                user: userFour._id
             });
 
             expect(docCount).to.equal(0);
@@ -744,13 +744,13 @@ describe('[db/models/user] - baseClassStudent context', () => {
 
         it('Should delete all associated class-student-invitation records upon student deletion', async () => {
 
-            const userThreeId = persistedUsers[2]._id;
-            const userThree = await User.findOne({ _id: userThreeId });
+            const userFiveId = persistedUsers[4]._id;
+            const userFive = await User.findOne({ _id: userFiveId });
 
-            await userThree.remove();
+            await userFive.remove();
 
             const docCount = await ClassStudentInvitation.countDocuments({
-                user: userThree._id
+                user: userFive._id
             });
 
             expect(docCount).to.equal(0);

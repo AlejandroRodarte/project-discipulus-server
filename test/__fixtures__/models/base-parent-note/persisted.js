@@ -15,7 +15,7 @@ const userRoles = [
 
 const parentNotes = [
     // 0-1: user[0] with two notes
-    ...generateOneToMany('user', users[0]._id, [{ note: modelFunctions.generateFakeNote() }, { note: modelFunctions.generateFakeNote() }]),
+    ...utilFunctions.generateOneToMany('user', users[0]._id, [{ note: modelFunctions.generateFakeNote() }, { note: modelFunctions.generateFakeNote() }]),
 ];
 
 module.exports = {
