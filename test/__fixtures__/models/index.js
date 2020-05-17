@@ -32,6 +32,14 @@ const uniqueTeacherNoteContext = require('./unique-teacher-note');
 const uniqueParentNoteContext = require('./unique-parent-note');
 const uniqueClassNoteContext = require('./unique-class-note');
 const uniqueClassStudentNoteContext = require('./unique-class-student-note');
+const baseClassFileContext = require('./base-class-file');
+const baseClassNoteContext = require('./base-class-note');
+const baseClassStudentFileContext = require('./base-class-student-file');
+const baseClassStudentNoteContext = require('./base-class-student-note');
+const baseParentNoteContext = require('./base-parent-note');
+const baseStudentNoteContext = require('./base-student-note');
+const baseTeacherNoteContext = require('./base-teacher-note');
+const baseUserNoteContext = require('./base-user-note');
 
 module.exports = {
     sampleFileContext,
@@ -67,5 +75,13 @@ module.exports = {
     uniqueStudentNoteContext,
     uniqueTeacherNoteContext,
     uniqueClassNoteContext,
-    uniqueClassStudentNoteContext
+    uniqueClassStudentNoteContext,
+    baseClassFileContext,
+    baseClassNoteContext,
+    baseClassStudentFileContext,
+    baseClassStudentNoteContext,
+    baseParentNoteContext,
+    baseStudentNoteContext,
+    baseTeacherNoteContext,
+    baseUserNoteContext
 };
