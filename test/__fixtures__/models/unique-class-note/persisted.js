@@ -1,20 +1,19 @@
 const { Types } = require('mongoose');
-const { class: clazz, classNote } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const modelFunctions = require('../../functions/models');
-const utilFunctions = require('../../functions/util');
+const { models, util } = require('../../functions');
 
 const classes = [
     // 0: generate one sample class
-    ...utilFunctions.generateOneToMany('user', new Types.ObjectId(), [ modelFunctions.generateFakeClass() ])
+    ...util.generateOneToMany('user', new Types.ObjectId(), [ models.generateFakeClass() ])
 ];
 
 const classNotes = [
     // 0: class[0] with sample note
-    ...utilFunctions.generateOneToMany('class', classes[0]._id, [{ note: modelFunctions.generateFakeNote() }])
+    ...util.generateOneToMany('class', classes[0]._id, [{ note: models.generateFakeNote() }])
 ];
 
 module.exports = {
-    [clazz.modelName]: classes,
-    [classNote.modelName]: classNotes
+    [db.names.class.modelName]: classes,
+    [db.names.classNote.modelName]: classNotes
 };

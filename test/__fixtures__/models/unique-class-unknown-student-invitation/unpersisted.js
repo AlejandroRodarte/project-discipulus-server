@@ -1,11 +1,11 @@
 const { Types } = require('mongoose');
 const faker = require('faker');
 
-const { classUnknownStudentInvitation } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedClassUnknownStudentInvitations = persisted[classUnknownStudentInvitation.modelName];
+const persistedClassUnknownStudentInvitations = persisted[db.names.classUnknownStudentInvitation.modelName];
 
 const classUnknownStudentInvitations = [
 
@@ -36,5 +36,5 @@ const classUnknownStudentInvitations = [
 ];
 
 module.exports = {
-    [classUnknownStudentInvitation.modelName]: classUnknownStudentInvitations
+    [db.names.classUnknownStudentInvitation.modelName]: classUnknownStudentInvitations
 };

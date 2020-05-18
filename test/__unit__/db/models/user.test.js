@@ -4,67 +4,54 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const User = require('../../../../src/db/models/user');
-const { userDefinition } = require('../../../../src/db/schemas/user');
-const modelFunctions = require('../../../__fixtures__/functions/models');
-
-const { getRolesPipeline } = require('../../../../src/db/aggregation/user-role');
-
-const { userRole } = require('../../../../src/db/names');
-const roleTypes = require('../../../../src/util/roles');
-
-const storageApi = require('../../../../src/api/storage');
-const sampleFiles = require('../../../__fixtures__/shared/sample-files');
-
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-const names = require('../../../../src/db/names');
-
-const regexp = require('../../../../src/util/regexp');
-
-const generateFakeUsers = require('../../../__fixtures__/functions/models/generate-fake-users');
+const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
+const api = require('../../../../src/api');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const [userDoc] = generateFakeUsers(1, { fakeToken: true });
+const [userDoc] = fixtures.functions.models.generateFakeUsers(1, { fakeToken: true });
 
-let user = new User(userDoc);
+let user = new db.models.User(userDoc);
 
-beforeEach(() => user = modelFunctions.getNewModelInstance(User, userDoc));
+beforeEach(() => user = fixtures.functions.models.getNewModelInstance(db.models.User, userDoc));
 
 describe('[db/models/user] - invalid name', () => {
 
-    const [userMinLength] = userDefinition.name.minlength;
-    const [userMaxLength] = userDefinition.name.maxlength;
+    const [userMinLength] = db.schemas.definitions.userDefinition.name.minlength;
+    const [userMaxLength] = db.schemas.definitions.userDefinition.name.maxlength;
 
     it('Should not validate a user without a name', () => {
         user.name = undefined;
-        modelFunctions.testForInvalidModel(user, userDefinition.name.required);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.name.required);
     });
 
     it('Should not validate a user with a name that does not match the fullName regexp pattern', () => {
         user.name = 'Max+ User!';
-        modelFunctions.testForInvalidModel(user, userDefinition.name.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.name.validate);
     });
 
     it('Should not validate a user with a name that does not match the singleName regexp pattern', () => {
         user.name = '.Peter';
-        modelFunctions.testForInvalidModel(user, userDefinition.name.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.name.validate);
     });
 
     it('Should not validate a user with an explicit profane name', () => {
         user.name = 'Pussy Destroyer';
-        modelFunctions.testForInvalidModel(user, userDefinition.name.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.name.validate);
     });
 
     it(`Should not validate a user with a name shorter than ${ userMinLength } characters`, () => {
         user.name = 'A';
-        modelFunctions.testForInvalidModel(user, userDefinition.name.minlength);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.name.minlength);
     });
 
     it(`Should not validate a user with a name longer than ${ userMaxLength } characters`, () => {
         user.name = 'Hey this is a reaaaaaaallllyyy looooong super name that should not enter into the database ever since its pretty long you now';
-        modelFunctions.testForInvalidModel(user, userDefinition.name.maxlength);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.name.maxlength);
     });
 
 });
@@ -73,13 +60,13 @@ describe('[db/models/user] - valid name', () => {
 
     it('Should validate a correct user name', () => {
         user.name = 'Brian O\' Connor';
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
     });
 
     it('Should trim a valid user name', () => {
 
         user.name = '   John        Smith    ';
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
 
         expect(user.name).to.equal('John Smith');
 
@@ -89,32 +76,32 @@ describe('[db/models/user] - valid name', () => {
 
 describe('[db/models/user] - invalid username', () => {
 
-    const [usernameMinLength] = userDefinition.username.minlength;
-    const [usernameMaxLength] = userDefinition.username.maxlength;
+    const [usernameMinLength] = db.schemas.definitions.userDefinition.username.minlength;
+    const [usernameMaxLength] = db.schemas.definitions.userDefinition.username.maxlength;
 
     it('Should not validate a user without a username', () => {
         user.username = undefined;
-        modelFunctions.testForInvalidModel(user, userDefinition.username.required);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.username.required);
     });
 
     it('Should not validate a user with a username that does not match the username regexp pattern', () => {
         user.username = 'max+!';
-        modelFunctions.testForInvalidModel(user, userDefinition.username.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.username.validate);
     });
 
     it('Should not validate a user with a profane username', () => {
         user.username = 'anus';
-        modelFunctions.testForInvalidModel(user, userDefinition.username.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.username.validate);
     });
 
     it(`Should not validate a user with a username shorter than ${ usernameMinLength } characters`, () => {
         user.username = 'cz';
-        modelFunctions.testForInvalidModel(user, userDefinition.username.minlength);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.username.minlength);
     });
 
     it(`Should not validate a user with a username longer than ${ usernameMaxLength } characters`, () => {
         user.username = 'superlongusernamebruhohmygodsuperbadass';
-        modelFunctions.testForInvalidModel(user, userDefinition.username.maxlength);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.username.maxlength);
     });
 
 });
@@ -123,13 +110,13 @@ describe('[db/models/user] - valid username', () => {
 
     it('Should validate a correct username', () => {
         user.username = 'lion_delta42';
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
     });
 
     it('Should trim a valid username', () => {
 
         user.username = '   magician.red_68     ';
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
 
         expect(user.username).to.equal('magician.red_68');
 
@@ -141,12 +128,12 @@ describe('[db/models/user] - invalid email', () => {
 
     it('Should not validate a user without an email', () => {
         user.email = undefined;
-        modelFunctions.testForInvalidModel(user, userDefinition.email.required);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.email.required);
     });
 
     it('Should not validate a user with an invalid email', () => {
         user.email = 'this-is@not-an@email.com';
-        modelFunctions.testForInvalidModel(user, userDefinition.email.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.email.validate);
     });
 
 });
@@ -155,13 +142,13 @@ describe('[db/models/user] - valid email', () => {
 
     it('Should validate a correct email', () => {
         user.email = 'john_smith@hotmail.com';
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
     });
 
     it('Should trim a valid email', () => {
 
         user.email = '   smith@something.org     ';
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
 
         expect(user.email).to.equal('smith@something.org');
 
@@ -171,21 +158,21 @@ describe('[db/models/user] - valid email', () => {
 
 describe('[db/models/user] - invalid password', () => {
 
-    const [passwordMinLength] = userDefinition.password.minlength;
+    const [passwordMinLength] = db.schemas.definitions.userDefinition.password.minlength;
 
     it('Should not validate a user without a password', () => {
         user.password = undefined;
-        modelFunctions.testForInvalidModel(user, userDefinition.password.required);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.password.required);
     });
 
     it('Should not validate a user with a password that does not match the strongPassword regexp', () => {
         user.password = 'weak-shit';
-        modelFunctions.testForInvalidModel(user, userDefinition.password.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.password.validate);
     });
 
     it(`Should not validate a user with a password shorter than ${ passwordMinLength } characters (unhashed)`, () => {
         user.password = '?sH1t.';
-        modelFunctions.testForInvalidModel(user, userDefinition.password.minlength);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.password.minlength);
     });
 
 });
@@ -194,7 +181,7 @@ describe('[db/models/user] - valid password', () => {
 
     it('Should validate a correct password', () => {
         user.password = 'Str0ng?P4s$w0rd!';
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
     });
 
 });
@@ -210,7 +197,7 @@ describe('[db/models/user] - invalid avatar', () => {
             mimetype: 'image/jpeg'
         };
 
-        modelFunctions.testForInvalidModel(user, userDefinition.avatar.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.avatar.validate);
 
     });
 
@@ -221,7 +208,7 @@ describe('[db/models/user] - invalid avatar', () => {
             mimetype: 'application/xml'
         };
 
-        modelFunctions.testForInvalidModel(user, userDefinition.avatar.validate);
+        fixtures.functions.models.testForInvalidModel(user, db.schemas.definitions.userDefinition.avatar.validate);
 
     });
 
@@ -230,12 +217,12 @@ describe('[db/models/user] - invalid avatar', () => {
 describe('[db/models/user] - valid avatar', () => {
 
     it('Should validate a correctly defined file schema', () => {
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
     });
 
     it('Should validate a user without a defined file schema', () => {
         user.avatar = undefined;
-        modelFunctions.testForValidModel(user);
+        fixtures.functions.models.testForValidModel(user);
     });
 
 });
@@ -265,9 +252,9 @@ describe('[db/models/user] - statics.findByIdAndValidateRole', () => {
 
     it('Should throw error if User.findOne (called with correct args) resolves to null', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(null);
+        userFindOneStub = sinon.stub(db.models.User, 'findOne').resolves(null);
 
-        await expect(User.findByIdAndValidateRole(userId, roleTypes.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, notFoundErrorMessage);
+        await expect(db.models.User.findByIdAndValidateRole(userId, util.roles.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, notFoundErrorMessage);
 
         sinon.assert.calledOnceWithExactly(userFindOneStub, {
             _id: userId,
@@ -278,21 +265,21 @@ describe('[db/models/user] - statics.findByIdAndValidateRole', () => {
 
     it('Should throw error if resolved user.hasRole returns false', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
+        userFindOneStub = sinon.stub(db.models.User, 'findOne').resolves(user);
         userHasRoleStub = sinon.stub(user, 'hasRole').resolves(false);
 
-        await expect(User.findByIdAndValidateRole(userId, roleTypes.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, invalidRoleErrorMessage);
+        await expect(db.models.User.findByIdAndValidateRole(userId, util.roles.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, invalidRoleErrorMessage);
 
-        sinon.assert.calledOnceWithExactly(userHasRoleStub, roleTypes.ROLE_PARENT);
+        sinon.assert.calledOnceWithExactly(userHasRoleStub, util.roles.ROLE_PARENT);
 
     });
 
     it('Should return user model instance if all promises resolve', async () => {
 
-        userFindOneStub = sinon.stub(User, 'findOne').resolves(user);
+        userFindOneStub = sinon.stub(db.models.User, 'findOne').resolves(user);
         userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
 
-        await expect(User.findByIdAndValidateRole(userId, roleTypes.ROLE_PARENT, errorMessages)).to.eventually.eql(user);
+        await expect(db.models.User.findByIdAndValidateRole(userId, util.roles.ROLE_PARENT, errorMessages)).to.eventually.eql(user);
 
     });
 
@@ -308,10 +295,10 @@ describe('[db/models/user] - methods.getUserRoles', () => {
 
     it('Should create a correct pipeline for the aggregate call', async () => {
 
-        userAggregateStub = sinon.stub(user.model(userRole.modelName), 'aggregate').resolves([]);
+        userAggregateStub = sinon.stub(user.model(shared.db.names.userRole.modelName), 'aggregate').resolves([]);
         const roles = await user.getUserRoles();
 
-        const wasCalledProperly = userAggregateStub.calledOnceWith(getRolesPipeline(user._id));
+        const wasCalledProperly = userAggregateStub.calledOnceWith(db.aggregation.userRolePipelines.getRolesPipeline(user._id));
         expect(wasCalledProperly).to.equal(true);
 
         expect(roles.length).to.equal(0);
@@ -320,7 +307,7 @@ describe('[db/models/user] - methods.getUserRoles', () => {
 
     it('Should return an empty array on found user with no roles', async () => {
 
-        userAggregateStub = sinon.stub(user.model(userRole.modelName), 'aggregate').resolves([]);
+        userAggregateStub = sinon.stub(user.model(shared.db.names.userRole.modelName), 'aggregate').resolves([]);
         const roles = await user.getUserRoles();
 
         expect(roles.length).to.equal(0);
@@ -329,12 +316,12 @@ describe('[db/models/user] - methods.getUserRoles', () => {
 
     it ('Should return an array of role names on found user with roles', async () => {
 
-        userAggregateStub = sinon.stub(user.model(userRole.modelName), 'aggregate').resolves([
+        userAggregateStub = sinon.stub(user.model(shared.db.names.userRole.modelName), 'aggregate').resolves([
             {
                 _id: user._id,
                 roles: [
-                    roleTypes.ROLE_ADMIN,
-                    roleTypes.ROLE_PARENT
+                    util.roles.ROLE_ADMIN,
+                    util.roles.ROLE_PARENT
                 ]
             }
         ]);
@@ -345,8 +332,8 @@ describe('[db/models/user] - methods.getUserRoles', () => {
         
         const [roleOne, roleTwo] = roles;
 
-        expect(roleOne).to.equal(roleTypes.ROLE_ADMIN);
-        expect(roleTwo).to.equal(roleTypes.ROLE_PARENT);
+        expect(roleOne).to.equal(util.roles.ROLE_ADMIN);
+        expect(roleTwo).to.equal(util.roles.ROLE_PARENT);
 
     });
 
@@ -362,9 +349,9 @@ describe('[db/models/user] - methods.hasRole', () => {
 
     it('Should return true on user that has a role', async () => {
 
-        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([roleTypes.ROLE_PARENT]);
+        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([util.roles.ROLE_PARENT]);
 
-        const hasRole = await user.hasRole(roleTypes.ROLE_PARENT);
+        const hasRole = await user.hasRole(util.roles.ROLE_PARENT);
 
         sinon.assert.calledOnce(getUserRolesStub);
         expect(hasRole).to.equal(true);
@@ -373,9 +360,9 @@ describe('[db/models/user] - methods.hasRole', () => {
 
     it('Should return false on user that does not have a role', async () => {
 
-        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([roleTypes.ROLE_TEACHER]);
+        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([util.roles.ROLE_TEACHER]);
 
-        const hasRole = await user.hasRole(roleTypes.ROLE_STUDENT);
+        const hasRole = await user.hasRole(util.roles.ROLE_STUDENT);
 
         sinon.assert.calledOnce(getUserRolesStub);
         expect(hasRole).to.equal(false);
@@ -394,15 +381,15 @@ describe('[db/models/user] - methods.saveAvatar', () => {
     let userSaveStub;
     let createMultipartObjectStub;
 
-    const avatarDoc = sampleFiles.pngImage;
+    const avatarDoc = fixtures.shared.sampleFiles.pngImage;
     const buffer = Buffer.alloc(10);
 
-    it('Should throw error if user.avatar is defined but storageApi.deleteBucketObjects rejects (with correct arguments)', async () => {
+    it('Should throw error if user.avatar is defined but storage.deleteBucketObjects rejects (with correct arguments)', async () => {
 
-        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').rejects();
+        deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').rejects();
         await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(deleteBucketObjectsStub, bucketNames[names.user.modelName], [user.avatar.keyname]);
+        sinon.assert.calledOnceWithExactly(deleteBucketObjectsStub, api.storage.config.bucketNames[shared.db.names.user.modelName], [user.avatar.keyname]);
 
     });
 
@@ -417,17 +404,17 @@ describe('[db/models/user] - methods.saveAvatar', () => {
 
     });
 
-    it('Should throw error and rollback avatar (user.save is called twice) if storageApi.createMultipartObject fails (with correct arguments)', async () => {
+    it('Should throw error and rollback avatar (user.save is called twice) if storage.createMultipartObject fails (with correct arguments)', async () => {
 
         user.avatar = undefined;
 
         userSaveStub = sinon.stub(user, 'save').resolvesThis();
-        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').rejects();
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').rejects();
 
         await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[names.user.modelName], sinon.match({
-            keyname: sinon.match(regexp.fileKeyname),
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, api.storage.config.bucketNames[shared.db.names.user.modelName], sinon.match({
+            keyname: sinon.match(util.regexp.fileKeyname),
             buffer,
             size: buffer.length,
             mimetype: avatarDoc.mimetype
@@ -442,7 +429,7 @@ describe('[db/models/user] - methods.saveAvatar', () => {
         user.avatar = undefined;
 
         userSaveStub = sinon.stub(user, 'save').resolvesThis();
-        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').resolves();
 
         await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.eql(user);
 

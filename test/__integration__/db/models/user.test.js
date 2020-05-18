@@ -3,73 +3,28 @@ const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo, Error } = require('mongoose');
 
-const { 
-    User, 
-    UserRole, 
-    ParentStudent,
-    UserFile,
-    ParentFile,
-    StudentFile,
-    TeacherFile,
-    ParentStudentInvitation,
-    UserEvent,
-    Class,
-    ClassStudent,
-    ClassStudentInvitation,
-    UserNote,
-    ParentNote,
-    TeacherNote,
-    StudentNote
-} = require('../../../../src/db/models');
-
-const { 
-    uniqueUserContext, 
-    baseUserRoleContext, 
-    baseParentStudentContext,
-    baseUserFileContext,
-    baseStudentFileContext,
-    baseParentFileContext,
-    baseTeacherFileContext,
-    baseParentStudentInvitationContext,
-    baseUserEventContext,
-    baseClassContext,
-    baseClassStudentContext,
-    baseUserNoteContext,
-    baseParentNoteContext,
-    baseTeacherNoteContext,
-    baseStudentNoteContext
-} = require('../../../__fixtures__/models');
-
-const { userAvatarContext, removeAllUserFilesContext } = require('../../../__fixtures__/models-storage');
-
-const db = require('../../../__fixtures__/functions/db');
-const dbStorage = require('../../../__fixtures__/functions/db-storage');
-
-const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
-
-const names = require('../../../../src/db/names');
-
-const storageApi = require('../../../../src/api/storage');
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const roleTypes = require('../../../../src/util/roles');
+const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
+const api = require('../../../../src/api');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 describe('[db/models/user] - uniqueUser context', () => {
 
-    beforeEach(db.init(uniqueUserContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.uniqueUserContext.persisted));
 
-    const persistedUsers = uniqueUserContext.persisted[names.user.modelName];
-    const unpersistedUsers = uniqueUserContext.unpersisted[names.user.modelName];
+    const persistedUsers = fixtures.models.uniqueUserContext.persisted[shared.db.names.user.modelName];
+    const unpersistedUsers = fixtures.models.uniqueUserContext.unpersisted[shared.db.names.user.modelName];
 
     describe('[db/models/user] - Non-unique names', () => {
 
         const nonUniqueUserDoc = unpersistedUsers[1];
 
         it('Should persist a user with a non-unique name', async () => {
-            const user = new User(nonUniqueUserDoc);
+            const user = new db.models.User(nonUniqueUserDoc);
             await expect(user.save()).to.eventually.be.eql(user);
         });
     
@@ -80,7 +35,7 @@ describe('[db/models/user] - uniqueUser context', () => {
         const userDoc = unpersistedUsers[2];
 
         it('Should not persist a user with a non-unique username', async () => {
-            const user = new User(userDoc);
+            const user = new db.models.User(userDoc);
             await expect(user.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
     
@@ -91,7 +46,7 @@ describe('[db/models/user] - uniqueUser context', () => {
         const userDoc = unpersistedUsers[3];
 
         it('Should not persist a user with a non-unique email', async () => {
-            const user = new User(userDoc);
+            const user = new db.models.User(userDoc);
             await expect(user.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
     
@@ -102,7 +57,7 @@ describe('[db/models/user] - uniqueUser context', () => {
         const userDoc = unpersistedUsers[0];
 
         it('Should persist a user with a required unique fields', async () => {
-            const user = new User(userDoc);
+            const user = new db.models.User(userDoc);
             await expect(user.save()).to.eventually.be.eql(user);
         });
     
@@ -115,7 +70,7 @@ describe('[db/models/user] - uniqueUser context', () => {
 
         it('Should persist a user with a hashed password', async () => {
     
-            const user = await User.findOne({ _id: userOneId });
+            const user = await db.models.User.findOne({ _id: userOneId });
     
             expect(user.password.length).to.equal(60);
             expect(user.password).to.not.equal(userOne.password);
@@ -124,15 +79,15 @@ describe('[db/models/user] - uniqueUser context', () => {
     
     });
 
-    afterEach(db.teardown(uniqueUserContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.uniqueUserContext.persisted));
 
 });
 
 describe('[db/models/user] - baseUserRole context', () => {
 
-    beforeEach(db.init(baseUserRoleContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseUserRoleContext.persisted));
 
-    const persistedUsers = baseUserRoleContext.persisted[names.user.modelName];
+    const persistedUsers = fixtures.models.baseUserRoleContext.persisted[shared.db.names.user.modelName];
 
     const userOneId = persistedUsers[0]._id;
 
@@ -141,15 +96,15 @@ describe('[db/models/user] - baseUserRole context', () => {
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
         it('Should remove user-role association upon user deletion', async () => {
 
-            const user = await User.findOne({ _id: userOneId });
+            const user = await db.models.User.findOne({ _id: userOneId });
             await user.remove();
 
-            const userRoleDocCount = await UserRole.countDocuments({
+            const userRoleDocCount = await db.models.UserRole.countDocuments({
                 user: userOneId
             });
 
@@ -165,28 +120,28 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     describe('[db/models/user] - methods.getUserRoles', () => {
 
-        const persistedUsers = baseUserRoleContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseUserRoleContext.persisted[shared.db.names.user.modelName];
 
         const userTwoId = persistedUsers[1]._id;
         const userThreeId = persistedUsers[2]._id;
 
         it('Should return an array of rolenames on user with roles', async () => {
 
-            const user = await User.findOne({ _id: userTwoId });
+            const user = await db.models.User.findOne({ _id: userTwoId });
             const roles = await user.getUserRoles();
 
             expect(roles.length).to.equal(2);
 
             const [roleOne, roleTwo] = roles;
 
-            expect(roleOne).to.equal(roleTypes.ROLE_ADMIN);
-            expect(roleTwo).to.equal(roleTypes.ROLE_PARENT);
+            expect(roleOne).to.equal(util.roles.ROLE_ADMIN);
+            expect(roleTwo).to.equal(util.roles.ROLE_PARENT);
 
         });
 
         it ('Should return an empty array on user without roles', async () => {
 
-            const user = await User.findOne({ _id: userThreeId });
+            const user = await db.models.User.findOne({ _id: userThreeId });
             const roles = await user.getUserRoles();
 
             expect(roles.length).to.equal(0);
@@ -197,15 +152,15 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     describe('[db/models/user] - methods.hasRole', () => {
 
-        const persistedUsers = baseUserRoleContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseUserRoleContext.persisted[shared.db.names.user.modelName];
 
         const userOneId = persistedUsers[0]._id;
         const userTwoId = persistedUsers[2]._id;
 
         it('Should return true on user that has a role', async () => {
 
-            const user = await User.findOne({ _id: userOneId });
-            const hasRole = await user.hasRole(roleTypes.ROLE_ADMIN);
+            const user = await db.models.User.findOne({ _id: userOneId });
+            const hasRole = await user.hasRole(util.roles.ROLE_ADMIN);
 
             expect(hasRole).to.equal(true);
 
@@ -213,8 +168,8 @@ describe('[db/models/user] - baseUserRole context', () => {
 
         it('Should return false on user that does not have a role', async () => {
 
-            const user = await User.findOne({ _id: userTwoId });
-            const hasRole = await user.hasRole(roleTypes.ROLE_STUDENT);
+            const user = await db.models.User.findOne({ _id: userTwoId });
+            const hasRole = await user.hasRole(util.roles.ROLE_STUDENT);
 
             expect(hasRole).to.equal(false);
 
@@ -222,32 +177,32 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     });
 
-    afterEach(db.teardown(baseUserRoleContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseUserRoleContext.persisted));
 
 });
 
 describe('[db/models/user] - baseParentStudent context', () => {
 
-    beforeEach(db.init(baseParentStudentContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseParentStudentContext.persisted));
 
-    const persistedUsers = baseParentStudentContext.persisted[names.user.modelName];
+    const persistedUsers = fixtures.models.baseParentStudentContext.persisted[shared.db.names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
         it('Should delete associated parentStudent records upon student user deletion', async () => {
             
             const userSevenId = persistedUsers[6]._id;
-            const userSeven = await User.findOne({ _id: userSevenId });
+            const userSeven = await db.models.User.findOne({ _id: userSevenId });
 
             await userSeven.remove();
 
-            const docCount = await ParentStudent.countDocuments({
+            const docCount = await db.models.ParentStudent.countDocuments({
                 student: userSevenId
             });
 
@@ -258,11 +213,11 @@ describe('[db/models/user] - baseParentStudent context', () => {
         it('Should delete associated parentStudent records upon parent deletion', async () => {
 
             const userSixId = persistedUsers[5]._id;
-            const userSix = await User.findOne({ _id: userSixId });
+            const userSix = await db.models.User.findOne({ _id: userSixId });
 
             await userSix.remove();
 
-            const docCount = await ParentStudent.countDocuments({
+            const docCount = await db.models.ParentStudent.countDocuments({
                 parent: userSixId
             });
 
@@ -273,15 +228,15 @@ describe('[db/models/user] - baseParentStudent context', () => {
         it('Should delete associated parentStudent records upon user that is both a student and a parent', async () => {
 
             const userFiveId = persistedUsers[4]._id;
-            const userFive = await User.findOne({ _id: userFiveId });
+            const userFive = await db.models.User.findOne({ _id: userFiveId });
 
             await userFive.remove();
 
-            const parentDocCount = await ParentStudent.countDocuments({
+            const parentDocCount = await db.models.ParentStudent.countDocuments({
                 parent: userFiveId
             });
 
-            const studentDocCount = await ParentStudent.countDocuments({
+            const studentDocCount = await db.models.ParentStudent.countDocuments({
                 student: userFiveId
             });
 
@@ -296,32 +251,32 @@ describe('[db/models/user] - baseParentStudent context', () => {
 
     });
 
-    afterEach(db.teardown(baseParentStudentContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseParentStudentContext.persisted));
 
 });
 
 describe('[db/models/user] - baseParentStudentInvitation context', () => {
 
-    beforeEach(db.init(baseParentStudentInvitationContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseParentStudentInvitationContext.persisted));
 
     describe('[db/models/user] - Pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseParentStudentInvitationContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseParentStudentInvitationContext.persisted[shared.db.names.user.modelName];
 
         it('Should delete associated parentStudentInvitation records upon parent user deletion', async () => {
 
             const userOneId = persistedUsers[0]._id;
 
-            const user = await User.findOne({ _id: userOneId });
+            const user = await db.models.User.findOne({ _id: userOneId });
             await user.remove();
 
-            const docCount = await ParentStudentInvitation.countDocuments({
+            const docCount = await db.models.ParentStudentInvitation.countDocuments({
                 parent: userOneId
             });
 
@@ -333,10 +288,10 @@ describe('[db/models/user] - baseParentStudentInvitation context', () => {
 
             const userSevenId = persistedUsers[6]._id;
 
-            const user = await User.findOne({ _id: userSevenId });
+            const user = await db.models.User.findOne({ _id: userSevenId });
             await user.remove();
 
-            const docCount = await ParentStudentInvitation.countDocuments({
+            const docCount = await db.models.ParentStudentInvitation.countDocuments({
                 student: userSevenId
             });
 
@@ -348,14 +303,14 @@ describe('[db/models/user] - baseParentStudentInvitation context', () => {
 
             const userFiveId = persistedUsers[4]._id;
 
-            const user = await User.findOne({ _id: userFiveId });
+            const user = await db.models.User.findOne({ _id: userFiveId });
             await user.remove();
 
-            const parentDocCount = await ParentStudentInvitation.countDocuments({
+            const parentDocCount = await db.models.ParentStudentInvitation.countDocuments({
                 parent: userFiveId
             });
 
-            const studentDocCount = await ParentStudentInvitation.countDocuments({
+            const studentDocCount = await db.models.ParentStudentInvitation.countDocuments({
                 student: userFiveId
             });
 
@@ -370,33 +325,33 @@ describe('[db/models/user] - baseParentStudentInvitation context', () => {
 
     });
 
-    afterEach(db.teardown(baseParentStudentInvitationContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseParentStudentInvitationContext.persisted));
 
 });
 
 describe('[db/models/user] - baseUserFile context', () => {
 
-    beforeEach(db.init(baseUserFileContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseUserFileContext.persisted));
 
-    const persistedUsers = baseUserFileContext.persisted[names.user.modelName];
+    const persistedUsers = fixtures.models.baseUserFileContext.persisted[shared.db.names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
         const userOneId = persistedUsers[0]._id;
 
         it('Should delete all associated user files upon user deletion', async () => {
 
-            const user = await User.findOne({ _id: userOneId });
+            const user = await db.models.User.findOne({ _id: userOneId });
 
             await user.remove();
 
-            const docCount = await UserFile.countDocuments({
+            const docCount = await db.models.UserFile.countDocuments({
                 user: userOneId
             });
 
@@ -410,33 +365,33 @@ describe('[db/models/user] - baseUserFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseUserFileContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseUserFileContext.persisted));
 
 });
 
 describe('[db/models/user] - baseParentFile context', () => {
 
-    beforeEach(db.init(baseParentFileContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseParentFileContext.persisted));
 
-    const persistedUsers = baseParentFileContext.persisted[names.user.modelName];
+    const persistedUsers = fixtures.models.baseParentFileContext.persisted[shared.db.names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
         const parentId = persistedUsers[0]._id;
 
         it('Should delete all associated parent files upon user deletion (with parent role)', async () => {
 
-            const parent = await User.findOne({ _id: parentId });
+            const parent = await db.models.User.findOne({ _id: parentId });
 
             await parent.remove();
 
-            const docCount = await ParentFile.countDocuments({
+            const docCount = await db.models.ParentFile.countDocuments({
                 user: parentId
             });
 
@@ -450,33 +405,33 @@ describe('[db/models/user] - baseParentFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseParentFileContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseParentFileContext.persisted));
 
 });
 
 describe('[db/models/user] - baseStudentFile context', () => {
 
-    beforeEach(db.init(baseStudentFileContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseStudentFileContext.persisted));
 
-    const persistedUsers = baseStudentFileContext.persisted[names.user.modelName];
+    const persistedUsers = fixtures.models.baseStudentFileContext.persisted[shared.db.names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
         const studentId = persistedUsers[0]._id;
 
         it('Should delete all associated student files upon user deletion (with student role)', async () => {
 
-            const student = await User.findOne({ _id: studentId });
+            const student = await db.models.User.findOne({ _id: studentId });
 
             await student.remove();
 
-            const docCount = await StudentFile.countDocuments({
+            const docCount = await db.models.StudentFile.countDocuments({
                 user: studentId
             });
 
@@ -490,33 +445,33 @@ describe('[db/models/user] - baseStudentFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseStudentFileContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseStudentFileContext.persisted));
 
 });
 
 describe('[db/models/user] - baseTeacherFile context', () => {
 
-    beforeEach(db.init(baseTeacherFileContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseTeacherFileContext.persisted));
 
-    const persistedUsers = baseTeacherFileContext.persisted[names.user.modelName];
+    const persistedUsers = fixtures.models.baseTeacherFileContext.persisted[shared.db.names.user.modelName];
 
     describe('[db/models/user] - Pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
         const teacherId = persistedUsers[0]._id;
 
         it('Should delete all associated teacher files upon user deletion (with teacher role)', async () => {
 
-            const teacher = await User.findOne({ _id: teacherId });
+            const teacher = await db.models.User.findOne({ _id: teacherId });
 
             await teacher.remove();
 
-            const docCount = await TeacherFile.countDocuments({
+            const docCount = await db.models.TeacherFile.countDocuments({
                 user: teacherId
             });
 
@@ -530,7 +485,7 @@ describe('[db/models/user] - baseTeacherFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseTeacherFileContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseTeacherFileContext.persisted));
 
 });
 
@@ -538,22 +493,22 @@ describe('[db/models/user] - userAvatar context', function() {
 
     this.timeout(20000);
 
-    this.beforeEach(dbStorage.init(userAvatarContext.persisted));
+    this.beforeEach(fixtures.functions.dbStorage.init(fixtures.modelsStorage.userAvatarContext.persisted));
 
-    const persistedUsers = userAvatarContext.persisted.db[names.user.modelName];
-    const persistedAvatars = userAvatarContext.persisted.storage[names.user.modelName];
+    const persistedUsers = fixtures.modelsStorage.userAvatarContext.persisted.db[shared.db.names.user.modelName];
+    const persistedAvatars = fixtures.modelsStorage.userAvatarContext.persisted.storage[shared.db.names.user.modelName];
 
-    const unpersistedAvatars = userAvatarContext.unpersisted.storage[names.user.modelName];
+    const unpersistedAvatars = fixtures.modelsStorage.userAvatarContext.unpersisted.storage[shared.db.names.user.modelName];
 
     describe('[db/models/user] - methods.saveAvatar', () => {
 
         it('Should throw error if a user attempt to save an avatar that is not a valid image', async () => {
 
             const documentFile = unpersistedAvatars[0];
-            const buffer = getAssetBuffer(documentFile.originalname);
+            const buffer = fixtures.functions.assets.getAssetBuffer(documentFile.originalname);
 
             const userOneId = persistedUsers[0]._id;
-            const userOne = await User.findOne({ _id: userOneId });
+            const userOne = await db.models.User.findOne({ _id: userOneId });
 
             await expect(userOne.saveAvatar(documentFile, buffer)).to.eventually.be.rejectedWith(Error.ValidationError);
 
@@ -562,14 +517,14 @@ describe('[db/models/user] - userAvatar context', function() {
         it('Should allow a user with no avatar to save an avatar properly if its of the correct type', async () => {
 
             const avatarFile = unpersistedAvatars[1];
-            const buffer = getAssetBuffer(avatarFile.originalname);
+            const buffer = fixtures.functions.assets.getAssetBuffer(avatarFile.originalname);
 
             const userOneId = persistedUsers[0]._id;
-            const userOne = await User.findOne({ _id: userOneId });
+            const userOne = await db.models.User.findOne({ _id: userOneId });
 
             await expect(userOne.saveAvatar(avatarFile, buffer)).to.eventually.be.eql(userOne);
 
-            const res = await storageApi.getMultipartObject(bucketNames[names.user.modelName], userOne.avatar.keyname);
+            const res = await api.storage.getMultipartObject(api.storage.config.bucketNames[shared.db.names.user.modelName], userOne.avatar.keyname);
 
             expect(res.buffer).to.eql(buffer);
             expect(res.contentType).to.equal(userOne.avatar.mimetype);
@@ -579,21 +534,21 @@ describe('[db/models/user] - userAvatar context', function() {
         it('Should allow a user with avatar to replace it with another one', async () => {
 
             const avatarFile = unpersistedAvatars[1];
-            const buffer = getAssetBuffer(avatarFile.originalname);
+            const buffer = fixtures.functions.assets.getAssetBuffer(avatarFile.originalname);
 
             const userTwoId = persistedUsers[1]._id;
-            const userTwo = await User.findOne({ _id: userTwoId });
+            const userTwo = await db.models.User.findOne({ _id: userTwoId });
 
             await expect(userTwo.saveAvatar(avatarFile, buffer)).to.eventually.be.eql(userTwo);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.user.modelName]);
+            const bucketKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.user.modelName]);
 
             const oldAvatarKeyname = persistedAvatars[0].keyname;
 
             expect(bucketKeys.length).to.equal(1);
             expect(bucketKeys).to.not.include(oldAvatarKeyname);
 
-            const res = await storageApi.getMultipartObject(bucketNames[names.user.modelName], userTwo.avatar.keyname);
+            const res = await api.storage.getMultipartObject(api.storage.config.bucketNames[shared.db.names.user.modelName], userTwo.avatar.keyname);
 
             expect(res.buffer).to.eql(buffer);
             expect(res.contentType).to.equal(userTwo.avatar.mimetype);
@@ -602,7 +557,7 @@ describe('[db/models/user] - userAvatar context', function() {
 
     });
 
-    this.afterEach(dbStorage.teardown(userAvatarContext.persisted));
+    this.afterEach(fixtures.functions.dbStorage.teardown(fixtures.modelsStorage.userAvatarContext.persisted));
 
 });
 
@@ -610,24 +565,24 @@ describe('[db/models/user] - removeAllUserFiles context', function() {
 
     this.timeout(30000);
 
-    this.beforeEach(dbStorage.init(removeAllUserFilesContext.persisted));
+    this.beforeEach(fixtures.functions.dbStorage.init(fixtures.modelsStorage.removeAllUserFilesContext.persisted));
 
-    const persistedUsers = removeAllUserFilesContext.persisted.db[names.user.modelName];
+    const persistedUsers = fixtures.modelsStorage.removeAllUserFilesContext.persisted.db[shared.db.names.user.modelName];
 
     describe('[db/models/user] - pre remove hook', () => {
 
         it('Should remove all associated files on user removal', async () => {
 
             const userId = persistedUsers[0]._id;
-            const userToDelete = await User.findOne({ _id: userId });
+            const userToDelete = await db.models.User.findOne({ _id: userId });
 
             await expect(userToDelete.remove()).to.eventually.be.fulfilled;
 
-            const avatarKeys = await storageApi.listBucketKeys(bucketNames[names.user.modelName]);
-            const userFileKeys = await storageApi.listBucketKeys(bucketNames[names.userFile.modelName]);
-            const parentFileKeys = await storageApi.listBucketKeys(bucketNames[names.parentFile.modelName]);
-            const studentFileKeys = await storageApi.listBucketKeys(bucketNames[names.studentFile.modelName]);
-            const teacherFileKeys = await storageApi.listBucketKeys(bucketNames[names.teacherFile.modelName]);
+            const avatarKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.user.modelName]);
+            const userFileKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.userFile.modelName]);
+            const parentFileKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.parentFile.modelName]);
+            const studentFileKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.studentFile.modelName]);
+            const teacherFileKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.teacherFile.modelName]);
 
             expect(avatarKeys.length).to.equal(0);
             expect(userFileKeys.length).to.equal(0);
@@ -639,32 +594,32 @@ describe('[db/models/user] - removeAllUserFiles context', function() {
 
     });
 
-    this.afterEach(dbStorage.teardown(removeAllUserFilesContext.persisted));
+    this.afterEach(fixtures.functions.dbStorage.teardown(fixtures.modelsStorage.removeAllUserFilesContext.persisted));
 
 });
 
 describe('[db/models/user] - baseUserEvent context', () => {
 
-    beforeEach(db.init(baseUserEventContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseUserEventContext.persisted));
 
     describe('[db/models/user] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseUserEventContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseUserEventContext.persisted[shared.db.names.user.modelName];
 
         it('Should delete all associated user events upon user deletion', async () => {
 
             const userId = persistedUsers[0]._id;
-            const user = await User.findOne({ _id: userId });
+            const user = await db.models.User.findOne({ _id: userId });
 
             await user.remove();
             
-            const docCount = await UserEvent.countDocuments({
+            const docCount = await db.models.UserEvent.countDocuments({
                 user: userId
             });
 
@@ -678,32 +633,32 @@ describe('[db/models/user] - baseUserEvent context', () => {
 
     });
 
-    afterEach(db.teardown(baseUserEventContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseUserEventContext.persisted));
 
 });
 
 describe('[db/models/user] - baseClass context', () => {
 
-    beforeEach(db.init(baseClassContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseClassContext.persisted));
 
     describe('[db/models/user] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseClassContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseClassContext.persisted[shared.db.names.user.modelName];
 
         it('Should delete all associated classes upon user deletion', async () => {
 
             const userId = persistedUsers[2]._id;
-            const user = await User.findOne({ _id: userId });
+            const user = await db.models.User.findOne({ _id: userId });
 
             await user.remove();
             
-            const docCount = await Class.countDocuments({
+            const docCount = await db.models.Class.countDocuments({
                 user: userId
             });
 
@@ -717,32 +672,32 @@ describe('[db/models/user] - baseClass context', () => {
 
     });
 
-    afterEach(db.teardown(baseClassContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseClassContext.persisted));
 
 });
 
 describe('[db/models/user] - baseClassStudent context', () => {
 
-    beforeEach(db.init(baseClassStudentContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseClassStudentContext.persisted));
 
     describe('[db/models/user] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseClassStudentContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseClassStudentContext.persisted[shared.db.names.user.modelName];
 
         it('Should delete all associated class-student records upon student deletion', async () => {
 
             const userFourId = persistedUsers[3]._id;
-            const userFour = await User.findOne({ _id: userFourId });
+            const userFour = await db.models.User.findOne({ _id: userFourId });
 
             await userFour.remove();
 
-            const docCount = await ClassStudent.countDocuments({
+            const docCount = await db.models.ClassStudent.countDocuments({
                 user: userFour._id
             });
 
@@ -753,11 +708,11 @@ describe('[db/models/user] - baseClassStudent context', () => {
         it('Should delete all associated class-student-invitation records upon student deletion', async () => {
 
             const userFiveId = persistedUsers[4]._id;
-            const userFive = await User.findOne({ _id: userFiveId });
+            const userFive = await db.models.User.findOne({ _id: userFiveId });
 
             await userFive.remove();
 
-            const docCount = await ClassStudentInvitation.countDocuments({
+            const docCount = await db.models.ClassStudentInvitation.countDocuments({
                 user: userFive._id
             });
 
@@ -771,32 +726,32 @@ describe('[db/models/user] - baseClassStudent context', () => {
 
     });
 
-    afterEach(db.teardown(baseClassStudentContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseClassStudentContext.persisted));
 
 });
 
 describe('[db/models/user] - baseUserNote context', () => {
 
-    beforeEach(db.init(baseUserNoteContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseUserNoteContext.persisted));
 
     describe('[db/models/user] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseUserNoteContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseUserNoteContext.persisted[shared.db.names.user.modelName];
 
         it('Should delete all associated user-notes upon user deletion', async () => {
 
             const userOneId = persistedUsers[0]._id;
-            const userOne = await User.findOne({ _id: userOneId });
+            const userOne = await db.models.User.findOne({ _id: userOneId });
 
             await userOne.remove();
             
-            const docCount = await UserNote.countDocuments({
+            const docCount = await db.models.UserNote.countDocuments({
                 user: userOneId
             });
 
@@ -810,32 +765,32 @@ describe('[db/models/user] - baseUserNote context', () => {
 
     });
 
-    afterEach(db.teardown(baseUserNoteContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseUserNoteContext.persisted));
 
 });
 
 describe('[db/models/user] - baseParentNote context', () => {
 
-    beforeEach(db.init(baseParentNoteContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseParentNoteContext.persisted));
 
     describe('[db/models/user] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseParentNoteContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseParentNoteContext.persisted[shared.db.names.user.modelName];
 
         it('Should delete all associated parent-notes upon parent deletion', async () => {
 
             const userOneId = persistedUsers[0]._id;
-            const userOne = await User.findOne({ _id: userOneId });
+            const userOne = await db.models.User.findOne({ _id: userOneId });
 
             await userOne.remove();
             
-            const docCount = await ParentNote.countDocuments({
+            const docCount = await db.models.ParentNote.countDocuments({
                 user: userOneId
             });
 
@@ -849,32 +804,32 @@ describe('[db/models/user] - baseParentNote context', () => {
 
     });
 
-    afterEach(db.teardown(baseParentNoteContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseParentNoteContext.persisted));
 
 });
 
 describe('[db/models/user] - baseStudentNote context', () => {
 
-    beforeEach(db.init(baseStudentNoteContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseStudentNoteContext.persisted));
 
     describe('[db/models/user] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseStudentNoteContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseStudentNoteContext.persisted[shared.db.names.user.modelName];
 
         it('Should delete all associated student-notes upon student deletion', async () => {
 
             const userOneId = persistedUsers[0]._id;
-            const userOne = await User.findOne({ _id: userOneId });
+            const userOne = await db.models.User.findOne({ _id: userOneId });
 
             await userOne.remove();
             
-            const docCount = await StudentNote.countDocuments({
+            const docCount = await db.models.StudentNote.countDocuments({
                 user: userOneId
             });
 
@@ -888,32 +843,32 @@ describe('[db/models/user] - baseStudentNote context', () => {
 
     });
 
-    afterEach(db.teardown(baseStudentNoteContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseStudentNoteContext.persisted));
 
 });
 
 describe('[db/models/user] - baseTeacherNote context', () => {
 
-    beforeEach(db.init(baseTeacherNoteContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseTeacherNoteContext.persisted));
 
     describe('[db/models/user] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
         beforeEach(() => {
-            deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+            deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         });
 
-        const persistedUsers = baseTeacherNoteContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseTeacherNoteContext.persisted[shared.db.names.user.modelName];
 
         it('Should delete all associated teacher-notes upon teacher deletion', async () => {
 
             const userOneId = persistedUsers[0]._id;
-            const userOne = await User.findOne({ _id: userOneId });
+            const userOne = await db.models.User.findOne({ _id: userOneId });
 
             await userOne.remove();
             
-            const docCount = await TeacherNote.countDocuments({
+            const docCount = await db.models.TeacherNote.countDocuments({
                 user: userOneId
             });
 
@@ -927,6 +882,6 @@ describe('[db/models/user] - baseTeacherNote context', () => {
 
     });
 
-    afterEach(db.teardown(baseTeacherNoteContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseTeacherNoteContext.persisted));
 
 });

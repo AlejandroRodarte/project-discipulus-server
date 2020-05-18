@@ -1,13 +1,13 @@
 const expect = require('chai').expect;
 
-const markdownUtils = require('../../../../src/util/markdown');
+const { markdown } = require('../../../../src/util');
 
 describe('[util/markdown/parse-markdown-to-html] - general flow', () => {
 
     it('Should parse markdown string to html', () => {
 
-        const markdown = '## This is some dope markdown';
-        const html = markdownUtils.parseMarkdownToHtml(markdown);
+        const markdownText = '## This is some dope markdown';
+        const html = markdown.parseMarkdownToHtml(markdownText);
 
         expect(html).to.include('<h2');
         expect(html).to.include('</h2>');

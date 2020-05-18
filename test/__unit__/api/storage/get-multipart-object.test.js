@@ -2,8 +2,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { getMultipartObject } = require('../../../../src/api/storage');
-const cos = require('../../../../src/api/storage/config/cos');
+const { storage } = require('../../../../src/api');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -17,11 +16,11 @@ describe('[api/storage/get-multipart-object] - cos.getObject', () => {
 
     it('Should call cos.getObject with correct arguments and throw error if promise rejects', async () => {
 
-        getObjectStub = sinon.stub(cos, 'getObject').returns({
+        getObjectStub = sinon.stub(storage.config.cos, 'getObject').returns({
             promise: () => Promise.reject(new Error('Object not found'))
         });
 
-        await expect(getMultipartObject(bucketName, itemName)).to.eventually.be.rejectedWith(Error);
+        await expect(storage.getMultipartObject(bucketName, itemName)).to.eventually.be.rejectedWith(Error);
 
         sinon.assert.calledOnceWithExactly(getObjectStub, {
             Bucket: bucketName,
@@ -45,14 +44,14 @@ describe('[api/storage/get-multipart-object] - happy path', () => {
         const buffer = Buffer.alloc(10);
         const mimetype = 'text/plain';
 
-        getObjectStub = sinon.stub(cos, 'getObject').returns({
+        getObjectStub = sinon.stub(storage.config.cos, 'getObject').returns({
             promise: () => Promise.resolve({
                 Body: buffer,
                 ContentType: mimetype
             })
         });
 
-        await expect(getMultipartObject(bucketName, itemName)).to.eventually.be.eql({
+        await expect(storage.getMultipartObject(bucketName, itemName)).to.eventually.be.eql({
             buffer,
             contentType: mimetype
         });

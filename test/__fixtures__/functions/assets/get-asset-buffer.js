@@ -1,7 +1,7 @@
 const fs = require('fs');
 
-const { BASE_ASSETS_PATH } = require('../../config/values');
+const { values } = require('../../config');
 
-const getAssetBuffer = (name) => fs.readFileSync(`${BASE_ASSETS_PATH}/${name}`);
+const getAssetBuffer = (name) => fs.readFileSync(`${values.BASE_ASSETS_PATH}/${name}`);
 
 module.exports = getAssetBuffer;

@@ -1,21 +1,21 @@
-const { generateFakeFile } = require('../../functions/models');
+const { models } = require('../../functions');
 
-const { user, userFile } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
+const persistedUsers = persisted[db.names.user.modelName];
 
 const usersFiles = [
     
     // 0. persisted user[0] with another file
     {
         user: persistedUsers[0]._id,
-        file: generateFakeFile()
+        file: models.generateFakeFile()
     }
 
 ];
 
 module.exports = {
-    [userFile.modelName]: usersFiles
+    [db.names.userFile.modelName]: usersFiles
 };

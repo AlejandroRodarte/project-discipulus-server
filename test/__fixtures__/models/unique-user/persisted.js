@@ -1,10 +1,10 @@
-const { user } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const generateFakeUsers = require('../../functions/models/generate-fake-users');
+const { models } = require('../../functions');
 
 const persisted = {
     // 0-0: generate one enabled fake user
-    [user.modelName]: generateFakeUsers(1)
+    [db.names.user.modelName]: models.generateFakeUsers(1)
 };
 
 module.exports = persisted;

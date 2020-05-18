@@ -1,24 +1,22 @@
 const { Types } = require('mongoose');
 
-const { sharedParentStudentDefinition } = require('../../../../../src/db/schemas/shared/parent-student');
-const { testForInvalidModel, testForValidModel, getNewModelInstance } = require('../../../../__fixtures__/functions/models');
-
-const { ParentStudent } = require('../../../../../src/db/models/shared');
+const db = require('../../../../../src/db');
+const fixtures = require('../../../../__fixtures__');
 
 const parentStudentDoc = {
     parent: new Types.ObjectId(),
     student: new Types.ObjectId()
 };
 
-let parentStudent = new ParentStudent(parentStudentDoc);
+let parentStudent = new db.models.shared.ParentStudent(parentStudentDoc);
 
-beforeEach(() => parentStudent = getNewModelInstance(ParentStudent, parentStudentDoc));
+beforeEach(() => parentStudent = fixtures.functions.models.getNewModelInstance(db.models.shared.ParentStudent, parentStudentDoc));
 
 describe('[db/models/shared/parent-student] - invalid parent', () => {
 
     it('Should not validate parent-student if a parent id is not defined', () => {
         parentStudent.parent = undefined;
-        testForInvalidModel(parentStudent, sharedParentStudentDefinition.parent.required);
+        fixtures.functions.models.testForInvalidModel(parentStudent, db.schemas.shared.definitions.sharedParentStudentDefinition.parent.required);
     });
 
 });
@@ -27,7 +25,7 @@ describe('[db/models/shared/parent-student] - invalid student', () => {
 
     it('Should not validate parent-student if a student id is not defined', () => {
         parentStudent.student = undefined;
-        testForInvalidModel(parentStudent, sharedParentStudentDefinition.student.required);
+        fixtures.functions.models.testForInvalidModel(parentStudent, db.schemas.shared.definitions.sharedParentStudentDefinition.student.required);
     });
 
 });
@@ -35,7 +33,7 @@ describe('[db/models/shared/parent-student] - invalid student', () => {
 describe('[db/models/shared/parent-student] - valid parent-student', () => {
 
     it('Should validate parent-student with correct ids', () => {
-        testForValidModel(parentStudent);
+        fixtures.functions.models.testForValidModel(parentStudent);
     });
 
 });

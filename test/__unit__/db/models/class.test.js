@@ -4,79 +4,66 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const lorem = require('../../../__fixtures__/util/lorem');
-
-const { classDefinition } = require('../../../../src/db/schemas/class');
-const { testForInvalidModel, testForValidModel, getNewModelInstance, generateFakeClass, generateFakeUsers } = require('../../../__fixtures__/functions/models');
-
-const { User, Class } = require('../../../../src/db/models');
-
-const sampleFiles = require('../../../__fixtures__/shared/sample-files');
-const roleTypes = require('../../../../src/util/roles');
-
-const storageApi = require('../../../../src/api/storage');
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const names = require('../../../../src/db/names');
-
-const regexp = require('../../../../src/util/regexp');
-
-const { modelErrorMessages } = require('../../../../src/util/errors');
+const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
+const api = require('../../../../src/api');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const [userDoc] = generateFakeUsers(1, { fakeToken: true });
+const [userDoc] = fixtures.functions.models.generateFakeUsers(1, { fakeToken: true });
 
 const classDoc = {
     user: userDoc._id,
-    ...generateFakeClass({
+    ...fixtures.functions.models.generateFakeClass({
         titleWords: 5,
         descriptionWords: 20,
         sessions: [[0, 20], [30, 40], [70, 90]]
     })
 };
 
-let clazz = new Class(classDoc);
-let user = new User(userDoc);
+let clazz = new db.models.Class(classDoc);
+let user = new db.models.User(userDoc);
 
 beforeEach(() => {
-    clazz = getNewModelInstance(Class, classDoc);
-    user = getNewModelInstance(User, userDoc);
+    clazz = fixtures.functions.models.getNewModelInstance(db.models.Class, classDoc);
+    user = fixtures.functions.models.getNewModelInstance(db.models.User, userDoc);
 });
 
 describe('[db/models/class] - Invalid user', () => {
 
     it('Should not validate if user _id is not defined', () => {
         clazz.user = undefined;
-        testForInvalidModel(clazz, classDefinition.user.required);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.user.required);
     });
 
 });
 
 describe('[db/models/class] - Invalid title', () => {
 
-    const [titleMinLength] = classDefinition.title.minlength;
-    const [titleMaxLength] = classDefinition.title.maxlength;
+    const [titleMinLength] = db.schemas.definitions.classDefinition.title.minlength;
+    const [titleMaxLength] = db.schemas.definitions.classDefinition.title.maxlength;
 
     it('Should not validate if title is undefined', () => {
         clazz.title = undefined;
-        testForInvalidModel(clazz, classDefinition.title.required);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.title.required);
     });
 
     it('Should not validate if title has a profane word', () => {
         clazz.title = 'Some good thermodynamic shit';
-        testForInvalidModel(clazz, classDefinition.title.validate);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.title.validate);
     });
 
     it(`Should not validate if title is shorter than ${ titleMinLength } characters`, () => {
         clazz.title = 'bo';
-        testForInvalidModel(clazz, classDefinition.title.minlength);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.title.minlength);
     });
 
     it(`Should not validate if title is longer than ${ titleMaxLength } characters`, () => {
-        clazz.title = lorem.generateWords(100);
-        testForInvalidModel(clazz, classDefinition.title.maxlength);
+        clazz.title = fixtures.util.lorem.generateWords(100);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.title.maxlength);
     });
 
 });
@@ -85,7 +72,7 @@ describe('[db/models/class] - Valid title', () => {
 
     it('Should remove redundant spaces on valid class title', () => {
         clazz.title = '     superhard  class yo  ';
-        testForValidModel(clazz);
+        fixtures.functions.models.testForValidModel(clazz);
         expect(clazz.title).to.equal('superhard class yo');
     });
 
@@ -95,23 +82,23 @@ describe('[db/models/class] - Undefined description', () => {
 
     it('Should validate if class description is undefined', () => {
         clazz.description = undefined;
-        testForValidModel(clazz);
+        fixtures.functions.models.testForValidModel(clazz);
     })
 
 });
 
 describe('[db/models/class] - Invalid description', () => {
 
-    const [descriptionMaxLength] = classDefinition.description.maxlength;
+    const [descriptionMaxLength] = db.schemas.definitions.classDefinition.description.maxlength;
 
     it('Should not validate if class description has bad words', () => {
         clazz.description = 'You better pass this fucking class';
-        testForInvalidModel(clazz, classDefinition.description.validate);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.description.validate);
     });
 
     it(`Should not validate class description longer than ${ descriptionMaxLength } characters`, () => {
-        clazz.description = lorem.generateWords(250);
-        testForInvalidModel(clazz, classDefinition.description.maxlength);
+        clazz.description = fixtures.util.lorem.generateWords(250);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.description.maxlength);
     });
 
 });
@@ -120,7 +107,7 @@ describe('[db/models/class] - Valid description', () => {
 
     it('Should remove redundant spaces on valid class descriptions', () => {
         clazz.description = '    lmao    who wrote   this  ';
-        testForValidModel(clazz);
+        fixtures.functions.models.testForValidModel(clazz);
         expect(clazz.description).to.equal('lmao who wrote this');
     });
 
@@ -130,7 +117,7 @@ describe('[db/models/class] - Undefined avatar', () => {
 
     it('Should validate class if avatar is undefined', () => {
         clazz.avatar = undefined;
-        testForValidModel(clazz);
+        fixtures.functions.models.testForValidModel(clazz);
     });
 
 });
@@ -138,8 +125,8 @@ describe('[db/models/class] - Undefined avatar', () => {
 describe('[db/models/class] - Invalid avatar', () => {
 
     it('Should not validate avatar that is not an image', () => {
-        clazz.avatar = sampleFiles.documentFile;
-        testForInvalidModel(clazz, classDefinition.avatar.validate);
+        clazz.avatar = fixtures.shared.sampleFiles.documentFile;
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.avatar.validate);
     });
 
 });
@@ -148,7 +135,7 @@ describe('[db/models/class] - Invalid sessions', () => {
 
     it('Should not validate a class that has no sessions', () => {
         clazz.sessions = [];
-        testForInvalidModel(clazz, classDefinition.sessions.validate);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.sessions.validate);
     });
 
     it('Should not validate sessions that are not incremental', () => {
@@ -168,7 +155,7 @@ describe('[db/models/class] - Invalid sessions', () => {
             }
         ];
 
-        testForInvalidModel(clazz, classDefinition.sessions.validate);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.sessions.validate);
 
     });
     
@@ -185,7 +172,7 @@ describe('[db/models/class] - Default archive', () => {
 describe('[db/models/class] - Valid class', () => {
 
     it('Should validate a class that meets all validation requirements', () => {
-        testForValidModel(clazz);
+        fixtures.functions.models.testForValidModel(clazz);
     });
 
 });
@@ -201,8 +188,8 @@ describe('[db/models/class] - statics.findByIdAndCheckForSelfAssociation', () =>
 
     it('Should throw error if Class.findOne (called with right args) resolves null', async () => {
 
-        classFindOneStub = sinon.stub(Class, 'findOne').resolves(null);
-        await expect(Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.be.rejectedWith(Error, modelErrorMessages.classNotFound);
+        classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(null);
+        await expect(db.models.Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classNotFound);
 
         sinon.assert.calledOnceWithExactly(classFindOneStub, {
             _id: ids.classId
@@ -214,14 +201,14 @@ describe('[db/models/class] - statics.findByIdAndCheckForSelfAssociation', () =>
 
         clazz.user = ids.studentId;
 
-        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
-        await expect(Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfTeaching);
+        classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(clazz);
+        await expect(db.models.Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.selfTeaching);
 
     });
 
     it('Should return class instance if all checks pass', async () => {
-        classFindOneStub = sinon.stub(Class, 'findOne').resolves(clazz);
-        await expect(Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.eql(clazz);
+        classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(clazz);
+        await expect(db.models.Class.findByIdAndCheckForSelfAssociation(ids)).to.eventually.eql(clazz);
     });
 
     afterEach(() => {
@@ -237,19 +224,19 @@ describe('[db/models/class] - methods.checkAndSave', () => {
 
     it('Should throw error if User.findByIdAndValidateRole (called with correct args) throws', async () => {
 
-        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').rejects();
+        userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').rejects();
         await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, clazz.user, roleTypes.ROLE_TEACHER, {
-            notFoundErrorMessage: modelErrorMessages.teacherNotFound,
-            invalidRoleErrorMessage: modelErrorMessages.notATeacher
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, clazz.user, util.roles.ROLE_TEACHER, {
+            notFoundErrorMessage: util.errors.modelErrorMessages.teacherNotFound,
+            invalidRoleErrorMessage: util.errors.modelErrorMessages.notATeacher
         });
 
     });
 
     it('Should throw error if class.save happens to fail', async () => {
 
-        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(user);
+        userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').resolves(user);
         classSaveStub = sinon.stub(clazz, 'save').rejects();
 
         await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
@@ -260,7 +247,7 @@ describe('[db/models/class] - methods.checkAndSave', () => {
 
     it('Should return class model instance if all promises resolve properly', async () => {
 
-        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(user);
+        userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').resolves(user);
         classSaveStub = sinon.stub(clazz, 'save').resolves(clazz);
 
         await expect(clazz.checkAndSave()).to.eventually.be.eql(clazz);
@@ -279,15 +266,15 @@ describe('[db/models/class] - methods.saveAvatar', () => {
     let classSaveStub;
     let createMultipartObjectStub;
 
-    const pngImage = sampleFiles.pngImage;
+    const pngImage = fixtures.shared.sampleFiles.pngImage;
     const buffer = Buffer.alloc(10);
 
-    it('Should throw error if class avatar is defined but storageApi.deleteBucketObjects (called with correct args) fails', async () => {
+    it('Should throw error if class avatar is defined but storage.deleteBucketObjects (called with correct args) fails', async () => {
 
-        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').rejects();
+        deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').rejects();
         await expect(clazz.saveAvatar(pngImage, buffer)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(deleteBucketObjectsStub, bucketNames[names.class.modelName], [clazz.avatar.keyname]);
+        sinon.assert.calledOnceWithExactly(deleteBucketObjectsStub, api.storage.config.bucketNames[shared.db.names.class.modelName], [clazz.avatar.keyname]);
 
     });
 
@@ -302,18 +289,18 @@ describe('[db/models/class] - methods.saveAvatar', () => {
 
     });
 
-    it('Should throw error if storageApi.createMultipartObject (called with correct args) fails; class avatar should be undefined', async () => {
+    it('Should throw error if storage.createMultipartObject (called with correct args) fails; class avatar should be undefined', async () => {
 
-        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         classSaveStub = sinon.stub(clazz, 'save').resolves(clazz);
-        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').rejects();
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').rejects();
 
         await expect(clazz.saveAvatar(pngImage, buffer)).to.eventually.be.rejectedWith(Error);
 
         expect(clazz.avatar).to.be.undefined;
 
-        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[names.class.modelName], {
-            keyname: sinon.match(regexp.fileKeyname),
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, api.storage.config.bucketNames[shared.db.names.class.modelName], {
+            keyname: sinon.match(util.regexp.fileKeyname),
             buffer,
             size: buffer.length,
             mimetype: pngImage.mimetype
@@ -325,9 +312,9 @@ describe('[db/models/class] - methods.saveAvatar', () => {
 
     it('Should return class model instance if all required promises resolve properly', async () => {
 
-        deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves();
+        deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves();
         classSaveStub = sinon.stub(clazz, 'save').resolves(clazz);
-        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').resolves();
 
         await expect(clazz.saveAvatar(pngImage, buffer)).to.eventually.eql(clazz);
 

@@ -1,23 +1,24 @@
 const { Types } = require('mongoose');
-const generateOneToMany = require('../../functions/util/generate-one-to-many');
-const { generateFakeFile } = require('../../functions/models');
 
-const sampleFiles = require('../../shared/sample-files');
-const { user, userFile } = require('../../../../src/db/names');
+const { models, util } = require('../../functions');
+
+const { sampleFiles } = require('../../shared');
+
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted.db[user.modelName];
+const persistedUsers = persisted.db[db.names.user.modelName];
 
 const usersFiles = [
 
     // 0. associate file to unknown user
-    ...generateOneToMany('user', new Types.ObjectId(), [{ file: generateFakeFile() }]),
+    ...util.generateOneToMany('user', new Types.ObjectId(), [{ file: models.generateFakeFile() }]),
 
     // 1. associate file to user[0] (disabled)
-    ...generateOneToMany('user', persistedUsers[0]._id, [{ file: generateFakeFile() }]),
+    ...util.generateOneToMany('user', persistedUsers[0]._id, [{ file: models.generateFakeFile() }]),
 
-    ...generateOneToMany('user', persistedUsers[1]._id, [
+    ...util.generateOneToMany('user', persistedUsers[1]._id, [
 
         // 2. associate user[1] the exact same pptx file it already has persisted
         { 
@@ -38,6 +39,6 @@ const usersFiles = [
 
 module.exports = {
     db: {
-        [userFile.modelName]: usersFiles
+        [db.names.userFile.modelName]: usersFiles
     }
 };

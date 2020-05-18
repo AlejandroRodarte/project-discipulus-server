@@ -1,17 +1,16 @@
-const { user, userNote } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const modelFunctions = require('../../../__fixtures__/functions/models');
-const utilFunctions = require('../../../__fixtures__/functions/util');
+const { models, util } = require('../../functions');
 
 // 0: generate one sample user
-const users = modelFunctions.generateFakeUsers(1, { fakeToken: true });
+const users = models.generateFakeUsers(1, { fakeToken: true });
 
 const userNotes = [
     // 0: user[0] with sample note
-    ...utilFunctions.generateOneToMany('user', users[0]._id, [{ note: modelFunctions.generateFakeNote() }])
+    ...util.generateOneToMany('user', users[0]._id, [{ note: models.generateFakeNote() }])
 ];
 
 module.exports = {
-    [user.modelName]: users,
-    [userNote.modelName]: userNotes
+    [db.names.user.modelName]: users,
+    [db.names.userNote.modelName]: userNotes
 };

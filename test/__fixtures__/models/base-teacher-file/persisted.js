@@ -1,26 +1,25 @@
-const { generateFakeFile, generateFakeUsers } = require('../../functions/models');
-const generateOneToMany = require('../../functions/util/generate-one-to-many');
+const { models, util } = require('../../functions');
 
-const { roles, ids } = require('../../shared/roles');
+const { roles } = require('../../shared');
 
-const { user, teacherFile, role, userRole } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 // 0: generate 1 enabled user
-const users = generateFakeUsers(1, { fakeToken: true });
+const users = models.generateFakeUsers(1, { fakeToken: true });
 
 const usersRoles = [
     // 0. user[0] as teacher
-    ...generateOneToMany('user', users[0]._id, [{ role: ids.ROLE_TEACHER }]),
+    ...util.generateOneToMany('user', users[0]._id, [{ role: roles.ids.ROLE_TEACHER }]),
 ];
 
 const teachersFiles = [
     // 0-1: user[0] (teacher) with two files
-    ...generateOneToMany('user', users[0]._id, [{ file: generateFakeFile() }, { file: generateFakeFile() }]),
+    ...util.generateOneToMany('user', users[0]._id, [{ file: models.generateFakeFile() }, { file: models.generateFakeFile() }]),
 ];
 
 module.exports = {
-    [role.modelName]: roles,
-    [user.modelName]: users,
-    [userRole.modelName]: usersRoles,
-    [teacherFile.modelName]: teachersFiles
+    [db.names.role.modelName]: roles.roles,
+    [db.names.user.modelName]: users,
+    [db.names.userRole.modelName]: usersRoles,
+    [db.names.teacherFile.modelName]: teachersFiles
 };

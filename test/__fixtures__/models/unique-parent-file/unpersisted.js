@@ -1,34 +1,33 @@
-const { user, parentFile } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const { generateFakeFile } = require('../../../__fixtures__/functions/models');
-const generateOneToMany = require('../../../__fixtures__/functions/util/generate-one-to-many');
+const { models, util } = require('../../functions');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
-const persistedParentFiles = persisted[parentFile.modelName];
+const persistedUsers = persisted[db.names.user.modelName];
+const persistedParentFiles = persisted[db.names.parentFile.modelName];
 
 const parentFiles = [
     
-    ...generateOneToMany('user', persistedUsers[0]._id, [
+    ...util.generateOneToMany('user', persistedUsers[0]._id, [
 
         // 0. different file for persisted user[0] but same original name
         // compared to already persisted one
         { 
             file: {
-                ...generateFakeFile(),
+                ...models.generateFakeFile(),
                 originalname: persistedParentFiles[0].file.originalname
             }
         },
 
         // 1. completely unique file for persisted user[0]
         {
-            file: generateFakeFile()
+            file: models.generateFakeFile()
         }
     ])
 
 ];
 
 module.exports = {
-    [parentFile.modelName]: parentFiles
+    [db.names.parentFile.modelName]: parentFiles
 };

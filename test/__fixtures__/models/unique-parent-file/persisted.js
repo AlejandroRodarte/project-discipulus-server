@@ -1,17 +1,16 @@
-const { user, parentFile } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const { generateFakeFile, generateFakeUsers } = require('../../../__fixtures__/functions/models');
-const generateOneToMany = require('../../../__fixtures__/functions/util/generate-one-to-many');
+const { models, util } = require('../../functions');
 
 // 0: generate one sample user
-const users = generateFakeUsers(1, { fakeToken: true });
+const users = models.generateFakeUsers(1, { fakeToken: true });
 
 const parentFiles = [
     // 0: user[0] will have associated one file as a parent (no role required)
-    ...generateOneToMany('user', users[0]._id, [{ file: generateFakeFile() }])
+    ...util.generateOneToMany('user', users[0]._id, [{ file: models.generateFakeFile() }])
 ];
 
 module.exports = {
-    [user.modelName]: users,
-    [parentFile.modelName]: parentFiles
+    [db.names.user.modelName]: users,
+    [db.names.parentFile.modelName]: parentFiles
 };

@@ -2,8 +2,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { createMultipartObject } = require('../../../../src/api/storage');
-const cos = require('../../../../src/api/storage/config/cos');
+const { storage } = require('../../../../src/api');
 
 const bucketName = 'sample-bucket-name';
 const keyname = 'file.txt';
@@ -29,11 +28,11 @@ describe('[api/storage/create-multipart-object] - cos.createMultipartUpload', ()
 
     it('Should call cos.createMultipartUpload with the correct arguments and throw error if promise rejects', async () => {
 
-        stub = sinon.stub(cos, 'createMultipartUpload').returns({
+        stub = sinon.stub(storage.config.cos, 'createMultipartUpload').returns({
             promise: () => Promise.reject(new Error('Error while creating multipart object'))
         });
 
-        await expect(createMultipartObject(bucketName, data)).to.eventually.be.rejectedWith(Error);
+        await expect(storage.createMultipartObject(bucketName, data)).to.eventually.be.rejectedWith(Error);
 
         sinon.assert.calledOnceWithExactly(stub, {
             Bucket: bucketName,
@@ -57,7 +56,7 @@ describe('[api/storage/create-multipart-object] - cos.uploadPart', () => {
 
     beforeEach(() => {
 
-        createMultipartUploadStub = sinon.stub(cos, 'createMultipartUpload').returns({
+        createMultipartUploadStub = sinon.stub(storage.config.cos, 'createMultipartUpload').returns({
             promise: () => Promise.resolve({
                 UploadId: uploadId
             })
@@ -67,15 +66,15 @@ describe('[api/storage/create-multipart-object] - cos.uploadPart', () => {
 
     it('Should call cos.uploadPart with the correct arguments and throw error if promise rejects, calling cos.abortMultipartUpload with correct arguments', async () => {
 
-        uploadPartStub = sinon.stub(cos, 'uploadPart').returns({
+        uploadPartStub = sinon.stub(storage.config.cos, 'uploadPart').returns({
             promise: () => Promise.reject(new Error('Error while uploading a part'))
         });
 
-        abortMultipartUploadStub = sinon.stub(cos, 'abortMultipartUpload').returns({
+        abortMultipartUploadStub = sinon.stub(storage.config.cos, 'abortMultipartUpload').returns({
             promise: () => Promise.resolve()
         });
 
-        await expect(createMultipartObject(bucketName, data)).to.eventually.be.rejectedWith(Error);
+        await expect(storage.createMultipartObject(bucketName, data)).to.eventually.be.rejectedWith(Error);
 
         sinon.assert.calledOnceWithExactly(uploadPartStub, {
             Body: buffer.slice(0, 10),
@@ -110,13 +109,13 @@ describe('[api/storage/create-multipart-object] - cos.completeMultipartUpload', 
 
     beforeEach(() => {
 
-        createMultipartUploadStub = sinon.stub(cos, 'createMultipartUpload').returns({
+        createMultipartUploadStub = sinon.stub(storage.config.cos, 'createMultipartUpload').returns({
             promise: () => Promise.resolve({
                 UploadId: uploadId
             })
         });
 
-        uploadPartStub = sinon.stub(cos, 'uploadPart').returns({
+        uploadPartStub = sinon.stub(storage.config.cos, 'uploadPart').returns({
             promise: () => Promise.resolve({
                 ETag: eTag
             })
@@ -126,15 +125,15 @@ describe('[api/storage/create-multipart-object] - cos.completeMultipartUpload', 
 
     it('Should call cos.completeMultipartUpload with correct arguments and throw error if promise rejects, calling cos.abortMultipartUpload', async () => {
 
-        completeMultipartUploadStub = sinon.stub(cos, 'completeMultipartUpload').returns({
+        completeMultipartUploadStub = sinon.stub(storage.config.cos, 'completeMultipartUpload').returns({
             promise: () => Promise.reject(new Error('Error while completing multipart upload'))
         });
 
-        abortMultipartUploadStub = sinon.stub(cos, 'abortMultipartUpload').returns({
+        abortMultipartUploadStub = sinon.stub(storage.config.cos, 'abortMultipartUpload').returns({
             promise: () => Promise.resolve()
         });
 
-        await expect(createMultipartObject(bucketName, data)).to.eventually.be.rejectedWith(Error);
+        await expect(storage.createMultipartObject(bucketName, data)).to.eventually.be.rejectedWith(Error);
 
         sinon.assert.calledOnceWithExactly(completeMultipartUploadStub, {
             Bucket: bucketName,
@@ -169,26 +168,26 @@ describe('[api/storage/create-multipart-object] - happy path', () => {
 
     beforeEach(() => {
 
-        createMultipartUploadStub = sinon.stub(cos, 'createMultipartUpload').returns({
+        createMultipartUploadStub = sinon.stub(storage.config.cos, 'createMultipartUpload').returns({
             promise: () => Promise.resolve({
                 UploadId: uploadId
             })
         });
 
-        uploadPartStub = sinon.stub(cos, 'uploadPart').returns({
+        uploadPartStub = sinon.stub(storage.config.cos, 'uploadPart').returns({
             promise: () => Promise.resolve({
                 ETag: eTag
             })
         });
 
-        completeMultipartUploadStub = sinon.stub(cos, 'completeMultipartUpload').returns({
+        completeMultipartUploadStub = sinon.stub(storage.config.cos, 'completeMultipartUpload').returns({
             promise: () => Promise.resolve()
         });
 
     });
 
     it('Should resolve if all required promises resolve', async () => {
-        await expect(createMultipartObject(bucketName, data)).to.eventually.be.fulfilled;
+        await expect(storage.createMultipartObject(bucketName, data)).to.eventually.be.fulfilled;
     });
 
     afterEach(() => {

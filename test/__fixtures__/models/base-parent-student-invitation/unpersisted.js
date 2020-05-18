@@ -1,16 +1,16 @@
 const { Types } = require('mongoose');
 
-const { parentStudentInvitation, user } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const generateOneToMany = require('../../functions/util/generate-one-to-many');
+const { util } = require('../../functions');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
+const persistedUsers = persisted[db.names.user.modelName];
 
 const parentStudentInvitations = [
 
-    ...generateOneToMany('parent', persistedUsers[0]._id, [
+    ...util.generateOneToMany('parent', persistedUsers[0]._id, [
 
         // 0: user[0] (enabled parent) with user[0] (enabled parent)
         { 
@@ -35,15 +35,15 @@ const parentStudentInvitations = [
     ]),
     
     // 4. unknown parent with user[2] (enabled parent/student)
-    ...generateOneToMany('parent', new Types.ObjectId(), [{ student: persistedUsers[2]._id }]),
+    ...util.generateOneToMany('parent', new Types.ObjectId(), [{ student: persistedUsers[2]._id }]),
 
     // 5. user[7] (disabled parent) with user[2] (enabled parent/student)
-    ...generateOneToMany('parent', persistedUsers[7]._id, [{ student: persistedUsers[2]._id }]),
+    ...util.generateOneToMany('parent', persistedUsers[7]._id, [{ student: persistedUsers[2]._id }]),
 
     // 6. user[6] (enabled student) with user[2] (enabled parent/student)
-    ...generateOneToMany('parent', persistedUsers[6]._id, [{ student: persistedUsers[2]._id }]),
+    ...util.generateOneToMany('parent', persistedUsers[6]._id, [{ student: persistedUsers[2]._id }]),
 
-    ...generateOneToMany('parent', persistedUsers[0]._id, [
+    ...util.generateOneToMany('parent', persistedUsers[0]._id, [
 
         // 7. user[0] (enabled parent) with user[4] (enabled parent/student) which already is associated
         { 
@@ -64,8 +64,6 @@ const parentStudentInvitations = [
 
 ];
 
-const unpersisted = 
-
 module.exports = {
-    [parentStudentInvitation.modelName]: parentStudentInvitations
+    [db.names.parentStudentInvitation.modelName]: parentStudentInvitations
 };

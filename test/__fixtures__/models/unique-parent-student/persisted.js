@@ -1,10 +1,10 @@
 const { Types } = require('mongoose');
 
-const { parentStudent } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = {
 
-    [parentStudent.modelName]: [
+    [db.names.parentStudent.modelName]: [
 
         // 0. sample parent student
         {

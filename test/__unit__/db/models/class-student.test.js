@@ -5,12 +5,9 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { ClassStudent, User, Class, ClassStudentInvitation, ClassUnknownStudentInvitation } = require('../../../../src/db/models');
-const { classStudentDefinition } = require('../../../../src/db/schemas/class-student');
-const modelFunctions = require('../../../__fixtures__/functions/models');
-
-const { modelErrorMessages } = require('../../../../src/util/errors');
-const roleTypes = require('../../../../src/util/roles');
+const db = require('../../../../src/db');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -30,14 +27,14 @@ const classUnknownStudentInvitationDoc = {
     email: faker.internet.email()
 };
 
-const [studentDoc] = modelFunctions.generateFakeUsers(1, { fakeToken: true });
+const [studentDoc] = fixtures.functions.models.generateFakeUsers(1, { fakeToken: true });
 
 const classDoc = {
 
     _id: new Types.ObjectId(),
     user: new Types.ObjectId(),
 
-    ...modelFunctions.generateFakeClass({
+    ...fixtures.functions.models.generateFakeClass({
         titleWords: 5,
         descriptionWords: 10,
         sessions: [[0, 10]]
@@ -45,25 +42,25 @@ const classDoc = {
 
 };
 
-let classStudent = new ClassStudent(classStudentDoc);
-let classStudentInvitation = new ClassStudentInvitation(classStudentInvitationDoc);
-let classUnknownStudentInvitation = new ClassUnknownStudentInvitation(classUnknownStudentInvitationDoc);
-let student = new User(studentDoc);
-let clazz = new Class(classDoc);
+let classStudent = new db.models.ClassStudent(classStudentDoc);
+let classStudentInvitation = new db.models.ClassStudentInvitation(classStudentInvitationDoc);
+let classUnknownStudentInvitation = new db.models.ClassUnknownStudentInvitation(classUnknownStudentInvitationDoc);
+let student = new db.models.User(studentDoc);
+let clazz = new db.models.Class(classDoc);
 
 beforeEach(() => {
-    classStudent = modelFunctions.getNewModelInstance(ClassStudent, classStudentDoc);
-    classStudentInvitation = modelFunctions.getNewModelInstance(ClassStudentInvitation, classStudentInvitationDoc);
-    classUnknownStudentInvitation = modelFunctions.getNewModelInstance(ClassUnknownStudentInvitation, classUnknownStudentInvitationDoc);
-    student = modelFunctions.getNewModelInstance(User, studentDoc);
-    clazz = modelFunctions.getNewModelInstance(Class, classDoc);
+    classStudent = fixtures.functions.models.getNewModelInstance(db.models.ClassStudent, classStudentDoc);
+    classStudentInvitation = fixtures.functions.models.getNewModelInstance(db.models.ClassStudentInvitation, classStudentInvitationDoc);
+    classUnknownStudentInvitation = fixtures.functions.models.getNewModelInstance(db.models.ClassUnknownStudentInvitation, classUnknownStudentInvitationDoc);
+    student = fixtures.functions.models.getNewModelInstance(db.models.User, studentDoc);
+    clazz = fixtures.functions.models.getNewModelInstance(db.models.Class, classDoc);
 });
 
 describe('[db/models/class-student] - Invalid class', () => {
 
     it('Should not validate if class-student does not include a class _id', () => {
         classStudent.class = undefined;
-        modelFunctions.testForInvalidModel(classStudent, classStudentDefinition.class.required);
+        fixtures.functions.models.testForInvalidModel(classStudent, db.schemas.definitions.classStudentDefinition.class.required);
     });
 
 });
@@ -72,7 +69,7 @@ describe('[db/models/class-student] - Invalid user', () => {
 
     it('Should not validate if class-student does not include a user _id', () => {
         classStudent.user = undefined;
-        modelFunctions.testForInvalidModel(classStudent, classStudentDefinition.user.required);
+        fixtures.functions.models.testForInvalidModel(classStudent, db.schemas.definitions.classStudentDefinition.user.required);
     });
 
 });
@@ -96,7 +93,7 @@ describe('[db/models/class-student] - Default archive', () => {
 describe('[db/models/class-student] - Valid model', () => {
 
     it('Should validate correct class-student model', () => {
-        modelFunctions.testForValidModel(classStudent);
+        fixtures.functions.models.testForValidModel(classStudent);
     });
 
 });
@@ -108,20 +105,20 @@ describe('[db/models/class-student] - methods.checkUser', () => {
 
     it('Should throw error if User.findByIdAndValidateRole (with correct args) rejects', async () => {
 
-        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').rejects();
+        userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').rejects();
         await expect(classStudent.checkUser()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, classStudent.user, roleTypes.ROLE_STUDENT, {
-            notFoundErrorMessage: modelErrorMessages.studentNotFound,
-            invalidRoleErrorMessage: modelErrorMessages.notAStudent
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, classStudent.user, util.roles.ROLE_STUDENT, {
+            notFoundErrorMessage: util.errors.modelErrorMessages.studentNotFound,
+            invalidRoleErrorMessage: util.errors.modelErrorMessages.notAStudent
         });
 
     });
 
     it('Should throw error if Class.findByIdAndCheckForSelfAssociation (with correct args) rejects', async () => {
 
-        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
-        classFindByIdAndCheckForSelfAssociationStub = sinon.stub(Class, 'findByIdAndCheckForSelfAssociation').rejects();
+        userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').resolves(student);
+        classFindByIdAndCheckForSelfAssociationStub = sinon.stub(db.models.Class, 'findByIdAndCheckForSelfAssociation').rejects();
 
         await expect(classStudent.checkUser()).to.eventually.be.rejectedWith(Error);
 
@@ -134,8 +131,8 @@ describe('[db/models/class-student] - methods.checkUser', () => {
 
     it('Should return checked user if all checks pass', async () => {
 
-        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
-        classFindByIdAndCheckForSelfAssociationStub = sinon.stub(Class, 'findByIdAndCheckForSelfAssociation').resolves(clazz);
+        userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').resolves(student);
+        classFindByIdAndCheckForSelfAssociationStub = sinon.stub(db.models.Class, 'findByIdAndCheckForSelfAssociation').resolves(clazz);
 
         await expect(classStudent.checkUser()).to.eventually.eql(student);
 
@@ -166,9 +163,9 @@ describe('[db/models/class-student] - methods.checkKnownInvitationAndSave', () =
     it('Should throw error ClassStudentInvitation.findOne (called with correct args) resolves to null', async () => {
 
         classStudentCheckUserStub = sinon.stub(classStudent, 'checkUser').resolves(student);
-        classStudentInvitationFindOneStub = sinon.stub(ClassStudentInvitation, 'findOne').resolves(null);
+        classStudentInvitationFindOneStub = sinon.stub(db.models.ClassStudentInvitation, 'findOne').resolves(null);
 
-        await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classStudentInvitationRequired);
+        await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classStudentInvitationRequired);
 
         sinon.assert.calledOnceWithExactly(classStudentInvitationFindOneStub, {
             class: classStudent.class,
@@ -180,7 +177,7 @@ describe('[db/models/class-student] - methods.checkKnownInvitationAndSave', () =
     it('Should remove class-student invitation and persist association if all checks pass', async () => {
 
         classStudentCheckUserStub = sinon.stub(classStudent, 'checkUser').resolves(student);
-        classStudentInvitationFindOneStub = sinon.stub(ClassStudentInvitation, 'findOne').resolves(classStudentInvitation);
+        classStudentInvitationFindOneStub = sinon.stub(db.models.ClassStudentInvitation, 'findOne').resolves(classStudentInvitation);
         classStudentInvitationRemoveStub = sinon.stub(classStudentInvitation, 'remove').resolves();
         classStudentSaveStub = sinon.stub(classStudent, 'save').resolves();
 
@@ -216,9 +213,9 @@ describe('[db/models/class-student] - methods.checkUnknownInvitationAndSave', ()
     it('Should throw error ClassUnknownStudentInvitation.findOne (called with correct args) resolves to null', async () => {
 
         classStudentCheckUserStub = sinon.stub(classStudent, 'checkUser').resolves(student);
-        classUnknownStudentInvitationFindOneStub = sinon.stub(ClassUnknownStudentInvitation, 'findOne').resolves(null);
+        classUnknownStudentInvitationFindOneStub = sinon.stub(db.models.ClassUnknownStudentInvitation, 'findOne').resolves(null);
 
-        await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classUnknownStudentInvitationRequired);
+        await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classUnknownStudentInvitationRequired);
 
         sinon.assert.calledOnceWithExactly(classUnknownStudentInvitationFindOneStub, {
             class: classStudent.class,
@@ -230,7 +227,7 @@ describe('[db/models/class-student] - methods.checkUnknownInvitationAndSave', ()
     it('Should remove class-student invitation and persist association if all checks pass', async () => {
 
         classStudentCheckUserStub = sinon.stub(classStudent, 'checkUser').resolves(student);
-        classUnknownStudentInvitationFindOneStub = sinon.stub(ClassUnknownStudentInvitation, 'findOne').resolves(classUnknownStudentInvitation);
+        classUnknownStudentInvitationFindOneStub = sinon.stub(db.models.ClassUnknownStudentInvitation, 'findOne').resolves(classUnknownStudentInvitation);
         classUnknownStudentInvitationRemoveStub = sinon.stub(classUnknownStudentInvitation, 'remove').resolves();
         classStudentSaveStub = sinon.stub(classStudent, 'save').resolves();
 

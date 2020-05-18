@@ -3,31 +3,30 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { Class, ClassNote } = require('../../../../src/db/models');
-const { classNoteDefinition } = require('../../../../src/db/schemas/class-note');
-const modelFunctions = require('../../../__fixtures__/functions/models');
+const db = require('../../../../src/db');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const classNoteDoc = {
     class: new Types.ObjectId(),
-    note: modelFunctions.generateFakeNote({
+    note: fixtures.functions.models.generateFakeNote({
         titleWords: 5,
         descriptionWords: 10,
         markdown: '# Test'
     })
 };
 
-let classNote = new ClassNote(classNoteDoc);
+let classNote = new db.models.ClassNote(classNoteDoc);
 
-beforeEach(() => classNote = modelFunctions.getNewModelInstance(ClassNote, classNoteDoc));
+beforeEach(() => classNote = fixtures.functions.models.getNewModelInstance(db.models.ClassNote, classNoteDoc));
 
 describe('[db/models/class-note] - Invalid class', () => {
 
     it('Should not validate if class id is undefined', () => {
         classNote.class = undefined;
-        modelFunctions.testForInvalidModel(classNote, classNoteDefinition.class.required);
+        fixtures.functions.models.testForInvalidModel(classNote, db.schemas.definitions.classNoteDefinition.class.required);
     });
 
 });
@@ -36,7 +35,7 @@ describe('[db/models/class-note] - Invalid note', () => {
 
     it('Should not validate if note is undefined', () => {
         classNote.note = undefined;
-        modelFunctions.testForInvalidModel(classNote, classNoteDefinition.note.required);
+        fixtures.functions.models.testForInvalidModel(classNote, db.schemas.definitions.classNoteDefinition.note.required);
     });
 
 });
@@ -52,7 +51,7 @@ describe('[db/models/class-note] - Default published', () => {
 describe('[db/models/class-note] - Valid model', () => {
 
     it('Should validate correct model', () => {
-        modelFunctions.testForValidModel(classNote);
+        fixtures.functions.models.testForValidModel(classNote);
     });
 
 });
@@ -64,7 +63,7 @@ describe('[db/models/class-note] - methods.checkAndSave', () => {
 
     it('Generated function should call methods with correct args and return class-note doc', async () => {
 
-        classExistsStub = sinon.stub(Class, 'exists').resolves(true);
+        classExistsStub = sinon.stub(db.models.Class, 'exists').resolves(true);
         classNoteSaveStub = sinon.stub(classNote, 'save').resolves(classNote);
 
         await expect(classNote.checkAndSave()).to.eventually.eql(classNote);

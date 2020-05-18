@@ -1,4 +1,3 @@
-const assets = require('./assets');
 const config = require('./config');
 const functions = require('./functions');
 const models = require('./models');
@@ -8,7 +7,6 @@ const shared = require('./shared');
 const util = require('./util');
 
 module.exports = {
-    assets,
     config,
     functions,
     models,

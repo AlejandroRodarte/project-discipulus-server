@@ -1,9 +1,10 @@
-const attachKeynames = require('../../functions/util/attach-keynames');
+const { util } = require('../../functions');
 
-const sampleFiles = require('../../shared/sample-files');
-const { user } = require('../../../../src/db/names');
+const { sampleFiles } = require('../../shared');
 
-const userAvatars = attachKeynames([
+const { db } = require('../../../../src/shared');
+
+const userAvatars = util.attachKeynames([
 
     // 0. invalid avatar file
     sampleFiles.documentFile,
@@ -16,7 +17,7 @@ const userAvatars = attachKeynames([
 module.exports = {
 
     storage: {
-        [user.modelName]: userAvatars
+        [db.names.user.modelName]: userAvatars
     }
 
 };

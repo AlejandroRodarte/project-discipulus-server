@@ -3,26 +3,25 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { generateNoteCheckAndSave } = require('../../../../../src/util/models/common');
-const { generateFakeNote, getNewModelInstance } = require('../../../../__fixtures__/functions/models');
-
-const { UserNote } = require('../../../../../src/db/models');
+const db = require('../../../../../src/db');
+const util = require('../../../../../src/util');
+const fixtures = require('../../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const userNoteDoc = {
     user: new Types.ObjectId(),
-    note: generateFakeNote({
+    note: fixtures.functions.models.generateFakeNote({
         titleWords: 5,
         descriptionWords: 10,
         markdown: '# Test'
     })
 };
 
-let userNote = new UserNote(userNoteDoc);
+let userNote = new db.models.UserNote(userNoteDoc);
 
-beforeEach(() => userNote = getNewModelInstance(UserNote, userNoteDoc));
+beforeEach(() => userNote = fixtures.functions.models.getNewModelInstance(db.models.UserNote, userNoteDoc));
 
 describe('[util/models/common/generate-note-check-and-save]', () => {
 
@@ -32,7 +31,7 @@ describe('[util/models/common/generate-note-check-and-save]', () => {
     it('Generated function should throw error if validate callback rejects', async () => {
 
         validateFake = sinon.fake.rejects();
-        const checkAndSave = generateNoteCheckAndSave(validateFake).bind(userNote);
+        const checkAndSave = util.models.common.generateNoteCheckAndSave(validateFake).bind(userNote);
 
         await expect(checkAndSave()).to.eventually.be.rejectedWith(Error);
 
@@ -43,7 +42,7 @@ describe('[util/models/common/generate-note-check-and-save]', () => {
         validateFake = sinon.fake.resolves();
         userNoteSaveStub = sinon.stub(userNote, 'save').rejects();
 
-        const checkAndSave = generateNoteCheckAndSave(validateFake).bind(userNote);
+        const checkAndSave = util.models.common.generateNoteCheckAndSave(validateFake).bind(userNote);
         await expect(checkAndSave()).to.eventually.be.rejectedWith(Error);
 
     });
@@ -53,7 +52,7 @@ describe('[util/models/common/generate-note-check-and-save]', () => {
         validateFake = sinon.fake.resolves();
         userNoteSaveStub = sinon.stub(userNote, 'save').resolves(userNote);
 
-        const checkAndSave = generateNoteCheckAndSave(validateFake).bind(userNote);
+        const checkAndSave = util.models.common.generateNoteCheckAndSave(validateFake).bind(userNote);
         await expect(checkAndSave()).to.eventually.eql(userNote);
 
     });

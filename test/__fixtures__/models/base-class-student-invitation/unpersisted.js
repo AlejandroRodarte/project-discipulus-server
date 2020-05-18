@@ -1,17 +1,17 @@
 const { Types } = require('mongoose');
 
-const utilFunctions = require('../../functions/util');
+const { util } = require('../../functions');
 
-const { user, class: clazz, classStudentInvitation } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
-const persistedClasses = persisted[clazz.modelName]
+const persistedUsers = persisted[db.names.user.modelName];
+const persistedClasses = persisted[db.names.class.modelName]
 
 const classStudentInvitations = [
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 0. class[0] with unknown student
         {
@@ -31,9 +31,9 @@ const classStudentInvitations = [
     ]),
 
     // 3. unknown class with user[5] (enabled student)
-    ...utilFunctions.generateOneToMany('class', new Types.ObjectId(), [{ user: persistedUsers[5]._id }]),
+    ...util.generateOneToMany('class', new Types.ObjectId(), [{ user: persistedUsers[5]._id }]),
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 4. class[0] (user[0] is teacher) with user[0] (also a student)
         {
@@ -60,5 +60,5 @@ const classStudentInvitations = [
 ];
 
 module.exports = {
-    [classStudentInvitation.modelName]: classStudentInvitations
+    [db.names.classStudentInvitation.modelName]: classStudentInvitations
 };

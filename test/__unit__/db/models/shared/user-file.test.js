@@ -1,24 +1,22 @@
 const { Types } = require('mongoose');
 
-const { sharedUserFileDefinition } = require('../../../../../src/db/schemas/shared/user-file');
-const { testForInvalidModel, testForValidModel, getNewModelInstance, generateFakeFile } = require('../../../../__fixtures__/functions/models');
-
-const { UserFile } = require('../../../../../src/db/models/shared');
+const db = require('../../../../../src/db');
+const fixtures = require('../../../../__fixtures__');
 
 const userFileDoc = {
     user: new Types.ObjectId(),
-    file: generateFakeFile()
+    file: fixtures.functions.models.generateFakeFile()
 };
 
-let userFile = new UserFile(userFileDoc);
+let userFile = new db.models.shared.UserFile(userFileDoc);
 
-beforeEach(() => userFile = getNewModelInstance(UserFile, userFileDoc));
+beforeEach(() => userFile = fixtures.functions.models.getNewModelInstance(db.models.shared.UserFile, userFileDoc));
 
 describe('[db/models/shared/user-file] - invalid user', () => {
 
     it('Should not validate user-file if a user id is not defined', () => {
         userFile.user = undefined;
-        testForInvalidModel(userFile, sharedUserFileDefinition.user.required);
+        fixtures.functions.models.testForInvalidModel(userFile, db.schemas.shared.definitions.sharedUserFileDefinition.user.required);
     });
 
 });
@@ -27,7 +25,7 @@ describe('[db/models/shared/user-file] - invalid file', () => {
 
     it('Should not validate user-file if a file is not defined', () => {
         userFile.file = undefined;
-        testForInvalidModel(userFile, sharedUserFileDefinition.file.required);
+        fixtures.functions.models.testForInvalidModel(userFile, db.schemas.shared.definitions.sharedUserFileDefinition.file.required);
     });
 
 });
@@ -35,7 +33,7 @@ describe('[db/models/shared/user-file] - invalid file', () => {
 describe('[db/models/shared/user-file] - valid user-file', () => {
 
     it('Should validate user-file with correct user id and file object', () => {
-        testForValidModel(userFile);
+        fixtures.functions.models.testForValidModel(userFile);
     });
 
 });

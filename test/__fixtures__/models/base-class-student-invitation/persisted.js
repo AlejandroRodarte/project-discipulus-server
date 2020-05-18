@@ -1,25 +1,24 @@
-const modelFunctions = require('../../functions/models');
-const utilFunctions = require('../../functions/util');
+const { models, util } = require('../../functions');
 
-const { roles, ids } = require('../../shared/roles');
+const { roles } = require('../../shared');
 
-const { user, role, userRole, class: clazz, classStudent, classStudentInvitation } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const users = [
 
     // 0. enabled user
-    ...modelFunctions.generateFakeUsers(1, {
+    ...models.generateFakeUsers(1, {
         fakeToken: true
     }),
 
     // 1. disabled user
-    ...modelFunctions.generateFakeUsers(1, {
+    ...models.generateFakeUsers(1, {
         enabled: false,
         fakeToken: true,
     }),
 
     // 2-5. enabled users
-    ...modelFunctions.generateFakeUsers(4, {
+    ...models.generateFakeUsers(4, {
         fakeToken: true,
     })
 
@@ -28,30 +27,30 @@ const users = [
 const userRoles = [
 
     // 0. user[0] is an enabled teacher
-    ...utilFunctions.generateOneToMany('user', users[0]._id, [{ role: ids.ROLE_TEACHER }, { role: ids.ROLE_STUDENT }]),
+    ...util.generateOneToMany('user', users[0]._id, [{ role: roles.ids.ROLE_TEACHER }, { role: roles.ids.ROLE_STUDENT }]),
 
     // 1. user[1] is a disabled student
-    ...utilFunctions.generateOneToMany('user', users[1]._id, [{ role: ids.ROLE_STUDENT }]),
+    ...util.generateOneToMany('user', users[1]._id, [{ role: roles.ids.ROLE_STUDENT }]),
 
     // 2. user[2] is an enabled parent
-    ...utilFunctions.generateOneToMany('user', users[2]._id, [{ role: ids.ROLE_PARENT }]),
+    ...util.generateOneToMany('user', users[2]._id, [{ role: roles.ids.ROLE_PARENT }]),
 
     // 3. user[3] is an enabled student
-    ...utilFunctions.generateOneToMany('user', users[3]._id, [{ role: ids.ROLE_STUDENT }]),
+    ...util.generateOneToMany('user', users[3]._id, [{ role: roles.ids.ROLE_STUDENT }]),
 
     // 4. user[4] is an enabled student
-    ...utilFunctions.generateOneToMany('user', users[4]._id, [{ role: ids.ROLE_STUDENT }]),
+    ...util.generateOneToMany('user', users[4]._id, [{ role: roles.ids.ROLE_STUDENT }]),
 
     // 5. user[5] is an enabled student
-    ...utilFunctions.generateOneToMany('user', users[5]._id, [{ role: ids.ROLE_STUDENT }])
+    ...util.generateOneToMany('user', users[5]._id, [{ role: roles.ids.ROLE_STUDENT }])
 
 ];
 
 const classes = [
 
     // 0. user[0] has associated a sample class
-    ...utilFunctions.generateOneToMany('user', users[0]._id, [
-        modelFunctions.generateFakeClass({
+    ...util.generateOneToMany('user', users[0]._id, [
+        models.generateFakeClass({
             titleWords: 5,
             descriptionWords: 20,
             sessions: [[0, 20], [50, 80]]
@@ -62,19 +61,19 @@ const classes = [
 
 const classStudents = [
     // 0. class[0] has as one student: user[3]
-    ...utilFunctions.generateOneToMany('class', classes[0]._id, [{ user: users[3]._id }])
+    ...util.generateOneToMany('class', classes[0]._id, [{ user: users[3]._id }])
 ];
 
 const classStudentInvitations = [
     // 0. class[0] has as one invited student: user[4]
-    ...utilFunctions.generateOneToMany('class', classes[0]._id, [{ user: users[4]._id }])
+    ...util.generateOneToMany('class', classes[0]._id, [{ user: users[4]._id }])
 ];
 
 module.exports = {
-    [role.modelName]: roles,
-    [user.modelName]: users,
-    [userRole.modelName]: userRoles,
-    [clazz.modelName]: classes,
-    [classStudent.modelName]: classStudents,
-    [classStudentInvitation.modelName]: classStudentInvitations
+    [db.names.role.modelName]: roles.roles,
+    [db.names.user.modelName]: users,
+    [db.names.userRole.modelName]: userRoles,
+    [db.names.class.modelName]: classes,
+    [db.names.classStudent.modelName]: classStudents,
+    [db.names.classStudentInvitation.modelName]: classStudentInvitations
 };

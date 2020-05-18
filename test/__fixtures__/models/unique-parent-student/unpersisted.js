@@ -1,14 +1,14 @@
 const { Types } = require('mongoose');
 
-const { parentStudent } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const [persistedParentStudent] = persisted[parentStudent.modelName];
+const [persistedParentStudent] = persisted[db.names.parentStudent.modelName];
 
 const unpersisted = {
 
-    [parentStudent.modelName]: [
+    [db.names.parentStudent.modelName]: [
 
         // 0. same parent id but unique student id
         {

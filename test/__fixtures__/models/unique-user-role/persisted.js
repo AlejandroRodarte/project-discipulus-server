@@ -1,10 +1,10 @@
 const { Types } = require('mongoose');
 
-const { userRole } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = {
 
-    [userRole.modelName]: [
+    [db.names.userRole.modelName]: [
 
         // 0. sample user role
         {

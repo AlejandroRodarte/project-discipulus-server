@@ -1,14 +1,14 @@
 const { Types } = require('mongoose');
 const expect = require('chai').expect;
 
-const getRolesPipeline = require('../../../../../src/db/aggregation/user-role/get-roles-pipeline');
+const { aggregation } = require('../../../../../src/db');
 
 describe('[db/aggregation/user-role] - getRolesPipeline', () => {
 
     it('Should return proper pipeline object', () => {
 
         const userId = new Types.ObjectId();
-        const [firstStage] = getRolesPipeline(userId);
+        const [firstStage] = aggregation.userRolePipelines.getRolesPipeline(userId);
 
         expect(firstStage.$match.user).to.equal(userId);
 

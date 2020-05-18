@@ -1,20 +1,18 @@
 const { Types } = require('mongoose');
 
-const { generateFakeClass } = require('../../functions/models');
-const generateOneToMany = require('../../../__fixtures__/functions/util/generate-one-to-many');
+const { models, util } = require('../../functions');
 
-const attachKeynames = require('../../functions/util/attach-keynames');
+const { db } = require('../../../../src/shared');
 
-const sampleFiles = require('../../shared/sample-files');
-const { class: clazz } = require('../../../../src/db/names');
+const { sampleFiles } = require('../../shared');
 
 const userId = new Types.ObjectId();
 
 const classes = [
 
     // 0. sample class
-    ...generateOneToMany('user', userId, [
-        generateFakeClass({
+    ...util.generateOneToMany('user', userId, [
+        models.generateFakeClass({
             titleWords: 5,
             descriptionWords: 12,
             noAvatar: true,
@@ -23,8 +21,8 @@ const classes = [
     ]),
 
     // 1. sample class
-    ...generateOneToMany('user', userId, [
-        generateFakeClass({
+    ...util.generateOneToMany('user', userId, [
+        models.generateFakeClass({
             titleWords: 8,
             descriptionWords: 15,
             noAvatar: true,
@@ -37,7 +35,7 @@ const classes = [
 // classes[0] will have an associated avatar
 classes[0].avatar = sampleFiles.jpgImage;
 
-const classAvatars = attachKeynames([
+const classAvatars = util.attachKeynames([
     // 0. jpg image associated as avatar of classes[0]
     sampleFiles.jpgImage
 ]);
@@ -45,11 +43,11 @@ const classAvatars = attachKeynames([
 module.exports = {
 
     db: {
-        [clazz.modelName]: classes
+        [db.names.class.modelName]: classes
     },
 
     storage: {
-        [clazz.modelName]: classAvatars
+        [db.names.class.modelName]: classAvatars
     }
 
 };

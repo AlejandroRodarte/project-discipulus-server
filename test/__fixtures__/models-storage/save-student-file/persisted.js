@@ -1,23 +1,22 @@
-const generateFakeUsers = require('../../functions/models/generate-fake-users');
-const attachKeynames = require('../../functions/util/attach-keynames');
-const generateOneToMany = require('../../functions/util/generate-one-to-many');
+const { models, util } = require('../../functions');
 
-const sampleFiles = require('../../shared/sample-files');
-const { user, role, userRole, studentFile } = require('../../../../src/db/names');
+const { sampleFiles } = require('../../shared');
 
-const { roles, ids } = require('../../shared/roles');
+const { db } = require('../../../../src/shared');
+
+const { roles } = require('../../shared');
 
 const users = [
 
     // 0: disabled user
-    ...generateFakeUsers(1, {
+    ...models.generateFakeUsers(1, {
         enabled: false,
         fakeToken: true,
         noAvatar: true
     }),
 
     // 1-2: enabled users
-    ...generateFakeUsers(2, {
+    ...models.generateFakeUsers(2, {
         fakeToken: true,
         noAvatar: true
     }),
@@ -27,22 +26,22 @@ const users = [
 const userRoles = [
 
     // 0. user[0] (disabled) is a student
-    ...generateOneToMany('user', users[0]._id, [{ role: ids.ROLE_STUDENT }]),
+    ...util.generateOneToMany('user', users[0]._id, [{ role: roles.ids.ROLE_STUDENT }]),
 
     // 1. user[1] (enabled) is a teacher
-    ...generateOneToMany('user', users[1]._id, [{ role: ids.ROLE_TEACHER }]),
+    ...util.generateOneToMany('user', users[1]._id, [{ role: roles.ids.ROLE_TEACHER }]),
 
     // 2. user[2] (enabled) is a student
-    ...generateOneToMany('user', users[2]._id, [{ role: ids.ROLE_STUDENT }])
+    ...util.generateOneToMany('user', users[2]._id, [{ role: roles.ids.ROLE_STUDENT }])
 
 ];
 
 const studentFiles = [
     // 0. user[2] (enabled student) will have associated a sample pptx student file
-    ...generateOneToMany('user', users[2]._id, [{ file: sampleFiles.sheetFile }])
+    ...util.generateOneToMany('user', users[2]._id, [{ file: sampleFiles.sheetFile }])
 ];
 
-const storageStudentFiles = attachKeynames([
+const storageStudentFiles = util.attachKeynames([
     // 0. sample document file associated to user[2] (enabled student)
     sampleFiles.sheetFile
 ]);
@@ -50,14 +49,14 @@ const storageStudentFiles = attachKeynames([
 module.exports = {
 
     db: {
-        [user.modelName]: users,
-        [role.modelName]: roles,
-        [userRole.modelName]: userRoles,
-        [studentFile.modelName]: studentFiles
+        [db.names.user.modelName]: users,
+        [db.names.role.modelName]: roles.roles,
+        [db.names.userRole.modelName]: userRoles,
+        [db.names.studentFile.modelName]: studentFiles
     },
 
     storage: {
-        [studentFile.modelName]: storageStudentFiles
+        [db.names.studentFile.modelName]: storageStudentFiles
     }
 
 };

@@ -1,21 +1,21 @@
-const roleTypes = require('../../../../src/util/roles');
+const { roles } = require('../../../../src/util');
 
-const { role } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
 const unpersisted = {
 
-    [role.modelName]: [
+    [db.names.role.modelName]: [
 
         // 0. parent role (unique)
         {
-            name: roleTypes.ROLE_PARENT
+            name: roles.ROLE_PARENT
         },
 
         // 1. teacher role (non-unique)
         {
-            name: persisted[role.modelName][0].name
+            name: persisted[db.names.role.modelName][0].name
         }
 
     ]

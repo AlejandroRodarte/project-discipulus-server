@@ -2,30 +2,26 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { generateUserAndRoleValidator } = require('../../../../../src/util/models/common');
-const { generateFakeFile, getNewModelInstance, generateFakeUsers } = require('../../../../__fixtures__/functions/models');
-
-const { User, ParentFile } = require('../../../../../src/db/models');
-
-const roleTypes = require('../../../../../src/util/roles');
-const { modelErrorMessages } = require('../../../../../src/util/errors');
+const db = require('../../../../../src/db');
+const util = require('../../../../../src/util');
+const fixtures = require('../../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const [userDoc] = generateFakeUsers(1, { fakeToken: true });
+const [userDoc] = fixtures.functions.models.generateFakeUsers(1, { fakeToken: true });
 
 const parentFileDoc = {
     user: userDoc._id,
-    file: generateFakeFile()
+    file: fixtures.functions.models.generateFakeFile()
 };
 
-let parentFile = new ParentFile(parentFileDoc);
-let user = new User(userDoc);
+let parentFile = new db.models.ParentFile(parentFileDoc);
+let user = new db.models.User(userDoc);
 
 beforeEach(() => {
-    parentFile = getNewModelInstance(ParentFile, parentFileDoc);
-    user = getNewModelInstance(User, userDoc);
+    parentFile = fixtures.functions.models.getNewModelInstance(db.models.ParentFile, parentFileDoc);
+    user = fixtures.functions.models.getNewModelInstance(db.models.User, userDoc);
 });
 
 describe('[util/models/common/generate-user-and-role-validator] - general flow', () => {
@@ -34,24 +30,24 @@ describe('[util/models/common/generate-user-and-role-validator] - general flow',
 
     it('Returned function should throw error if User.findByIdAndValidateRole fails', async () => {
 
-        userFindByIdAndValidateRole = sinon.stub(User, 'findByIdAndValidateRole').rejects();
+        userFindByIdAndValidateRole = sinon.stub(db.models.User, 'findByIdAndValidateRole').rejects();
 
-        const validatorFn = generateUserAndRoleValidator(roleTypes.ROLE_PARENT);
+        const validatorFn = util.models.common.generateUserAndRoleValidator(util.roles.ROLE_PARENT);
 
         await expect(validatorFn(parentFile)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentFile.user, roleTypes.ROLE_PARENT, {
-            notFoundErrorMessage: modelErrorMessages.userNotFoundOrDisabled,
-            invalidRoleErrorMessage: modelErrorMessages.fileStorePermissionDenied
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentFile.user, util.roles.ROLE_PARENT, {
+            notFoundErrorMessage: util.errors.modelErrorMessages.userNotFoundOrDisabled,
+            invalidRoleErrorMessage: util.errors.modelErrorMessages.fileStorePermissionDenied
         });
 
     });
 
     it('Returned function should resolve if tasks resolve', async () => {
 
-        userFindByIdAndValidateRole = sinon.stub(User, 'findByIdAndValidateRole').resolves(user);
+        userFindByIdAndValidateRole = sinon.stub(db.models.User, 'findByIdAndValidateRole').resolves(user);
 
-        const validatorFn = generateUserAndRoleValidator(roleTypes.ROLE_PARENT);
+        const validatorFn = util.models.common.generateUserAndRoleValidator(util.roles.ROLE_PARENT);
         await expect(validatorFn(parentFile)).to.eventually.be.fulfilled;
 
     });

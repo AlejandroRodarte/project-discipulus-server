@@ -3,47 +3,36 @@ const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo } = require('mongoose');
 
-const UserFile = require('../../../../src/db/models/user-file');
-
-const { uniqueUserFileContext } = require('../../../__fixtures__/models');
-const { removeUserFileContext, saveUserFileContext } = require('../../../__fixtures__/models-storage');
-
-const db = require('../../../__fixtures__/functions/db');
-const dbStorage = require('../../../__fixtures__/functions/db-storage');
-
-const names = require('../../../../src/db/names');
-
-const storageApi = require('../../../../src/api/storage');
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const getAssetBuffer = require('../../../__fixtures__/functions/assets/get-asset-buffer');
-
-const { modelErrorMessages } = require('../../../../src/util/errors');
+const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
+const api = require('../../../../src/api');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 describe('[db/models/user-file] - uniqueUserFile context', () => {
 
-    beforeEach(db.init(uniqueUserFileContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.uniqueUserFileContext.persisted));
 
     describe('[db/models/user-file] - user/file.originalname index', () => {
 
-        const unpersistedUsersFiles = uniqueUserFileContext.unpersisted[names.userFile.modelName];
+        const unpersistedUsersFiles = fixtures.models.uniqueUserFileContext.unpersisted[shared.db.names.userFile.modelName];
 
         it('Should fail on duplicate user/file.originalname index', async () => {
-            const userFile = new UserFile(unpersistedUsersFiles[0]);
+            const userFile = new db.models.UserFile(unpersistedUsersFiles[0]);
             await expect(userFile.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         });
 
         it('Should persist on unique user/file.originalname index', async () => {
-            const userFile = new UserFile(unpersistedUsersFiles[1]);
+            const userFile = new db.models.UserFile(unpersistedUsersFiles[1]);
             await expect(userFile.save()).to.eventually.be.eql(userFile);
         });
 
     });
 
-    afterEach(db.teardown(uniqueUserFileContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.uniqueUserFileContext.persisted));
 
 });
 
@@ -51,26 +40,26 @@ describe('[db/models/user-file] - removeUserFile context', function() {
 
     this.timeout(20000);
 
-    this.beforeEach(dbStorage.init(removeUserFileContext.persisted));
+    this.beforeEach(fixtures.functions.dbStorage.init(fixtures.modelsStorage.removeUserFileContext.persisted));
 
     describe('[db/models/user-file] - pre remove hook', function() {
 
         let deleteBucketObjectsSpy;
 
-        const persistedUserFiles = removeUserFileContext.persisted.db[names.userFile.modelName];
+        const persistedUserFiles = fixtures.modelsStorage.removeUserFileContext.persisted.db[shared.db.names.userFile.modelName];
 
         it('Should remove multipart file before deleting model instance', async () => {
 
-            deleteBucketObjectsSpy = sinon.spy(storageApi, 'deleteBucketObjects');
+            deleteBucketObjectsSpy = sinon.spy(api.storage, 'deleteBucketObjects');
 
             const userFileOneId = persistedUserFiles[0]._id;
-            const userFile = await UserFile.findOne({ _id: userFileOneId });
+            const userFile = await db.models.UserFile.findOne({ _id: userFileOneId });
 
             await expect(userFile.remove()).to.eventually.be.fulfilled;
 
-            sinon.assert.calledOnceWithExactly(deleteBucketObjectsSpy, bucketNames[names.userFile.modelName], [userFile.file.keyname]);
+            sinon.assert.calledOnceWithExactly(deleteBucketObjectsSpy, api.storage.config.bucketNames[shared.db.names.userFile.modelName], [userFile.file.keyname]);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.userFile.modelName]);
+            const bucketKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.userFile.modelName]);
 
             expect(bucketKeys).to.not.include(userFile.file.keyname);
 
@@ -82,7 +71,7 @@ describe('[db/models/user-file] - removeUserFile context', function() {
 
     });
 
-    this.afterEach(dbStorage.teardown(removeUserFileContext.persisted));
+    this.afterEach(fixtures.functions.dbStorage.teardown(fixtures.modelsStorage.removeUserFileContext.persisted));
 
 });
 
@@ -90,34 +79,34 @@ describe('[db/models/user-file] - saveUserFile context', function() {
 
     this.timeout(20000);
 
-    this.beforeEach(dbStorage.init(saveUserFileContext.persisted));
+    this.beforeEach(fixtures.functions.dbStorage.init(fixtures.modelsStorage.saveUserFileContext.persisted));
 
-    const unpersistedUserFiles = saveUserFileContext.unpersisted.db[names.userFile.modelName];
+    const unpersistedUserFiles = fixtures.modelsStorage.saveUserFileContext.unpersisted.db[shared.db.names.userFile.modelName];
 
     describe('[db/models/user-file] - methods.saveFileAndDoc', async () => {
 
         it('Should throw error if a file is persisted to an unknown user', async () => {
 
             const userFileDoc = unpersistedUserFiles[0];
-            const userFile = new UserFile(userFileDoc);
+            const userFile = new db.models.UserFile(userFileDoc);
 
-            await expect(userFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
+            await expect(userFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
         it('Should throw error if a file is persisted to a disabled user', async () => {
 
             const userFileDoc = unpersistedUserFiles[1];
-            const userFile = new UserFile(userFileDoc);
+            const userFile = new db.models.UserFile(userFileDoc);
 
-            await expect(userFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, modelErrorMessages.userNotFoundOrDisabled);
+            await expect(userFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.userNotFoundOrDisabled);
 
         });
 
         it('Should throw error is userFile.save fails validation/uniqueness', async () => {
 
             const userFileDoc = unpersistedUserFiles[2];
-            const userFile = new UserFile(userFileDoc);
+            const userFile = new db.models.UserFile(userFileDoc);
 
             await expect(userFile.saveFileAndDoc(Buffer.alloc(10))).to.eventually.be.rejectedWith(mongo.MongoError);
 
@@ -126,13 +115,13 @@ describe('[db/models/user-file] - saveUserFile context', function() {
         it('Should persist properly a user file that meets the requirements', async () => {
 
             const userFileDoc = unpersistedUserFiles[3];
-            const userFile = new UserFile(userFileDoc);
+            const userFile = new db.models.UserFile(userFileDoc);
 
-            const buffer = getAssetBuffer(userFile.file.originalname);
+            const buffer = fixtures.functions.assets.getAssetBuffer(userFile.file.originalname);
 
             await expect(userFile.saveFileAndDoc(buffer)).to.eventually.eql(userFile);
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.userFile.modelName]);
+            const bucketKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.userFile.modelName]);
 
             expect(bucketKeys).to.include(userFile.file.keyname);
 
@@ -140,6 +129,6 @@ describe('[db/models/user-file] - saveUserFile context', function() {
 
     });
 
-    this.afterEach(dbStorage.teardown(saveUserFileContext.persisted));
+    this.afterEach(fixtures.functions.dbStorage.teardown(fixtures.modelsStorage.saveUserFileContext.persisted));
 
 });

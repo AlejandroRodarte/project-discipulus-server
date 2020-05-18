@@ -1,27 +1,27 @@
 const { Types } = require('mongoose');
 
-const utilFunctions = require('../../functions/util');
+const { models, util } = require('../../functions');
 
-const shared = require('../../shared');
+const { sampleFiles } = require('../../shared');
 
-const { class: clazz, classFile } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedClasses = persisted.db[clazz.modelName];
+const persistedClasses = persisted.db[db.names.class.modelName];
 
 const classFiles = [
     
     // 0. unknown class with pdf file
-    ...utilFunctions.generateOneToMany('class', new Types.ObjectId(), [{ file: shared.sampleFiles.pdfFile }]),
+    ...util.generateOneToMany('class', new Types.ObjectId(), [{ file: sampleFiles.pdfFile }]),
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 1. class[0] with doc file (already persisted, non-unique)
-        { file: shared.sampleFiles.documentFile },
+        { file: sampleFiles.documentFile },
 
         // 2. class[0] with zip file (unique)
-        { file: shared.sampleFiles.zipFile }
+        { file: sampleFiles.zipFile }
 
     ]),
 
@@ -29,6 +29,6 @@ const classFiles = [
 
 module.exports = {
     db: {
-        [classFile.modelName]: classFiles
+        [db.names.classFile.modelName]: classFiles
     }
 };

@@ -4,25 +4,24 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { User, UserNote } = require('../../../../src/db/models');
-
-const modelFunctions = require('../../../__fixtures__/functions/models');
+const db = require('../../../../src/db');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const userNoteDoc = {
     user: new Types.ObjectId(),
-    file: modelFunctions.generateFakeNote({
+    file: fixtures.functions.models.generateFakeNote({
         titleWords: 5,
         descriptionWords: 10,
         markdown: '# Test'
     })
 };
 
-let userNote = new UserNote(userNoteDoc);
+let userNote = new db.models.UserNote(userNoteDoc);
 
-beforeEach(() => userNote = modelFunctions.getNewModelInstance(UserNote, userNoteDoc));
+beforeEach(() => userNote = fixtures.functions.models.getNewModelInstance(db.models.UserNote, userNoteDoc));
 
 describe('[db/models/user-note] - methods.checkAndSave', () => {
 
@@ -31,7 +30,7 @@ describe('[db/models/user-note] - methods.checkAndSave', () => {
 
     it('Should call all required methods with the correct arguments on correct flow', async () => {
         
-        userExistsStub = sinon.stub(User, 'exists').resolves(true);
+        userExistsStub = sinon.stub(db.models.User, 'exists').resolves(true);
         userNoteSaveStub = sinon.stub(userNote, 'save').resolves(userNote);
 
         await expect(userNote.checkAndSave()).to.eventually.eql(userNote);

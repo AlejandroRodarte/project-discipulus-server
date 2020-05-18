@@ -1,14 +1,14 @@
 const { Types } = require('mongoose');
 
-const { userRole } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const [persistedUserRole] = persisted[userRole.modelName];
+const [persistedUserRole] = persisted[db.names.userRole.modelName];
 
 const unpersisted = {
 
-    [userRole.modelName]: [
+    [db.names.userRole.modelName]: [
 
         // 0. same user id as persisted user-role but different role
         {

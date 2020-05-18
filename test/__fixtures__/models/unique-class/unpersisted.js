@@ -1,20 +1,19 @@
-const { generateFakeClass } = require('../../functions/models');
-const generateOneToMany = require('../../functions/util/generate-one-to-many');
+const { models, util } = require('../../functions');
 
-const { user, class: clazz } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
-const persistedClasses = persisted[clazz.modelName];
+const persistedUsers = persisted[db.names.user.modelName];
+const persistedClasses = persisted[db.names.class.modelName];
 
 const classes = [
 
-    ...generateOneToMany('user', persistedUsers[0]._id, [
+    ...util.generateOneToMany('user', persistedUsers[0]._id, [
 
         // 0: different class associated to user[0] but exact same title
         {
-            ...generateFakeClass({
+            ...models.generateFakeClass({
                 titleWords: 7,
                 descriptionWords: 12,
                 sessions: [[100, 200]]
@@ -23,7 +22,7 @@ const classes = [
         },
 
         // 1: completely unique class for user[0]
-        generateFakeClass({
+        models.generateFakeClass({
             titleWords: 5,
             descriptionWords: 10,
             sessions: [[50, 80]]
@@ -34,5 +33,5 @@ const classes = [
 ]
 
 module.exports = {
-    [clazz.modelName]: classes
+    [db.names.class.modelName]: classes
 };

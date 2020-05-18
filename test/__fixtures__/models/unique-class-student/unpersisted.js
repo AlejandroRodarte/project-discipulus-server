@@ -1,10 +1,10 @@
 const { Types } = require('mongoose');
 
-const { classStudent } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedClassStudents = persisted[classStudent.modelName];
+const persistedClassStudents = persisted[db.names.classStudent.modelName];
 
 const classStudents = [
 
@@ -35,5 +35,5 @@ const classStudents = [
 ];
 
 module.exports = {
-    [classStudent.modelName]: classStudents
+    [db.names.classStudent.modelName]: classStudents
 };

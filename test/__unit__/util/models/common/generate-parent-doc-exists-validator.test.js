@@ -3,14 +3,10 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { generateParentDocExistsValidator } = require('../../../../../src/util/models/common');
-const { generateFakeFile, getNewModelInstance, generateFakeClass } = require('../../../../__fixtures__/functions/models');
-
-const { Class, ClassFile } = require('../../../../../src/db/models');
-
-const names = require('../../../../../src/db/names');
-
-const { modelErrorMessages } = require('../../../../../src/util/errors');
+const db = require('../../../../../src/db');
+const shared = require('../../../../../src/shared');
+const util = require('../../../../../src/util');
+const fixtures = require('../../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -18,7 +14,7 @@ chai.use(chaiAsPromised);
 const classDoc = {
     _id: new Types.ObjectId(),
     user: new Types.ObjectId(),
-    ...generateFakeClass({
+    ...fixtures.functions.models.generateFakeClass({
         titleWords: 5,
         descriptionWords: 10,
         sessions: [[0, 10]]
@@ -27,14 +23,14 @@ const classDoc = {
 
 const classFileDoc = {
     class: classDoc._id,
-    file: generateFakeFile()
+    file: fixtures.functions.models.generateFakeFile()
 };
 
-let classFile = new ClassFile(classFileDoc);
+let classFile = new db.models.ClassFile(classFileDoc);
 
 beforeEach(() => {
-    clazz = getNewModelInstance(Class, classDoc);
-    classFile = getNewModelInstance(ClassFile, classFileDoc);
+    clazz = fixtures.functions.models.getNewModelInstance(db.models.Class, classDoc);
+    classFile = fixtures.functions.models.getNewModelInstance(db.models.ClassFile, classFileDoc);
 });
 
 describe('[util/models/common/generate-parent-doc-exists-validator] - general flow', () => {
@@ -43,12 +39,12 @@ describe('[util/models/common/generate-parent-doc-exists-validator] - general fl
 
     it('Returned function should throw error if ParentModel.exists (called with correct args) resolves to false', async () => {
 
-        classExistsStub = sinon.stub(Class, 'exists').resolves(false);
+        classExistsStub = sinon.stub(db.models.Class, 'exists').resolves(false);
 
-        const validatorFn = generateParentDocExistsValidator({
-            parentModelName: names.class.modelName,
+        const validatorFn = util.models.common.generateParentDocExistsValidator({
+            parentModelName: shared.db.names.class.modelName,
             ref: 'class',
-            notFoundErrorMessage: modelErrorMessages.classNotFound
+            notFoundErrorMessage: util.errors.modelErrorMessages.classNotFound
         });
 
         await expect(validatorFn(classFile)).to.eventually.be.rejectedWith(Error);
@@ -61,12 +57,12 @@ describe('[util/models/common/generate-parent-doc-exists-validator] - general fl
 
     it('Returned function should resolve if tasks resolve', async () => {
 
-        classExistsStub = sinon.stub(Class, 'exists').resolves(true);
+        classExistsStub = sinon.stub(db.models.Class, 'exists').resolves(true);
 
-        const validatorFn = generateParentDocExistsValidator({
-            parentModelName: names.class.modelName,
+        const validatorFn = util.models.common.generateParentDocExistsValidator({
+            parentModelName: shared.db.names.class.modelName,
             ref: 'class',
-            notFoundErrorMessage: modelErrorMessages.classNotFound
+            notFoundErrorMessage: util.errors.modelErrorMessages.classNotFound
         });
 
         await expect(validatorFn(classFile)).to.eventually.be.fulfilled;

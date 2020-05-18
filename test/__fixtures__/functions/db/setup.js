@@ -1,6 +1,4 @@
-require('../../../../src/db/models');
+const { mongoose } = require('../../../../src/db');
 
-const { connect, disconnect } = require('../../../../src/db/mongoose');
-
-before(connect);
-after(disconnect);
+before(mongoose.connect);
+after(mongoose.disconnect);

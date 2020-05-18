@@ -1,27 +1,27 @@
 const { Types } = require('mongoose');
 
-const utilFunctions = require('../../functions/util');
+const { util } = require('../../functions');
 
-const shared = require('../../shared');
+const { sampleFiles } = require('../../shared');
 
-const { classStudent, classStudentFile } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedClassStudents = persisted.db[classStudent.modelName];
+const persistedClassStudents = persisted.db[db.names.classStudent.modelName];
 
 const classStudentFiles = [
     
     // 0. unknown class-student with pdf file
-    ...utilFunctions.generateOneToMany('classStudent', new Types.ObjectId(), [{ file: shared.sampleFiles.textFile }]),
+    ...util.generateOneToMany('classStudent', new Types.ObjectId(), [{ file: sampleFiles.textFile }]),
 
-    ...utilFunctions.generateOneToMany('classStudent', persistedClassStudents[0]._id, [
+    ...util.generateOneToMany('classStudent', persistedClassStudents[0]._id, [
 
         // 1. classStudent[0] with sheet file (already persisted, non-unique)
-        { file: shared.sampleFiles.sheetFile },
+        { file: sampleFiles.sheetFile },
 
         // 2. classStudent[0] with pptx file (unique)
-        { file: shared.sampleFiles.presentationFile }
+        { file: sampleFiles.presentationFile }
 
     ])
 
@@ -29,6 +29,6 @@ const classStudentFiles = [
 
 module.exports = {
     db: {
-        [classStudentFile.modelName]: classStudentFiles
+        [db.names.classStudentFile.modelName]: classStudentFiles
     }
 };

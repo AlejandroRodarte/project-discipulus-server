@@ -4,28 +4,22 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { User, UserFile } = require('../../../../src/db/models');
-
-const modelFunctions = require('../../../__fixtures__/functions/models');
-
-const names = require('../../../../src/db/names');
-
-const storageApi = require('../../../../src/api/storage');
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const { modelErrorMessages } = require('../../../../src/util/errors');
+const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
+const api = require('../../../../src/api');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const userFileDoc = {
     user: new Types.ObjectId(),
-    file: modelFunctions.generateFakeFile()
+    file: fixtures.functions.models.generateFakeFile()
 };
 
-let userFile = new UserFile(userFileDoc);
+let userFile = new db.models.UserFile(userFileDoc);
 
-beforeEach(() => userFile = modelFunctions.getNewModelInstance(UserFile, userFileDoc));
+beforeEach(() => userFile = fixtures.functions.models.getNewModelInstance(db.models.UserFile, userFileDoc));
 
 describe('[db/models/user-file] - methods.saveFileAndDoc', () => {
 
@@ -37,9 +31,9 @@ describe('[db/models/user-file] - methods.saveFileAndDoc', () => {
 
     it('Should call all required methods with the correct arguments on correct flow', async () => {
         
-        userExistsStub = sinon.stub(User, 'exists').resolves(true);
+        userExistsStub = sinon.stub(db.models.User, 'exists').resolves(true);
         userFileSaveStub = sinon.stub(userFile, 'save').resolves(userFile);
-        createMultiPartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+        createMultiPartObjectStub = sinon.stub(api.storage, 'createMultipartObject').resolves();
 
         await expect(userFile.saveFileAndDoc(buffer)).to.eventually.eql(userFile);
 
@@ -50,7 +44,7 @@ describe('[db/models/user-file] - methods.saveFileAndDoc', () => {
 
         sinon.assert.calledOnce(userFileSaveStub);
 
-        sinon.assert.calledOnceWithExactly(createMultiPartObjectStub, bucketNames[names.userFile.modelName], {
+        sinon.assert.calledOnceWithExactly(createMultiPartObjectStub, api.storage.config.bucketNames[shared.db.names.userFile.modelName], {
             keyname: userFile.file.keyname,
             buffer,
             size: buffer.length,

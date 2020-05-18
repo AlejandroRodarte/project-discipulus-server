@@ -1,11 +1,11 @@
 const faker = require('faker');
 const { Types } = require('mongoose');
 
-const { sharedFile } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = {
 
-    [sharedFile.modelName]: [
+    [db.names.sharedFile.modelName]: [
 
         // 0: sample random file
         {

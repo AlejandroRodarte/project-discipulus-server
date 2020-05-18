@@ -1,21 +1,20 @@
-const generateFakeUsers = require('../../functions/models/generate-fake-users');
-const attachKeynames = require('../../functions/util/attach-keynames');
-const generateOneToMany = require('../../functions/util/generate-one-to-many');
+const { models, util } = require('../../functions');
 
-const sampleFiles = require('../../shared/sample-files');
-const { user, userFile } = require('../../../../src/db/names');
+const { sampleFiles } = require('../../shared');
+
+const { db } = require('../../../../src/shared');
 
 const users = [
 
     // 0: disabled user
-    ...generateFakeUsers(1, {
+    ...models.generateFakeUsers(1, {
         enabled: false,
         fakeToken: true,
         noAvatar: true
     }),
 
     // 1: enabled user
-    ...generateFakeUsers(1, {
+    ...models.generateFakeUsers(1, {
         fakeToken: true,
         noAvatar: true
     }),
@@ -24,10 +23,10 @@ const users = [
 
 const usersFiles = [
     // 0. user[1] will have associated a sample pptx file
-    ...generateOneToMany('user', users[1]._id, [{ file: sampleFiles.presentationFile }])
+    ...util.generateOneToMany('user', users[1]._id, [{ file: sampleFiles.presentationFile }])
 ];
 
-const storageUsersFiles = attachKeynames([
+const storageUsersFiles = util.attachKeynames([
     // 0. sample pptx file associated to user[1]
     sampleFiles.presentationFile
 ]);
@@ -35,12 +34,12 @@ const storageUsersFiles = attachKeynames([
 module.exports = {
 
     db: {
-        [user.modelName]: users,
-        [userFile.modelName]: usersFiles
+        [db.names.user.modelName]: users,
+        [db.names.userFile.modelName]: usersFiles
     },
 
     storage: {
-        [userFile.modelName]: storageUsersFiles
+        [db.names.userFile.modelName]: storageUsersFiles
     }
 
 };

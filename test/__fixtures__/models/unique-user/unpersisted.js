@@ -1,16 +1,16 @@
-const { user } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const generateFakeUsers = require('../../functions/models/generate-fake-users');
+const { models } = require('../../functions');
 
 const persisted = require('./persisted');
 
-const [uniqueUser] = generateFakeUsers(1);
+const [uniqueUser] = models.generateFakeUsers(1);
 
-const [persistedUser] = persisted[user.modelName];
+const [persistedUser] = persisted[db.names.user.modelName];
 
 const unpersisted = {
 
-    [user.modelName]: [
+    [db.names.user.modelName]: [
 
         // 0. completely unique enabled user
         uniqueUser,

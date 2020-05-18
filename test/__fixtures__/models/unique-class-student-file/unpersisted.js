@@ -1,32 +1,31 @@
-const { classStudent, classStudentFile } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const modelFunctions = require('../../functions/models');
-const utilFunctions = require('../../functions/util');
+const { models, util } = require('../../functions');
 
 const persisted = require('./persisted');
 
-const persistedClassStudents = persisted[classStudent.modelName];
-const persistedClassStudentFiles = persisted[classStudentFile.modelName];
+const persistedClassStudents = persisted[db.names.classStudent.modelName];
+const persistedClassStudentFiles = persisted[db.names.classStudentFile.modelName];
 
 const classStudentFiles = [
     
-    ...utilFunctions.generateOneToMany('classStudent', persistedClassStudents[0]._id, [
+    ...util.generateOneToMany('classStudent', persistedClassStudents[0]._id, [
 
         // 0. classStudent[0] with a second file with same originalname as classStudentFile[0]
         {
             file: {
-                ...modelFunctions.generateFakeFile(),
+                ...models.generateFakeFile(),
                 originalname: persistedClassStudentFiles[0].file.originalname
             }
         },
 
         // 1. classStudent[0] with unique file
-        { file: modelFunctions.generateFakeFile() }
+        { file: models.generateFakeFile() }
         
     ])
 
 ];
 
 module.exports = {
-    [classStudentFile.modelName]: classStudentFiles
+    [db.names.classStudentFile.modelName]: classStudentFiles
 };

@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const regexp = require('../../../src/util/regexp');
+const { regexp } = require('../../../src/util');
 
 describe('[util/regexp] - roleName', () => {
 

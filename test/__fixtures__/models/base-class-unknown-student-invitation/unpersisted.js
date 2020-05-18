@@ -1,22 +1,22 @@
 const { Types } = require('mongoose');
 const faker = require('faker');
 
-const utilFunctions = require('../../functions/util');
+const { util } = require('../../functions');
 
-const { user, class: clazz, classUnknownStudentInvitation } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
-const persistedClasses = persisted[clazz.modelName];
-const persistedClassUnknownStudentInvitations = persisted[classUnknownStudentInvitation.modelName];
+const persistedUsers = persisted[db.names.user.modelName];
+const persistedClasses = persisted[db.names.class.modelName];
+const persistedClassUnknownStudentInvitations = persisted[db.names.classUnknownStudentInvitation.modelName];
 
 const classUnknownStudentInvitations = [
 
     // 0. unknown class with anonymous email user
-    ...utilFunctions.generateOneToMany('class', new Types.ObjectId(), [{ email: faker.internet.email() }]),
+    ...util.generateOneToMany('class', new Types.ObjectId(), [{ email: faker.internet.email() }]),
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 1. class[0] with email of an already invited, unknown user
         { 
@@ -41,9 +41,9 @@ const classUnknownStudentInvitations = [
     ]),
 
     // 5. unknown class with user[5] (enabled student)
-    ...utilFunctions.generateOneToMany('class', new Types.ObjectId(), [{ email: persistedUsers[5]._id }]),
+    ...util.generateOneToMany('class', new Types.ObjectId(), [{ email: persistedUsers[5]._id }]),
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 6. class[0] (user[0] is teacher) with user[0] (student)
         { 
@@ -70,5 +70,5 @@ const classUnknownStudentInvitations = [
 ];
 
 module.exports = {
-    [classUnknownStudentInvitation.modelName]: classUnknownStudentInvitations
+    [db.names.classUnknownStudentInvitation.modelName]: classUnknownStudentInvitations
 };

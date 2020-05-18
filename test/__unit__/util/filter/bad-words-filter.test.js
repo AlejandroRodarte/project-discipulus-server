@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const { utils } = require('../../../../src/util/filter/bad-words-filter');
+const { filter } = require('../../../../src/util');
 
 describe('[util/filter] - includesProfaneWord', () => {
 
@@ -17,7 +17,7 @@ describe('[util/filter] - includesProfaneWord', () => {
             'cumming.gif'
         ];
 
-        words.forEach(word => expect(utils.includesProfaneWord(word)).to.equal(true));
+        words.forEach(word => expect(filter.badWordsFilter.utils.includesProfaneWord(word)).to.equal(true));
 
     });
 
@@ -34,7 +34,7 @@ describe('[util/filter] - includesProfaneWord', () => {
             'execution.pdf'
         ];
 
-        words.forEach(word => expect(utils.includesProfaneWord(word)).to.equal(false));
+        words.forEach(word => expect(filter.badWordsFilter.utils.includesProfaneWord(word)).to.equal(false));
 
     });
 

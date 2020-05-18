@@ -1,30 +1,29 @@
-const { user, parentNote } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const modelFunctions = require('../../functions/models');
-const utilFunctions = require('../../functions/util');
+const { models, util } = require('../../functions');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
-const persistedParentNotes = persisted[parentNote.modelName];
+const persistedUsers = persisted[db.names.user.modelName];
+const persistedParentNotes = persisted[db.names.parentNote.modelName];
 
 const parentNotes = [
-    ...utilFunctions.generateOneToMany('user', persistedUsers[0]._id, [
+    ...util.generateOneToMany('user', persistedUsers[0]._id, [
 
         // 0. user[0] as parent with note that has same title as parentNote[0]
         { 
             note: {
-                ...modelFunctions.generateFakeNote(),
+                ...models.generateFakeNote(),
                 title: persistedParentNotes[0].note.title
             }
         },
 
         // 1. user[0] as parent with unique note
-        { note: modelFunctions.generateFakeNote() }
+        { note: models.generateFakeNote() }
 
     ])
 ];
 
 module.exports = {
-    [parentNote.modelName]: parentNotes
+    [db.names.parentNote.modelName]: parentNotes
 };

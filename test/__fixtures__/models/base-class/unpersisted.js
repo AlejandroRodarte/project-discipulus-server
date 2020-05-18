@@ -1,20 +1,19 @@
 const { Types } = require('mongoose');
 
-const { generateFakeClass } = require('../../functions/models');
-const generateOneToMany = require('../../functions/util/generate-one-to-many');
+const { models, util } = require('../../functions');
 
-const { user, class: clazz } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
-const persistedClasses = persisted[clazz.modelName];
+const persistedUsers = persisted[db.names.user.modelName];
+const persistedClasses = persisted[db.names.class.modelName];
 
 const classes = [
 
     // 0. class associated to an unknown user
-    ...generateOneToMany('user', new Types.ObjectId(), [
-        generateFakeClass({
+    ...util.generateOneToMany('user', new Types.ObjectId(), [
+        models.generateFakeClass({
             titleWords: 6,
             descriptionWords: 18,
             sessions: [[0, 30], [40, 100]]
@@ -22,8 +21,8 @@ const classes = [
     ]),
 
     // 1. class associated to user[0] (disabled teacher)
-    ...generateOneToMany('user', persistedUsers[0]._id, [
-        generateFakeClass({
+    ...util.generateOneToMany('user', persistedUsers[0]._id, [
+        models.generateFakeClass({
             titleWords: 6,
             descriptionWords: 18,
             sessions: [[0, 30], [40, 100]]
@@ -31,20 +30,20 @@ const classes = [
     ]),
 
     // 2. class associated to user[1] (enabled student)
-    ...generateOneToMany('user', persistedUsers[1]._id, [
-        generateFakeClass({
+    ...util.generateOneToMany('user', persistedUsers[1]._id, [
+        models.generateFakeClass({
             titleWords: 6,
             descriptionWords: 18,
             sessions: [[0, 30], [40, 100]]
         })
     ]),
 
-    ...generateOneToMany('user', persistedUsers[2]._id, [
+    ...util.generateOneToMany('user', persistedUsers[2]._id, [
 
         // 3. associate user[2] (enabled teacher) to another class that has the exact same title as
         // the one it has persisted
         {
-            ...generateFakeClass({
+            ...models.generateFakeClass({
                 titleWords: 6,
                 descriptionWords: 18,
                 sessions: [[0, 30], [40, 100]]
@@ -53,7 +52,7 @@ const classes = [
         },
 
         // 4. associate user[2] (enabled teacher) to a unique class
-        generateFakeClass({
+        models.generateFakeClass({
             titleWords: 7,
             descriptionWords: 21,
             sessions: [[0, 20], [40, 120]]
@@ -64,5 +63,5 @@ const classes = [
 ];
 
 module.exports = {
-    [clazz.modelName]: classes
+    [db.names.class.modelName]: classes
 };

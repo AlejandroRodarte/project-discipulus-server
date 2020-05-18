@@ -3,48 +3,27 @@ const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const { mongo } = require('mongoose');
 
-const { 
-    ClassStudent, 
-    ClassStudentInvitation, 
-    ClassUnknownStudentInvitation, 
-    ClassStudentFile, 
-    ClassStudentNote 
-} = require('../../../../src/db/models');
-
-const { 
-    uniqueClassStudentContext, 
-    baseClassStudentContext, 
-    baseClassStudentFileContext,
-    baseClassStudentNoteContext
-} = require('../../../__fixtures__/models');
-
-const { removeClassStudentFilesContext } = require('../../../__fixtures__/models-storage');
-
-const db = require('../../../__fixtures__/functions/db');
-const dbStorage = require('../../../__fixtures__/functions/db-storage');
-
-const storageApi = require('../../../../src/api/storage');
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const names = require('../../../../src/db/names');
-
-const { modelErrorMessages } = require('../../../../src/util/errors');
+const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
+const api = require('../../../../src/api');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe('[db/models/class-student] - uniqueClassStudentContext', () => {
+describe('[db/models/class-student] - fixtures.models.uniqueClassStudentContext', () => {
 
-    beforeEach(db.init(uniqueClassStudentContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.uniqueClassStudentContext.persisted));
 
-    const unpersistedClassStudents = uniqueClassStudentContext.unpersisted[names.classStudent.modelName];
+    const unpersistedClassStudents = fixtures.models.uniqueClassStudentContext.unpersisted[shared.db.names.classStudent.modelName];
 
     describe('[db/models/class-student] - class/user index', () => {
 
         it('Should fail on same class/user _id combo', async () => {
 
             const classStudentDoc = unpersistedClassStudents[0];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
             
             await expect(classStudent.save()).to.eventually.be.rejectedWith(mongo.MongoError);
         
@@ -53,7 +32,7 @@ describe('[db/models/class-student] - uniqueClassStudentContext', () => {
         it('Should persist on same class but different user', async () => {
 
             const classStudentDoc = unpersistedClassStudents[1];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
             await expect(classStudent.save()).to.eventually.eql(classStudent);
 
@@ -62,7 +41,7 @@ describe('[db/models/class-student] - uniqueClassStudentContext', () => {
         it('Should persist on same user but different class', async () => {
 
             const classStudentDoc = unpersistedClassStudents[2];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
             await expect(classStudent.save()).to.eventually.eql(classStudent);
 
@@ -71,7 +50,7 @@ describe('[db/models/class-student] - uniqueClassStudentContext', () => {
         it('Should persist on different class/user ids', async () => {
 
             const classStudentDoc = unpersistedClassStudents[3];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
             await expect(classStudent.save()).to.eventually.eql(classStudent);
 
@@ -79,80 +58,80 @@ describe('[db/models/class-student] - uniqueClassStudentContext', () => {
 
     });
 
-    afterEach(db.teardown(uniqueClassStudentContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.uniqueClassStudentContext.persisted));
 
 });
 
 describe('[db/models/class-student] - baseClassStudent context', () => {
 
-    beforeEach(db.init(baseClassStudentContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseClassStudentContext.persisted));
 
-    const unpersistedClassStudents = baseClassStudentContext.unpersisted[names.classStudent.modelName];
+    const unpersistedClassStudents = fixtures.models.baseClassStudentContext.unpersisted[shared.db.names.classStudent.modelName];
 
     describe('[db/models/class-student] - methods.checkKnownInvitationAndSave', () => {
 
         it('Should not persist if student does not exist', async () => {
 
             const classStudentDoc = unpersistedClassStudents[0];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
+            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.studentNotFound);
 
         });
 
         it('Should not persist if student is disabled', async () => {
 
             const classStudentDoc = unpersistedClassStudents[1];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
+            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.studentNotFound);
 
         });
 
         it('Should not persist if student does not have the student role', async () => {
 
             const classStudentDoc = unpersistedClassStudents[2];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAStudent);
+            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.notAStudent);
 
         });
 
         it('Should not persist if class does not exist', async () => {
 
             const classStudentDoc = unpersistedClassStudents[3];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classNotFound);
+            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classNotFound);
 
         });
 
         it('Should not persist if class teacher matchs the student id', async () => {
 
             const classStudentDoc = unpersistedClassStudents[4];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfTeaching);
+            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.selfTeaching);
 
         });
 
         it('Should not persist if there is not a proper class-student invitation in the database', async () => {
 
             const classStudentDoc = unpersistedClassStudents[5];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classStudentInvitationRequired);
+            await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classStudentInvitationRequired);
 
         });
 
         it('Should not persist if class-student is not unique (there is already an association). Invitation should be deleted', async () => {
 
             const classStudentDoc = unpersistedClassStudents[6];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
             await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
 
-            const invitationExists = await ClassStudentInvitation.exists({
+            const invitationExists = await db.models.ClassStudentInvitation.exists({
                 class: classStudent.class,
                 user: classStudent.user
             });
@@ -164,11 +143,11 @@ describe('[db/models/class-student] - baseClassStudent context', () => {
         it('Should persist on correct class-student doc, removing invitation', async () => {
 
             const classStudentDoc = unpersistedClassStudents[7];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
             await expect(classStudent.checkKnownInvitationAndSave()).to.eventually.eql(classStudent);
 
-            const invitationExists = await ClassStudentInvitation.exists({
+            const invitationExists = await db.models.ClassStudentInvitation.exists({
                 class: classStudent.class,
                 user: classStudent.user
             });
@@ -181,70 +160,70 @@ describe('[db/models/class-student] - baseClassStudent context', () => {
 
     describe('[db/models/class-student] - methods.checkUnknownInvitationAndSave', () => {
 
-        const persistedUsers = baseClassStudentContext.persisted[names.user.modelName];
+        const persistedUsers = fixtures.models.baseClassStudentContext.persisted[shared.db.names.user.modelName];
 
         it('Should not persist if student does not exist', async () => {
 
             const classStudentDoc = unpersistedClassStudents[8];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
+            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.studentNotFound);
 
         });
 
         it('Should not persist if student is disabled', async () => {
 
             const classStudentDoc = unpersistedClassStudents[9];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.studentNotFound);
+            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.studentNotFound);
 
         });
 
         it('Should not persist if student does not have the student role', async () => {
 
             const classStudentDoc = unpersistedClassStudents[10];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.notAStudent);
+            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.notAStudent);
 
         });
 
         it('Should not persist if class does not exist', async () => {
 
             const classStudentDoc = unpersistedClassStudents[11];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classNotFound);
+            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classNotFound);
 
         });
 
         it('Should not persist if class teacher matchs the student id', async () => {
 
             const classStudentDoc = unpersistedClassStudents[12];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfTeaching);
+            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.selfTeaching);
 
         });
 
         it('Should not persist there is not a proper class-unknown-student invitation in the database', async () => {
 
             const classStudentDoc = unpersistedClassStudents[13];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
-            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.classUnknownStudentInvitationRequired);
+            await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classUnknownStudentInvitationRequired);
 
         });
 
         it('Should not persist if class-student is not unique (there is already an association). Invitation should be deleted', async () => {
 
             const classStudentDoc = unpersistedClassStudents[14];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
             await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
 
-            const invitationExists = await ClassUnknownStudentInvitation.exists({
+            const invitationExists = await db.models.ClassUnknownStudentInvitation.exists({
                 class: classStudent.class,
                 email: persistedUsers[8].email
             });
@@ -256,11 +235,11 @@ describe('[db/models/class-student] - baseClassStudent context', () => {
         it('Should persist on correct class-student doc, removing invitation', async () => {
 
             const classStudentDoc = unpersistedClassStudents[15];
-            const classStudent = new ClassStudent(classStudentDoc);
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
 
             await expect(classStudent.checkUnknownInvitationAndSave()).to.eventually.eql(classStudent);
 
-            const invitationExists = await ClassUnknownStudentInvitation.exists({
+            const invitationExists = await db.models.ClassUnknownStudentInvitation.exists({
                 class: classStudent.class,
                 email: persistedUsers[9].email
             });
@@ -271,30 +250,30 @@ describe('[db/models/class-student] - baseClassStudent context', () => {
 
     });
 
-    afterEach(db.teardown(baseClassStudentContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseClassStudentContext.persisted));
 
 });
 
 describe('[db/models/class-student] - baseClassStudentFile context', () => {
 
-    beforeEach(db.init(baseClassStudentFileContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseClassStudentFileContext.persisted));
     
-    const persistedClassStudents = baseClassStudentFileContext.persisted[names.classStudent.modelName];
+    const persistedClassStudents = fixtures.models.baseClassStudentFileContext.persisted[shared.db.names.classStudent.modelName];
 
     describe('[db/models/class-student] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
-        beforeEach(() => deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves());
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
 
         it('Should delete all associated class-student files upon class-student deletion', async () => {
 
             const classStudentOne = persistedClassStudents[0]._id;
-            const classStudent = await ClassStudent.findOne({ _id: classStudentOne });
+            const classStudent = await db.models.ClassStudent.findOne({ _id: classStudentOne });
 
             await classStudent.remove();
 
-            const docCount = await ClassStudentFile.countDocuments({
+            const docCount = await db.models.ClassStudentFile.countDocuments({
                 classStudent: classStudentOne
             });
 
@@ -308,30 +287,30 @@ describe('[db/models/class-student] - baseClassStudentFile context', () => {
 
     });
 
-    afterEach(db.teardown(baseClassStudentFileContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseClassStudentFileContext.persisted));
 
 });
 
 describe('[db/models/class-student] - baseClassStudentNote context', () => {
 
-    beforeEach(db.init(baseClassStudentNoteContext.persisted));
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseClassStudentNoteContext.persisted));
     
-    const persistedClassStudents = baseClassStudentNoteContext.persisted[names.classStudent.modelName];
+    const persistedClassStudents = fixtures.models.baseClassStudentNoteContext.persisted[shared.db.names.classStudent.modelName];
 
     describe('[db/models/class-student] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
-        beforeEach(() => deleteBucketObjectsStub = sinon.stub(storageApi, 'deleteBucketObjects').resolves());
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
 
         it('Should delete all associated class-student notes upon class-student deletion', async () => {
 
             const classStudentOne = persistedClassStudents[0]._id;
-            const classStudent = await ClassStudent.findOne({ _id: classStudentOne });
+            const classStudent = await db.models.ClassStudent.findOne({ _id: classStudentOne });
 
             await classStudent.remove();
 
-            const docCount = await ClassStudentNote.countDocuments({
+            const docCount = await db.models.ClassStudentNote.countDocuments({
                 classStudent: classStudentOne
             });
 
@@ -345,7 +324,7 @@ describe('[db/models/class-student] - baseClassStudentNote context', () => {
 
     });
 
-    afterEach(db.teardown(baseClassStudentNoteContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseClassStudentNoteContext.persisted));
 
 });
 
@@ -353,10 +332,10 @@ describe('[db/models/class-student] - removeClassStudentFiles context', function
 
     this.timeout(20000);
 
-    this.beforeEach(dbStorage.init(removeClassStudentFilesContext.persisted));
+    this.beforeEach(fixtures.functions.dbStorage.init(fixtures.modelsStorage.removeClassStudentFilesContext.persisted));
 
-    const persistedClassStudents = removeClassStudentFilesContext.persisted.db[names.classStudent.modelName];
-    const persistedStorageClassStudentFiles = removeClassStudentFilesContext.persisted.storage[names.classStudentFile.modelName];
+    const persistedClassStudents = fixtures.modelsStorage.removeClassStudentFilesContext.persisted.db[shared.db.names.classStudent.modelName];
+    const persistedStorageClassStudentFiles = fixtures.modelsStorage.removeClassStudentFilesContext.persisted.storage[shared.db.names.classStudentFile.modelName];
 
     describe('[db/models/class-student] - pre remove hook', () => {
 
@@ -365,17 +344,17 @@ describe('[db/models/class-student] - removeClassStudentFiles context', function
             const classStudentFileOneKeyname = persistedStorageClassStudentFiles[0].keyname;
 
             const classStudentOneId = persistedClassStudents[0]._id;
-            const classStudentOne = await ClassStudent.findOne({ _id: classStudentOneId });
+            const classStudentOne = await db.models.ClassStudent.findOne({ _id: classStudentOneId });
 
             await classStudentOne.remove();
 
-            const bucketKeys = await storageApi.listBucketKeys(bucketNames[names.classStudentFile.modelName]);
+            const bucketKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.classStudentFile.modelName]);
             expect(bucketKeys).to.not.include(classStudentFileOneKeyname);
 
         });
 
     });
 
-    this.afterEach(dbStorage.teardown(removeClassStudentFilesContext.persisted));
+    this.afterEach(fixtures.functions.dbStorage.teardown(fixtures.modelsStorage.removeClassStudentFilesContext.persisted));
 
 });

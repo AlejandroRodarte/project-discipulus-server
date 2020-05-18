@@ -1,15 +1,14 @@
-const modelFunctions = require('../../functions/models');
-const utilFunctions = require('../../functions/util');
+const { models, util } = require('../../functions');
 
-const { user, userNote } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const users = [
 
     // 0: enabled user
-    ...modelFunctions.generateFakeUsers(1, { fakeToken: true }),
+    ...models.generateFakeUsers(1, { fakeToken: true }),
 
     // 1: disabled user
-    ...modelFunctions.generateFakeUsers(1, {
+    ...models.generateFakeUsers(1, {
         fakeToken: true,
         enabled: false
     })
@@ -18,10 +17,10 @@ const users = [
 
 const userNotes = [
     // 0-1: user[0] with two notes
-    ...utilFunctions.generateOneToMany('user', users[0]._id, [{ note: modelFunctions.generateFakeNote() }, { note: modelFunctions.generateFakeNote() }]),
+    ...util.generateOneToMany('user', users[0]._id, [{ note: models.generateFakeNote() }, { note: models.generateFakeNote() }]),
 ];
 
 module.exports = {
-    [user.modelName]: users,
-    [userNote.modelName]: userNotes
+    [db.names.user.modelName]: users,
+    [db.names.userNote.modelName]: userNotes
 };

@@ -3,32 +3,28 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { ClassStudent, ClassStudentFile } = require('../../../../src/db/models');
-const { classStudentFileDefinition } = require('../../../../src/db/schemas/class-student-file');
-const modelFunctions = require('../../../__fixtures__/functions/models');
-
-const storageApi = require('../../../../src/api/storage');
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const names = require('../../../../src/db/names');
+const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
+const api = require('../../../../src/api');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const classStudentFileDoc = {
     classStudent: new Types.ObjectId(),
-    file: modelFunctions.generateFakeFile()
+    file: fixtures.functions.models.generateFakeFile()
 };
 
-let classStudentFile = new ClassStudentFile(classStudentFileDoc);
+let classStudentFile = new db.models.ClassStudentFile(classStudentFileDoc);
 
-beforeEach(() => classStudentFile = modelFunctions.getNewModelInstance(ClassStudentFile, classStudentFileDoc));
+beforeEach(() => classStudentFile = fixtures.functions.models.getNewModelInstance(db.models.ClassStudentFile, classStudentFileDoc));
 
 describe('[db/models-class-student-file] - Invalid class-student', () => {
 
     it('Should not validate if class-student id is undefined', () => {
         classStudentFile.classStudent = undefined;
-        modelFunctions.testForInvalidModel(classStudentFile, classStudentFileDefinition.classStudent.required);
+        fixtures.functions.models.testForInvalidModel(classStudentFile, db.schemas.definitions.classStudentFileDefinition.classStudent.required);
     });
 
 });
@@ -37,7 +33,7 @@ describe('[db/models-class-student-file] - Invalid file', () => {
 
     it('Should not validate if file is undefined', () => {
         classStudentFile.file = undefined;
-        modelFunctions.testForInvalidModel(classStudentFile, classStudentFileDefinition.file.required);
+        fixtures.functions.models.testForInvalidModel(classStudentFile, db.schemas.definitions.classStudentFileDefinition.file.required);
     });
 
 });
@@ -45,7 +41,7 @@ describe('[db/models-class-student-file] - Invalid file', () => {
 describe('[db/models-class-student-file] - Valid model', () => {
 
     it('Should validate correct model', () => {
-        modelFunctions.testForValidModel(classStudentFile);
+        fixtures.functions.models.testForValidModel(classStudentFile);
     });
 
 });
@@ -60,9 +56,9 @@ describe('[db/models/class-student-file] - methods.saveFileAndDoc', () => {
 
     it('Generated function should call methods with correct args and return class-student-file doc', async () => {
 
-        classStudentExistsStub = sinon.stub(ClassStudent, 'exists').resolves(true);
+        classStudentExistsStub = sinon.stub(db.models.ClassStudent, 'exists').resolves(true);
         classStudentFileSaveStub = sinon.stub(classStudentFile, 'save').resolves(classStudentFile);
-        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').resolves();
 
         await expect(classStudentFile.saveFileAndDoc(buffer)).to.eventually.eql(classStudentFile);
 
@@ -72,7 +68,7 @@ describe('[db/models/class-student-file] - methods.saveFileAndDoc', () => {
 
         sinon.assert.calledOnce(classStudentFileSaveStub);
 
-        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[names.classStudentFile.modelName], {
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, api.storage.config.bucketNames[shared.db.names.classStudentFile.modelName], {
             keyname: classStudentFile.file.keyname,
             buffer,
             size: buffer.length,

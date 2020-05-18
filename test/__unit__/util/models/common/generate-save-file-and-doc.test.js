@@ -3,26 +3,22 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { generateSaveFileAndDoc } = require('../../../../../src/util/models/common');
-const { generateFakeFile, getNewModelInstance } = require('../../../../__fixtures__/functions/models');
-
-const { User, UserFile } = require('../../../../../src/db/models');
-
-const names = require('../../../../../src/db/names');
-
-const storageApi = require('../../../../../src/api/storage');
-const bucketNames = require('../../../../../src/api/storage/config/bucket-names');
+const db = require('../../../../../src/db');
+const shared = require('../../../../../src/shared');
+const api = require('../../../../../src/api');
+const util = require('../../../../../src/util');
+const fixtures = require('../../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const userFileDoc = {
     user: new Types.ObjectId(),
-    file: generateFakeFile()
+    file: fixtures.functions.models.generateFakeFile()
 };
 
-let userFile = new UserFile(userFileDoc);
-beforeEach(() => userFile = getNewModelInstance(UserFile, userFileDoc));
+let userFile = new db.models.UserFile(userFileDoc);
+beforeEach(() => userFile = fixtures.functions.models.getNewModelInstance(db.models.UserFile, userFileDoc));
 
 describe('[util/models/common/generate-save-file-and-doc-method] - general flow', () => {
 
@@ -35,8 +31,8 @@ describe('[util/models/common/generate-save-file-and-doc-method] - general flow'
 
         validateFake = sinon.fake.rejects();
 
-        const saveFileAndDoc = generateSaveFileAndDoc({
-            modelName: names.userFile.modelName,
+        const saveFileAndDoc = util.models.common.generateSaveFileAndDoc({
+            modelName: shared.db.names.userFile.modelName,
             validate: validateFake
         }).bind(userFile);
 
@@ -50,8 +46,8 @@ describe('[util/models/common/generate-save-file-and-doc-method] - general flow'
         validateFake = sinon.fake.resolves();
         userFileSaveStub = sinon.stub(userFile, 'save').rejects();
 
-        const saveFileAndDoc = generateSaveFileAndDoc({
-            modelName: names.parentFile.modelName,
+        const saveFileAndDoc = util.models.common.generateSaveFileAndDoc({
+            modelName: shared.db.names.parentFile.modelName,
             validate: validateFake
         }).bind(userFile);
 
@@ -60,15 +56,15 @@ describe('[util/models/common/generate-save-file-and-doc-method] - general flow'
 
     });
 
-    it('Returned function should throw error and call fileDoc.remove if storageApi.createMultipartObject happends to fail (called with correct args)', async () => {
+    it('Returned function should throw error and call fileDoc.remove if storage.createMultipartObject happends to fail (called with correct args)', async () => {
 
         validateFake = sinon.fake.resolves();
         userFileSaveStub = sinon.stub(userFile, 'save').resolves(userFile);
-        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').rejects();
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').rejects();
         userFileRemoveStub = sinon.stub(userFile, 'remove').resolves();
 
-        const saveFileAndDoc = generateSaveFileAndDoc({
-            modelName: names.userFile.modelName,
+        const saveFileAndDoc = util.models.common.generateSaveFileAndDoc({
+            modelName: shared.db.names.userFile.modelName,
             validate: validateFake
         }).bind(userFile);
 
@@ -76,7 +72,7 @@ describe('[util/models/common/generate-save-file-and-doc-method] - general flow'
 
         await expect(saveFileAndDoc(buffer)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[names.userFile.modelName], {
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, api.storage.config.bucketNames[shared.db.names.userFile.modelName], {
             keyname: userFile.file.keyname,
             buffer,
             size: buffer.length,
@@ -91,11 +87,11 @@ describe('[util/models/common/generate-save-file-and-doc-method] - general flow'
 
         validateFake = sinon.fake.resolves();
         userFileSaveStub = sinon.stub(userFile, 'save').resolves(userFile);
-        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').resolves();
         userFileRemoveStub = sinon.stub(userFile, 'remove').resolves();
 
-        const saveFileAndDoc = generateSaveFileAndDoc({
-            modelName: names.parentFile.modelName,
+        const saveFileAndDoc = util.models.common.generateSaveFileAndDoc({
+            modelName: shared.db.names.parentFile.modelName,
             validate: validateFake
         }).bind(userFile);
 

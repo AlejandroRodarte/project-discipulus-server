@@ -2,34 +2,28 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { User, StudentFile } = require('../../../../src/db/models');
-
-const modelFunctions = require('../../../__fixtures__/functions/models');
-
-const names = require('../../../../src/db/names');
-const roleTypes = require('../../../../src/util/roles');
-
-const storageApi = require('../../../../src/api/storage');
-const bucketNames = require('../../../../src/api/storage/config/bucket-names');
-
-const { modelErrorMessages } = require('../../../../src/util/errors');
+const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
+const api = require('../../../../src/api');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const [userDoc] = modelFunctions.generateFakeUsers(1, { fakeToken: true });
+const [userDoc] = fixtures.functions.models.generateFakeUsers(1, { fakeToken: true });
 
 const studentFileDoc = {
     user: userDoc._id,
-    file: modelFunctions.generateFakeFile()
+    file: fixtures.functions.models.generateFakeFile()
 };
 
-let user = new User(userDoc);
-let studentFile = new StudentFile(studentFileDoc);
+let user = new db.models.User(userDoc);
+let studentFile = new db.models.StudentFile(studentFileDoc);
 
 beforeEach(() => {
-    user = modelFunctions.getNewModelInstance(User, userDoc);
-    studentFile = modelFunctions.getNewModelInstance(StudentFile, studentFileDoc);
+    user = fixtures.functions.models.getNewModelInstance(db.models.User, userDoc);
+    studentFile = fixtures.functions.models.getNewModelInstance(db.models.StudentFile, studentFileDoc);
 });
 
 describe('[db/models/student-file] - methods.saveFileAndDoc', () => {
@@ -42,20 +36,20 @@ describe('[db/models/student-file] - methods.saveFileAndDoc', () => {
 
     it('Generated functions should be called with the correct arguments, resolving the persisted student file', async () => {
 
-        userFindByIdAndValidateRoleStub = sinon.stub(User, 'findByIdAndValidateRole').resolves(user);
+        userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').resolves(user);
         studentFileSaveStub = sinon.stub(studentFile, 'save').resolves(studentFile);
-        createMultipartObjectStub = sinon.stub(storageApi, 'createMultipartObject').resolves();
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').resolves();
 
         await expect(studentFile.saveFileAndDoc(buffer)).to.eventually.eql(studentFile);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, studentFile.user, roleTypes.ROLE_STUDENT, {
-            notFoundErrorMessage: modelErrorMessages.userNotFoundOrDisabled,
-            invalidRoleErrorMessage: modelErrorMessages.fileStorePermissionDenied
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, studentFile.user, util.roles.ROLE_STUDENT, {
+            notFoundErrorMessage: util.errors.modelErrorMessages.userNotFoundOrDisabled,
+            invalidRoleErrorMessage: util.errors.modelErrorMessages.fileStorePermissionDenied
         });
 
         sinon.assert.calledOnce(studentFileSaveStub);
 
-        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, bucketNames[names.studentFile.modelName], {
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, api.storage.config.bucketNames[shared.db.names.studentFile.modelName], {
             keyname: studentFile.file.keyname,
             buffer,
             size: buffer.length,

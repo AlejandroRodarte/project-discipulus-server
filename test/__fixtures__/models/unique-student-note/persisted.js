@@ -1,17 +1,16 @@
-const { user, studentNote } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const modelFunctions = require('../../functions/models');
-const utilFunctions = require('../../functions/util');
+const { models, util } = require('../../functions');
 
 // 0: generate one sample user
-const users = modelFunctions.generateFakeUsers(1, { fakeToken: true });
+const users = models.generateFakeUsers(1, { fakeToken: true });
 
 const studentNotes = [
     // 0: user[0] as student with sample note
-    ...utilFunctions.generateOneToMany('user', users[0]._id, [{ note: modelFunctions.generateFakeNote() }])
+    ...util.generateOneToMany('user', users[0]._id, [{ note: models.generateFakeNote() }])
 ];
 
 module.exports = {
-    [user.modelName]: users,
-    [studentNote.modelName]: studentNotes
+    [db.names.user.modelName]: users,
+    [db.names.studentNote.modelName]: studentNotes
 };

@@ -1,6 +1,6 @@
 const { Types } = require('mongoose');
 
-const { classStudentInvitation } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const classStudentInvitations = [
     // 0. sample class student invitation
@@ -11,5 +11,5 @@ const classStudentInvitations = [
 ];
 
 module.exports = {
-    [classStudentInvitation.modelName]: classStudentInvitations
+    [db.names.classStudentInvitation.modelName]: classStudentInvitations
 };

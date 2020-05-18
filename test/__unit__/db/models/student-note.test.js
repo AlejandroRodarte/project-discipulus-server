@@ -4,33 +4,30 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
-const { User, StudentNote } = require('../../../../src/db/models');
-
-const modelFunctions = require('../../../__fixtures__/functions/models');
-const roleTypes = require('../../../../src/util/roles');
-
-const { modelErrorMessages } = require('../../../../src/util/errors');
+const db = require('../../../../src/db');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const [studentDoc] = modelFunctions.generateFakeUsers(1, { fakeToken: true });
+const [studentDoc] = fixtures.functions.models.generateFakeUsers(1, { fakeToken: true });
 
 const studentNoteDoc = {
     user: new Types.ObjectId(),
-    file: modelFunctions.generateFakeNote({
+    file: fixtures.functions.models.generateFakeNote({
         titleWords: 5,
         descriptionWords: 10,
         markdown: '# Test'
     })
 };
 
-let studentNote = new StudentNote(studentNoteDoc);
-let student = new User(studentDoc);
+let studentNote = new db.models.StudentNote(studentNoteDoc);
+let student = new db.models.User(studentDoc);
 
 beforeEach(() => {
-    studentNote = modelFunctions.getNewModelInstance(StudentNote, studentNoteDoc);
-    student = modelFunctions.getNewModelInstance(User, studentDoc);
+    studentNote = fixtures.functions.models.getNewModelInstance(db.models.StudentNote, studentNoteDoc);
+    student = fixtures.functions.models.getNewModelInstance(db.models.User, studentDoc);
 });
 
 describe('[db/models/student-note] - methods.checkAndSave', () => {
@@ -40,14 +37,14 @@ describe('[db/models/student-note] - methods.checkAndSave', () => {
 
     it('Should call all required methods with the correct arguments on correct flow', async () => {
         
-        userFindByIdAndValidateRole = sinon.stub(User, 'findByIdAndValidateRole').resolves(student);
+        userFindByIdAndValidateRole = sinon.stub(db.models.User, 'findByIdAndValidateRole').resolves(student);
         studentNoteSaveStub = sinon.stub(studentNote, 'save').resolves(studentNote);
 
         await expect(studentNote.checkAndSave()).to.eventually.eql(studentNote);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, studentNote.user, roleTypes.ROLE_STUDENT, {
-            notFoundErrorMessage: modelErrorMessages.userNotFoundOrDisabled,
-            invalidRoleErrorMessage: modelErrorMessages.fileStorePermissionDenied
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, studentNote.user, util.roles.ROLE_STUDENT, {
+            notFoundErrorMessage: util.errors.modelErrorMessages.userNotFoundOrDisabled,
+            invalidRoleErrorMessage: util.errors.modelErrorMessages.fileStorePermissionDenied
         });
 
         sinon.assert.calledOnce(studentNoteSaveStub);

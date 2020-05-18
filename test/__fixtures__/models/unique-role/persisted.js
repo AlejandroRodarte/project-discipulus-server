@@ -1,17 +1,17 @@
 const { Types } = require('mongoose');
 
-const { role } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
-const roleTypes = require('../../../../src/util/roles');
+const { roles } = require('../../../../src/util');
 
 const persisted = {
 
-    [role.modelName]: [
+    [db.names.role.modelName]: [
 
         // 0: teacher role
         {
             _id: new Types.ObjectId(),
-            name: roleTypes.ROLE_TEACHER
+            name: roles.ROLE_TEACHER
         }
 
     ]

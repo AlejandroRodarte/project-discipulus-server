@@ -1,17 +1,17 @@
 const { Types } = require('mongoose');
 
-const utilFunctions = require('../../functions/util');
+const { models, util } = require('../../functions');
 
-const { user, class: clazz, classStudent } = require('../../../../src/db/names');
+const { db } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 
-const persistedUsers = persisted[user.modelName];
-const persistedClasses = persisted[clazz.modelName]
+const persistedUsers = persisted[db.names.user.modelName];
+const persistedClasses = persisted[db.names.class.modelName]
 
 const classStudents = [
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 0. class[0] with unknown student
         {
@@ -31,9 +31,9 @@ const classStudents = [
     ]),
 
     // 3. unknown class with user[4] (enabled student)
-    ...utilFunctions.generateOneToMany('class', new Types.ObjectId(), [{ user: persistedUsers[4]._id }]),
+    ...util.generateOneToMany('class', new Types.ObjectId(), [{ user: persistedUsers[4]._id }]),
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 4. class[0] (user[0] is teacher) with user[0] (also a student)
         {
@@ -57,7 +57,7 @@ const classStudents = [
 
     ]),
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 8. class[0] with unknown student
         {
@@ -77,9 +77,9 @@ const classStudents = [
     ]),
 
     // 11. unknown class with user[9] (enabled student)
-    ...utilFunctions.generateOneToMany('class', new Types.ObjectId(), [{ user: persistedUsers[9]._id }]),
+    ...util.generateOneToMany('class', new Types.ObjectId(), [{ user: persistedUsers[9]._id }]),
 
-    ...utilFunctions.generateOneToMany('class', persistedClasses[0]._id, [
+    ...util.generateOneToMany('class', persistedClasses[0]._id, [
 
         // 12. class[0] (user[0] is teacher) with user[0] (also a student)
         {
@@ -106,5 +106,5 @@ const classStudents = [
 ];
 
 module.exports = {
-    [classStudent.modelName]: classStudents
+    [db.names.classStudent.modelName]: classStudents
 };

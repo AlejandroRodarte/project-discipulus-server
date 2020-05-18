@@ -1,11 +1,11 @@
 const expect = require('chai').expect;
 
-const trimRedundantSpaces = require('../../../../src/util/functions/trim-redundant-spaces');
+const { functions } = require('../../../../src/util');
 
 describe('[util/functions] - trimRedundantSpaces', () => {
 
     it('Should remove redundant spaces', () => {
-        expect(trimRedundantSpaces('     My     Name   ')).to.equal('My Name');
+        expect(functions.trimRedundantSpaces('     My     Name   ')).to.equal('My Name');
     });
 
 });

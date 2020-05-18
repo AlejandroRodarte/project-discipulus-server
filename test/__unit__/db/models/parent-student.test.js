@@ -3,13 +3,9 @@ const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 
-const { generateFakeUsers, getNewModelInstance } = require('../../../__fixtures__/functions/models');
-
-const { User, ParentStudent, ParentStudentInvitation } = require('../../../../src/db/models');
-
-const roleTypes = require('../../../../src/util/roles');
-
-const { modelErrorMessages } = require('../../../../src/util/errors');
+const db = require('../../../../src/db');
+const util = require('../../../../src/util');
+const fixtures = require('../../../__fixtures__');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -24,20 +20,20 @@ const parentStudentInvitationDoc = {
     student: parentStudentDoc.student
 };
 
-const [parentDoc, studentDoc] = generateFakeUsers(2, {
+const [parentDoc, studentDoc] = fixtures.functions.models.generateFakeUsers(2, {
     fakeToken: true
 });
 
-let parentStudent = new ParentStudent(parentStudentDoc);
-let parent = new User(parentDoc);
-let student = new User(studentDoc);
-let parentStudentInvitation = new ParentStudentInvitation(parentStudentInvitationDoc);
+let parentStudent = new db.models.ParentStudent(parentStudentDoc);
+let parent = new db.models.User(parentDoc);
+let student = new db.models.User(studentDoc);
+let parentStudentInvitation = new db.models.ParentStudentInvitation(parentStudentInvitationDoc);
 
 beforeEach(() => {
-    parentStudent = getNewModelInstance(ParentStudent, parentStudentDoc);
-    parent = getNewModelInstance(User, parentDoc);
-    student = getNewModelInstance(User, studentDoc);
-    parentStudentInvitation = getNewModelInstance(ParentStudentInvitation, parentStudentInvitationDoc);
+    parentStudent = fixtures.functions.models.getNewModelInstance(db.models.ParentStudent, parentStudentDoc);
+    parent = fixtures.functions.models.getNewModelInstance(db.models.User, parentDoc);
+    student = fixtures.functions.models.getNewModelInstance(db.models.User, studentDoc);
+    parentStudentInvitation = fixtures.functions.models.getNewModelInstance(db.models.ParentStudentInvitation, parentStudentInvitationDoc);
 });
 
 describe('[db/models/parent-student] - methods.checkAndSave', () => {
@@ -54,21 +50,21 @@ describe('[db/models/parent-student] - methods.checkAndSave', () => {
             student: parentStudent.parent
         };
 
-        const sameIdParentStudent = new ParentStudent(sameIdParentStudentDoc);
+        const sameIdParentStudent = new db.models.ParentStudent(sameIdParentStudentDoc);
 
-        await expect(sameIdParentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.selfAssociation);
+        await expect(sameIdParentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.selfAssociation);
 
     });
 
     it('Should call User.findByIdAndValidateRole with correct args and throw error when it throws error', async () => {
 
-        userFindByIdAndValidateRole = sinon.stub(User, 'findByIdAndValidateRole').rejects();
+        userFindByIdAndValidateRole = sinon.stub(db.models.User, 'findByIdAndValidateRole').rejects();
         
         await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
     
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentStudent.parent, roleTypes.ROLE_PARENT, {
-            notFoundErrorMessage: modelErrorMessages.parentNotFound,
-            invalidRoleErrorMessage: modelErrorMessages.notAParent
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentStudent.parent, util.roles.ROLE_PARENT, {
+            notFoundErrorMessage: util.errors.modelErrorMessages.parentNotFound,
+            invalidRoleErrorMessage: util.errors.modelErrorMessages.notAParent
         });
 
     });
@@ -76,15 +72,15 @@ describe('[db/models/parent-student] - methods.checkAndSave', () => {
     it('Should throw error if second User.findByIdAndValidateRole call (with correct args) throws error to a student user', async () => {
 
         userFindByIdAndValidateRole = 
-            sinon.stub(User, 'findByIdAndValidateRole')
+            sinon.stub(db.models.User, 'findByIdAndValidateRole')
                  .onFirstCall().resolves(parent)
                  .onSecondCall().rejects();
 
         await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledWith(userFindByIdAndValidateRole.secondCall, parentStudent.student, roleTypes.ROLE_STUDENT, {
-            notFoundErrorMessage: modelErrorMessages.studentNotFound,
-            invalidRoleErrorMessage: modelErrorMessages.notAStudent
+        sinon.assert.calledWith(userFindByIdAndValidateRole.secondCall, parentStudent.student, util.roles.ROLE_STUDENT, {
+            notFoundErrorMessage: util.errors.modelErrorMessages.studentNotFound,
+            invalidRoleErrorMessage: util.errors.modelErrorMessages.notAStudent
         });
 
     });
@@ -92,13 +88,13 @@ describe('[db/models/parent-student] - methods.checkAndSave', () => {
     it('Should throw error if an associated parent-student invitation is not found (with correct args)', async () => {
 
         userFindByIdAndValidateRole = 
-            sinon.stub(User, 'findByIdAndValidateRole')
+            sinon.stub(db.models.User, 'findByIdAndValidateRole')
                  .onFirstCall().resolves(parent)
                  .onSecondCall().resolves(student);
 
-        parentStudentInvitationFindOneStub = sinon.stub(ParentStudentInvitation, 'findOne').resolves(null);
+        parentStudentInvitationFindOneStub = sinon.stub(db.models.ParentStudentInvitation, 'findOne').resolves(null);
 
-        await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, modelErrorMessages.parentStudentInvitationRequired);
+        await expect(parentStudent.checkAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.parentStudentInvitationRequired);
 
         sinon.assert.calledOnceWithExactly(parentStudentInvitationFindOneStub, {
             parent: parentStudent.parent,
@@ -110,11 +106,11 @@ describe('[db/models/parent-student] - methods.checkAndSave', () => {
     it('Should throw error on save if ParentStudent model validation rules fail', async () => {
 
         userFindByIdAndValidateRole = 
-            sinon.stub(User, 'findByIdAndValidateRole')
+            sinon.stub(db.models.User, 'findByIdAndValidateRole')
                  .onFirstCall().resolves(parent)
                  .onSecondCall().resolves(student);
 
-        parentStudentInvitationFindOneStub = sinon.stub(ParentStudentInvitation, 'findOne').resolves(parentStudentInvitation);
+        parentStudentInvitationFindOneStub = sinon.stub(db.models.ParentStudentInvitation, 'findOne').resolves(parentStudentInvitation);
 
         parentStudentInvitationRemoveStub = sinon.stub(parentStudentInvitation, 'remove').resolves();
         parentStudentSaveStub = sinon.stub(parentStudent, 'save').rejects();
@@ -128,11 +124,11 @@ describe('[db/models/parent-student] - methods.checkAndSave', () => {
     it('Should return parentStudent instance model when validations pass and parent-student-invitation gets removed', async () => {
 
         userFindByIdAndValidateRole = 
-            sinon.stub(User, 'findByIdAndValidateRole')
+            sinon.stub(db.models.User, 'findByIdAndValidateRole')
                  .onFirstCall().resolves(parent)
                  .onSecondCall().resolves(student);
 
-        parentStudentInvitationFindOneStub = sinon.stub(ParentStudentInvitation, 'findOne').resolves(parentStudentInvitation);
+        parentStudentInvitationFindOneStub = sinon.stub(db.models.ParentStudentInvitation, 'findOne').resolves(parentStudentInvitation);
 
         parentStudentInvitationRemoveStub = sinon.stub(parentStudentInvitation, 'remove').resolves();
         parentStudentSaveStub = sinon.stub(parentStudent, 'save').resolves(parentStudent);

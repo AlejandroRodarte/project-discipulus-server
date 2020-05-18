@@ -1,9 +1,9 @@
-const attachKeynames = require('../../functions/util/attach-keynames');
+const { util } = require('../../functions');
 
-const sampleFiles = require('../../shared/sample-files');
-const { class: clazz } = require('../../../../src/db/names');
+const { sampleFiles } = require('../../shared');
+const { db } = require('../../../../src/shared');
 
-const classAvatars = attachKeynames([
+const classAvatars = util.attachKeynames([
     
     // 0. document avatar file (invalid)
     sampleFiles.documentFile,
@@ -15,6 +15,6 @@ const classAvatars = attachKeynames([
 
 module.exports = {
     storage: {
-        [clazz.modelName]: classAvatars
+        [db.names.class.modelName]: classAvatars
     }
 };

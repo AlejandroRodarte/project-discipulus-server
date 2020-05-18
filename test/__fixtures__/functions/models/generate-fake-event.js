@@ -1,4 +1,4 @@
-const lorem = require('../../util/lorem');
+const { lorem } = require('../../util');
 
 const generateFakeEvent = ({ 
     titleWords = 5, 
