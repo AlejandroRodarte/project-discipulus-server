@@ -45,6 +45,12 @@ classSchema.virtual('classNotes', {
     foreignField: 'class'
 });
 
+classSchema.virtual('sessions', {
+    ref: db.names.session.modelName,
+    localField: '_id',
+    foreignField: 'class'
+});
+
 classSchema.pre('remove', async function() {
 
     const clazz = this;
