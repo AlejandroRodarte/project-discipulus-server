@@ -52,6 +52,9 @@ describe('[db/models/class] - baseClass context', () => {
 
     beforeEach(fixtures.functions.db.init(fixtures.models.baseClassContext.persisted));
 
+    const persistedUsers = fixtures.models.baseClassContext.persisted[shared.db.names.user.modelName];
+
+    const persistedClasses = fixtures.models.baseClassContext.persisted[shared.db.names.class.modelName];
     const unpersistedClasses = fixtures.models.baseClassContext.unpersisted[shared.db.names.class.modelName];
 
     describe('[db/models/class] - methods.checkAndSave', () => {
@@ -98,6 +101,48 @@ describe('[db/models/class] - baseClass context', () => {
             const clazz = new db.models.Class(classDoc);
 
             await expect(clazz.checkAndSave()).to.eventually.be.eql(clazz);
+
+        });
+
+    });
+
+    describe('[db/models/class] - statics.findByIdAndCheckForSelfAssociation', () => {
+
+        it('Should throw error if class is not found', async () => {
+
+            const unknownClassId = unpersistedClasses[0]._id;
+            const userTwoId = persistedUsers[2]._id;
+
+            await expect(db.models.Class.findByIdAndCheckForSelfAssociation({
+                classId: unknownClassId,
+                studentId: userTwoId
+            })).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classNotFound);
+
+        });
+
+        it('Should throw error if class.user _id matches studentId', async () => {
+
+            const classOneId = persistedClasses[0]._id;
+            const userThreeId = persistedUsers[2]._id;
+
+            await expect(db.models.Class.findByIdAndCheckForSelfAssociation({
+                classId: classOneId,
+                studentId: userThreeId
+            })).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.selfTeaching);
+
+        });
+
+        it('Should return class instance teacher is different from student', async () => {
+
+            const classOneId = persistedClasses[0]._id;
+            const userTwoId = persistedUsers[1]._id;
+
+            const clazz = await db.models.Class.findByIdAndCheckForSelfAssociation({
+                classId: classOneId,
+                studentId: userTwoId
+            });
+
+            expect(classOneId.toHexString()).to.equal(clazz._id.toHexString());
 
         });
 
