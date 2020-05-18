@@ -1,5 +1,5 @@
-const { sharedUserFileDefinition } = require('../shared/user-file');
+const { definitions } = require('../shared');
 
-const teacherFileDefinition = sharedUserFileDefinition;
+const teacherFileDefinition = definitions.sharedUserFileDefinition;
 
 module.exports = teacherFileDefinition;

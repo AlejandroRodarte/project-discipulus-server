@@ -5,7 +5,7 @@ const role = require('./role');
 const user = require('./user');
 
 module.exports = {
-    clazz,
+    class: clazz,
     classStudent,
     common,
     role,

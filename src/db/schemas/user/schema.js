@@ -1,116 +1,112 @@
 const { Schema } = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const { db } = require('../../../shared');
+const { storage } = require('../../../api');
+const { models } = require('../../../util');
+
+const { userRolePipelines } = require('../../aggregation');
 const userDefinition = require('./definition');
-const names = require('../../names');
-
-const { getRolesPipeline } = require('../../aggregation/user-role');
-
-const { deletionUserRules, deletionUserRulesByRole } = require('../../../util/models/user');
-
-const storageApi = require('../../../api/storage');
-const bucketNames = require('../../../api/storage/config/bucket-names');
-
-const { applyDeletionRules } = require('../../../db');
+const applyDeletionRules = require('../../apply-deletion-rules');
 
 const schemaOpts = {
-    collection: names.user.collectionName
+    collection: db.names.user.collectionName
 };
 
 const userSchema = new Schema(userDefinition, schemaOpts);
 
 userSchema.virtual('userRoles', {
-    ref: names.userRole.modelName,
+    ref: db.names.userRole.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('parentStudents', {
-    ref: names.parentStudent.modelName,
+    ref: db.names.parentStudent.modelName,
     localField: '_id',
     foreignField: 'parent'
 });
 
 userSchema.virtual('studentParents', {
-    ref: names.parentStudent.modelName,
+    ref: db.names.parentStudent.modelName,
     localField: '_id',
     foreignField: 'student'
 });
 
 userSchema.virtual('parentStudentInvitations', {
-    ref: names.parentStudentInvitation.modelName,
+    ref: db.names.parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'parent'
 });
 
 userSchema.virtual('studentParentInvitations', {
-    ref: names.parentStudentInvitation.modelName,
+    ref: db.names.parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'student'
 });
 
 userSchema.virtual('userFiles', {
-    ref: names.userFile.modelName,
+    ref: db.names.userFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('parentFiles', {
-    ref: names.parentFile.modelName,
+    ref: db.names.parentFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('teacherFiles', {
-    ref: names.teacherFile.modelName,
+    ref: db.names.teacherFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('studentFiles', {
-    ref: names.studentFile.modelName,
+    ref: db.names.studentFile.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('events', {
-    ref: names.userEvent.modelName,
+    ref: db.names.userEvent.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('studentClasses', {
-    ref: names.classStudent.modelName,
+    ref: db.names.classStudent.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('studentClassInvitations', {
-    ref: names.classStudentInvitation.modelName,
+    ref: db.names.classStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('userNotes', {
-    ref: names.userNote.modelName,
+    ref: db.names.userNote.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('parentNotes', {
-    ref: names.parentNote.modelName,
+    ref: db.names.parentNote.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('studentNotes', {
-    ref: names.studentNote.modelName,
+    ref: db.names.studentNote.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
 userSchema.virtual('teacherNotes', {
-    ref: names.teacherNote.modelName,
+    ref: db.names.teacherNote.modelName,
     localField: '_id',
     foreignField: 'user'
 });
@@ -134,14 +130,14 @@ userSchema.pre('remove', async function() {
         const roles = await user.getUserRoles();
 
         if (user.avatar) {
-            await storageApi.deleteBucketObjects(bucketNames[names.user.modelName], [user.avatar.keyname]);
+            await storage.deleteBucketObjects(storage.config.bucketNames[db.names.user.modelName], [user.avatar.keyname]);
         }
         
-        await applyDeletionRules(user, deletionUserRules);
+        await applyDeletionRules(user, models.user.deletionUserRules);
 
-        for (const role in deletionUserRulesByRole) {
+        for (const role in models.user.deletionUserRulesByRole) {
             if (roles.includes(role)) {
-                await applyDeletionRules(user, deletionUserRulesByRole[role]);
+                await applyDeletionRules(user, models.user.deletionUserRulesByRole[role]);
             }
         }
 
@@ -178,8 +174,8 @@ userSchema.methods.getUserRoles = async function() {
 
     const user = this;
     
-    const pipeline = getRolesPipeline(user._id);
-    const docs = await user.model(names.userRole.modelName).aggregate(pipeline);
+    const pipeline = userRolePipelines.getRolesPipeline(user._id);
+    const docs = await user.model(db.names.userRole.modelName).aggregate(pipeline);
 
     if (!docs.length) {
         return [];
@@ -207,7 +203,7 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     if (userModel.avatar) {
 
         try {
-            await storageApi.deleteBucketObjects(bucketNames[names.user.modelName], [userModel.avatar.keyname]);
+            await storage.deleteBucketObjects(storage.config.bucketNames[db.names.user.modelName], [userModel.avatar.keyname]);
         } catch (e) {
             throw e;
         }
@@ -223,7 +219,7 @@ userSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     }
 
     try {
-        await storageApi.createMultipartObject(bucketNames[names.user.modelName], {
+        await storage.createMultipartObject(storage.config.bucketNames[db.names.user.modelName], {
             keyname: userModel.avatar.keyname,
             buffer,
             size: buffer.length,

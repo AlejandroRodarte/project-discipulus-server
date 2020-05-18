@@ -1,9 +1,9 @@
-const { names } = require('../../../db');
+const { db } = require('../../../shared');
 const { modelErrorMessages } = require('../../errors');
 
 const userExistsValidator = async (doc) => {
 
-    const User = doc.model(names.user.modelName);
+    const User = doc.model(db.names.user.modelName);
 
     const { user: userId } = doc;
 

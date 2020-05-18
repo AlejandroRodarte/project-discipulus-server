@@ -1,4 +1,4 @@
-const { names } = require('../../../db');
+const { db } = require('../../../shared');
 
 const roles = require('../../roles');
 const deleteModes = require('../../delete-modes');
@@ -7,25 +7,25 @@ const deletionUserRulesByRole = {
 
     [roles.ROLE_PARENT]: [
         {
-            modelName: names.parentStudent.modelName,
+            modelName: db.names.parentStudent.modelName,
             fieldName: 'parent',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY
         },
         {
-            modelName: names.parentStudentInvitation.modelName,
+            modelName: db.names.parentStudentInvitation.modelName,
             fieldName: 'parent',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY
         },
         {
-            modelName: names.parentFile.modelName,
+            modelName: db.names.parentFile.modelName,
             fieldName: 'user',
             deleteFiles: true,
             deleteMode: deleteModes.DELETE_MANY
         },
         {
-            modelName: names.parentNote.modelName,
+            modelName: db.names.parentNote.modelName,
             fieldName: 'user',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY
@@ -34,37 +34,37 @@ const deletionUserRulesByRole = {
 
     [roles.ROLE_STUDENT]: [
         {
-            modelName: names.parentStudent.modelName,
+            modelName: db.names.parentStudent.modelName,
             fieldName: 'student',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY
         },
         {
-            modelName: names.parentStudentInvitation.modelName,
+            modelName: db.names.parentStudentInvitation.modelName,
             fieldName: 'student',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY
         },
         {
-            modelName: names.studentFile.modelName,
+            modelName: db.names.studentFile.modelName,
             fieldName: 'user',
             deleteFiles: true,
             deleteMode: deleteModes.DELETE_MANY
         },
         {
-            modelName: names.classStudent.modelName,
+            modelName: db.names.classStudent.modelName,
             fieldName: 'user',
             deleteFiles: false,
             deleteMode: deleteModes.REMOVE
         },
         {
-            modelName: names.classStudentInvitation.modelName,
+            modelName: db.names.classStudentInvitation.modelName,
             fieldName: 'user',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY
         },
         {
-            modelName: names.studentNote.modelName,
+            modelName: db.names.studentNote.modelName,
             fieldName: 'user',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY
@@ -73,19 +73,19 @@ const deletionUserRulesByRole = {
 
     [roles.ROLE_TEACHER]: [
         {
-            modelName: names.teacherFile.modelName,
+            modelName: db.names.teacherFile.modelName,
             fieldName: 'user',
             deleteFiles: true,
             deleteMode: deleteModes.DELETE_MANY
         },
         {
-            modelName: names.class.modelName,
+            modelName: db.names.class.modelName,
             fieldName: 'user',
             deleteFiles: false,
             deleteMode: deleteModes.REMOVE
         },
         {
-            modelName: names.teacherNote.modelName,
+            modelName: db.names.teacherNote.modelName,
             fieldName: 'user',
             deleteFiles: false,
             deleteMode: deleteModes.DELETE_MANY

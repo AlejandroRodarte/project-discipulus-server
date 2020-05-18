@@ -1,18 +1,18 @@
 const { Schema } = require('mongoose');
 
-const userNoteDefinition = require('./definition');
-const { userNote } = require('../../names');
+const { db } = require('../../../shared');
+const { models } = require('../../../util');
 
-const commonModelUtils = require('../../../util/models/common');
+const userNoteDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: userNote.collectionName
+    collection: db.names.userNote.collectionName
 };
 
 const userNoteSchema = new Schema(userNoteDefinition, schemaOpts);
 
 userNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-userNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.userExistsValidator);
+userNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.userExistsValidator);
 
 module.exports = userNoteSchema;

@@ -1,19 +1,19 @@
 const { Schema } = require('mongoose');
 
-const { classStudent } = require('../../names');
+const { db } = require('../../../shared');
 
-const { sharedFileSchema } = require('../shared/file');
+const { schemas } = require('../shared');
 
 const classStudentFileDefinition = {
 
     classStudent: {
         type: Schema.Types.ObjectId,
         required: [true, 'A class-student _id is required'],
-        ref: classStudent.modelName
+        ref: db.names.classStudent.modelName
     },
 
     file: {
-        type: sharedFileSchema,
+        type: schemas.sharedFileSchema,
         required: [true, 'A file is required']
     }
 

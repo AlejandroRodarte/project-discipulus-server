@@ -1,32 +1,31 @@
 
 const { Schema } = require('mongoose');
 
-const sessionFileDefinition = require('./definition');
-const names = require('../../names');
+const { db } = require('../../../shared');
+const { errors, models } = require('../../../util');
 
-const commonModelUtils = require('../../../util/models/common');
-const { modelErrorMessages } = require('../../../util/errors');
+const sessionFileDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: names.sessionFile.collectionName
+    collection: db.names.sessionFile.collectionName
 };
 
 const sessionFileSchema = new Schema(sessionFileDefinition, schemaOpts);
 
 sessionFileSchema.index({ session: 1, 'file.originalname': 1 }, { unique: true });
 
-sessionFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
-    modelName: names.sessionFile.modelName
+sessionFileSchema.pre('remove', models.common.generateFilePreRemove({
+    modelName: db.names.sessionFile.modelName
 }));
 
-sessionFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
+sessionFileSchema.methods.saveFileAndDoc = models.common.generateSaveFileAndDoc({
 
-    modelName: names.sessionFile.modelName,
+    modelName: db.names.sessionFile.modelName,
 
-    validate: commonModelUtils.generateParentDocExistsValidator({
-        parentModelName: names.session.modelName,
+    validate: models.common.generateParentDocExistsValidator({
+        parentModelName: db.names.session.modelName,
         ref: 'session',
-        notFoundErrorMessage: modelErrorMessages.sessionNotFound
+        notFoundErrorMessage: errors.modelErrorMessages.sessionNotFound
     })
     
 });

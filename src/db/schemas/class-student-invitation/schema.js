@@ -1,14 +1,12 @@
 const { Schema } = require('mongoose');
 
+const { db } = require('../../../shared');
+const { roles, errors } = require('../../../util');
+
 const classStudentInvitationDefinition = require('./definition');
-const names = require('../../names');
-
-const roleTypes = require('../../../util/roles');
-
-const { modelErrorMessages } = require('../../../util/errors');
 
 const schemaOpts = {
-    collection: names.classStudentInvitation.collectionName
+    collection: db.names.classStudentInvitation.collectionName
 };
 
 const classStudentInvitationSchema = new Schema(classStudentInvitationDefinition, schemaOpts);
@@ -19,15 +17,15 @@ classStudentInvitationSchema.methods.checkAndSave = async function() {
 
     const classStudentInvitation = this;
 
-    const User = classStudentInvitation.model(names.user.modelName);
-    const Class = classStudentInvitation.model(names.class.modelName);
-    const ClassStudent = classStudentInvitation.model(names.classStudent.modelName);
+    const User = classStudentInvitation.model(db.names.user.modelName);
+    const Class = classStudentInvitation.model(db.names.class.modelName);
+    const ClassStudent = classStudentInvitation.model(db.names.classStudent.modelName);
 
     try {
 
-        await User.findByIdAndValidateRole(classStudentInvitation.user, roleTypes.ROLE_STUDENT, {
-            notFoundErrorMessage: modelErrorMessages.studentNotFound,
-            invalidRoleErrorMessage: modelErrorMessages.notAStudent
+        await User.findByIdAndValidateRole(classStudentInvitation.user, roles.ROLE_STUDENT, {
+            notFoundErrorMessage: errors.modelErrorMessages.studentNotFound,
+            invalidRoleErrorMessage: errors.modelErrorMessages.notAStudent
         });
 
         await Class.findByIdAndCheckForSelfAssociation({
@@ -41,7 +39,7 @@ classStudentInvitationSchema.methods.checkAndSave = async function() {
         });
     
         if (classStudentExists) {
-            throw new Error(modelErrorMessages.classStudentAlreadyExists);
+            throw new Error(errors.modelErrorMessages.classStudentAlreadyExists);
         }
 
         await classStudentInvitation.save();

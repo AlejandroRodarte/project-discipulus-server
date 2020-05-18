@@ -1,12 +1,12 @@
 const { Schema } = require('mongoose');
 
-const classUnknownStudentInvitationDefinition = require('./definition');
-const names = require('../../names');
+const { db } = require('../../../shared');
+const { errors } = require('../../../util');
 
-const { modelErrorMessages } = require('../../../util/errors');
+const classUnknownStudentInvitationDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: names.classUnknownStudentInvitation.collectionName
+    collection: db.names.classUnknownStudentInvitation.collectionName
 };
 
 const classUnknownStudentInvitationSchema = new Schema(classUnknownStudentInvitationDefinition, schemaOpts);
@@ -17,9 +17,9 @@ classUnknownStudentInvitationSchema.methods.checkAndSave = async function() {
 
     const classUnknownStudentInvitation = this;
 
-    const User = classUnknownStudentInvitation.model(names.user.modelName);
-    const ClassStudentInvitation = classUnknownStudentInvitation.model(names.classStudentInvitation.modelName);
-    const Class = classUnknownStudentInvitation.model(names.class.modelName);
+    const User = classUnknownStudentInvitation.model(db.names.user.modelName);
+    const ClassStudentInvitation = classUnknownStudentInvitation.model(db.names.classStudentInvitation.modelName);
+    const Class = classUnknownStudentInvitation.model(db.names.class.modelName);
 
     const student = await User.findOne({
         email: classUnknownStudentInvitation.email
@@ -47,7 +47,7 @@ classUnknownStudentInvitationSchema.methods.checkAndSave = async function() {
         const classExists = await Class.exists({ _id: classUnknownStudentInvitation.class });
 
         if (!classExists) {
-            throw new Error(modelErrorMessages.classNotFound);
+            throw new Error(errors.modelErrorMessages.classNotFound);
         }
 
         await classUnknownStudentInvitation.save();

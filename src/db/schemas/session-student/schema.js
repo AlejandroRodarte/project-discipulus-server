@@ -1,10 +1,11 @@
 const { Schema } = require('mongoose');
 
+const { db } = require('../../../shared');
+
 const sessionStudentDefinition = require('./definition');
-const names = require('../../names');
 
 const schemaOpts = {
-    collection: names.sessionStudent.collectionName
+    collection: db.names.sessionStudent.collectionName
 };
 
 const sessionStudentSchema = new Schema(sessionStudentDefinition, schemaOpts);

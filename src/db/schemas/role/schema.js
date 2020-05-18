@@ -1,20 +1,20 @@
 const { Schema } = require('mongoose');
 
+const { db } = require('../../../shared');
+const { models } = require('../../../util');
+
 const roleDefinition = require('./definition');
-const { role, userRole } = require('../../names');
 
-const deletionRoleRules = require('../../../util/models/role/deletion-role-rules');
-
-const { applyDeletionRules } = require('../../../db');
+const applyDeletionRules = require('../../apply-deletion-rules');
 
 const schemaOpts = {
-    collection: role.collectionName
+    collection: db.names.role.collectionName
 };
 
 const roleSchema = new Schema(roleDefinition, schemaOpts);
 
 roleSchema.virtual('roleUsers', {
-    ref: userRole.modelName,
+    ref: db.names.userRole.modelName,
     localField: '_id',
     foreignField: 'role'
 });
@@ -24,7 +24,7 @@ roleSchema.pre('remove', async function() {
     const role = this;
 
     try {
-        await applyDeletionRules(role, deletionRoleRules);
+        await applyDeletionRules(role, models.role.deletionRoleRules);
     } catch (e) {
         throw e;
     }

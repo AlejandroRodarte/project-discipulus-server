@@ -1,4 +1,4 @@
-const storageApi = require('../../../api/storage');
+const { storage } = require('../../../api');
 
 const generateCommonSaveFileAndDoc = ({ modelName, validate }) => async function(buffer) {
 
@@ -12,7 +12,7 @@ const generateCommonSaveFileAndDoc = ({ modelName, validate }) => async function
     }
 
     try {
-        await storageApi.createMultipartObject(storageApi.config.bucketNames[modelName], {
+        await storage.createMultipartObject(storage.config.bucketNames[modelName], {
             keyname: fileDoc.file.keyname,
             buffer,
             size: buffer.length,

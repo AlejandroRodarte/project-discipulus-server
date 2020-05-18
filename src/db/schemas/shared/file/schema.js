@@ -1,10 +1,11 @@
 const { Schema } = require('mongoose');
 
+const { db } = require('../../../../shared');
+
 const sharedFileDefinition = require('./definition');
-const { sharedFile } = require('../../../names');
 
 const schemaOpts = {
-    collection: sharedFile.collectionName
+    collection: db.names.sharedFile.collectionName
 };
 
 const sharedFileSchema = new Schema(sharedFileDefinition, schemaOpts);

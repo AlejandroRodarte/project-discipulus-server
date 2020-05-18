@@ -1,10 +1,11 @@
 const { Schema } = require('mongoose');
 
+const { db } = require('../../../shared');
+
 const userEventDefinition = require('./definition');
-const { userEvent } = require('../../names');
 
 const schemaOpts = {
-    collection: userEvent.collectionName
+    collection: db.names.userEvent.collectionName
 };
 
 const userEventSchema = new Schema(userEventDefinition, schemaOpts);

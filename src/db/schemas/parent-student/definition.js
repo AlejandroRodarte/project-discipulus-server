@@ -1,5 +1,5 @@
-const { sharedParentStudentDefinition } = require('../shared/parent-student');
+const { definitions } = require('../shared');
 
-const parentStudentDefinition = sharedParentStudentDefinition
+const parentStudentDefinition = definitions.sharedParentStudentDefinition
 
 module.exports = parentStudentDefinition;

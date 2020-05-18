@@ -1,14 +1,12 @@
 const { Schema } = require('mongoose');
 
-const roleTypes = require('../../../util/roles');
+const { db } = require('../../../shared');
+const { roles, errors } = require('../../../util');
 
 const parentStudentInvitationDefinition = require('./definition');
-const { parentStudentInvitation, parentStudent, user } = require('../../names');
-
-const { modelErrorMessages } = require('../../../util/errors');
 
 const schemaOpts = {
-    collection: parentStudentInvitation.collectionName
+    collection: db.names.parentStudentInvitation.collectionName
 };
 
 const parentStudentInvitationSchema = new Schema(parentStudentInvitationDefinition, schemaOpts);
@@ -18,25 +16,25 @@ parentStudentInvitationSchema.index({ parent: 1, student: 1 }, { unique: true })
 parentStudentInvitationSchema.methods.checkAndSave = async function() {
 
     const parentStudentInvitation = this;
-    const User = parentStudentInvitation.model(user.modelName);
-    const ParentStudent = parentStudentInvitation.model(parentStudent.modelName);
+    const User = parentStudentInvitation.model(db.names.user.modelName);
+    const ParentStudent = parentStudentInvitation.model(db.names.parentStudent.modelName);
 
     const { parent, student } = parentStudentInvitation;
 
     if (parent.toHexString() === student.toHexString()) {
-        throw new Error(modelErrorMessages.selfAssociation);
+        throw new Error(errors.modelErrorMessages.selfAssociation);
     }
 
     try {
 
-        await User.findByIdAndValidateRole(student, roleTypes.ROLE_STUDENT, {
-            notFoundErrorMessage: modelErrorMessages.studentNotFound,
-            invalidRoleErrorMessage: modelErrorMessages.notAStudent
+        await User.findByIdAndValidateRole(student, roles.ROLE_STUDENT, {
+            notFoundErrorMessage: errors.modelErrorMessages.studentNotFound,
+            invalidRoleErrorMessage: errors.modelErrorMessages.notAStudent
         });
 
-        await User.findByIdAndValidateRole(parent, roleTypes.ROLE_PARENT, {
-            notFoundErrorMessage: modelErrorMessages.parentNotFound,
-            invalidRoleErrorMessage: modelErrorMessages.notAParent
+        await User.findByIdAndValidateRole(parent, roles.ROLE_PARENT, {
+            notFoundErrorMessage: errors.modelErrorMessages.parentNotFound,
+            invalidRoleErrorMessage: errors.modelErrorMessages.notAParent
         });
 
         const parentStudentExists = await ParentStudent.exists({
@@ -45,7 +43,7 @@ parentStudentInvitationSchema.methods.checkAndSave = async function() {
         });
     
         if (parentStudentExists) {
-            throw new Error(modelErrorMessages.parentStudentAlreadyExists);
+            throw new Error(errors.modelErrorMessages.parentStudentAlreadyExists);
         }
 
         await parentStudentInvitation.save();

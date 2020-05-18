@@ -1,19 +1,19 @@
 const { Schema } = require('mongoose');
 
-const { class: clazz, user } = require('../../names');
+const { db } = require('../../../shared');
 
 const classStudentDefinition = {
 
     class: {
         type: Schema.Types.ObjectId,
         required: [true, 'A class _id is required'],
-        ref: clazz.modelName
+        ref: db.names.class.modelName
     },
 
     user: {
         type: Schema.Types.ObjectId,
         required: [true, 'A student _id is required'],
-        ref: user.modelName
+        ref: db.names.user.modelName
     },
 
     write: {

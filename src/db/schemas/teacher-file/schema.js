@@ -1,27 +1,25 @@
 const { Schema } = require('mongoose');
 
+const { db } = require('../../../shared');
+const { roles, models } = require('../../../util');
+
 const teacherFileDefinition = require('./definition');
-const { teacherFile } = require('../../names');
-
-const commonModelUtils = require('../../../util/models/common');
-
-const roleTypes = require('../../../util/roles');
 
 const schemaOpts = {
-    collection: teacherFile.collectionName
+    collection: db.names.teacherFile.collectionName
 };
 
 const teacherFileSchema = new Schema(teacherFileDefinition, schemaOpts);
 
 teacherFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-teacherFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
-    modelName: teacherFile.modelName
+teacherFileSchema.pre('remove', models.common.generateFilePreRemove({
+    modelName: db.names.teacherFile.modelName
 }));
 
-teacherFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
-    modelName: teacherFile.modelName,
-    validate: commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_TEACHER)
+teacherFileSchema.methods.saveFileAndDoc = models.common.generateSaveFileAndDoc({
+    modelName: db.names.teacherFile.modelName,
+    validate: models.common.generateUserAndRoleValidator(roles.ROLE_TEACHER)
 });
 
 module.exports = teacherFileSchema;

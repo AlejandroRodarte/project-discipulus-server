@@ -1,8 +1,8 @@
+const { db } = require('../../shared');
+
 const { schemas } = require('../schemas');
-
 const getModel = require('../get-model');
-const { role } = require('../names');
 
-const Role = getModel(role.modelName, schemas.roleSchema);
+const Role = getModel(db.names.role.modelName, schemas.roleSchema);
 
 module.exports = Role;

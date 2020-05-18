@@ -1,18 +1,13 @@
 const { Schema } = require('mongoose');
 
+const { db } = require('../../../shared');
+const { roles, errors, models } = require('../../../util');
+
 const classStudentDefinition = require('./definition');
-const names = require('../../names');
-
-const roleTypes = require('../../../util/roles');
-
-const { modelErrorMessages } = require('../../../util/errors');
-
-const deletionClassStudentRules = require('../../../util/models/class-student/deletion-class-student-rules');
-
-const { applyDeletionRules } = require('../../../db');
+const applyDeletionRules = require('../../apply-deletion-rules');
 
 const schemaOpts = {
-    collection: names.classStudent.collectionName
+    collection: db.names.classStudent.collectionName
 };
 
 const classStudentSchema = new Schema(classStudentDefinition, schemaOpts);
@@ -24,7 +19,7 @@ classStudentSchema.pre('remove', async function() {
     const classStudent = this;
 
     try {
-        await applyDeletionRules(classStudent, deletionClassStudentRules);
+        await applyDeletionRules(classStudent, models.classStudent.deletionClassStudentRules);
     } catch {
         throw e;
     }
@@ -32,13 +27,13 @@ classStudentSchema.pre('remove', async function() {
 });
 
 classStudentSchema.virtual('classStudentFiles', {
-    ref: names.classStudentFile.modelName,
+    ref: db.names.classStudentFile.modelName,
     localField: '_id',
     foreignField: 'classStudent'
 });
 
 classStudentSchema.virtual('classStudentNotes', {
-    ref: names.classStudentNote.modelName,
+    ref: db.names.classStudentNote.modelName,
     localField: '_id',
     foreignField: 'classStudent'
 });
@@ -46,14 +41,14 @@ classStudentSchema.virtual('classStudentNotes', {
 classStudentSchema.methods.checkUser = async function() {
 
     const classStudent = this;
-    const User = classStudent.model(names.user.modelName);
-    const Class = classStudent.model(names.class.modelName);
+    const User = classStudent.model(db.names.user.modelName);
+    const Class = classStudent.model(db.names.class.modelName);
 
     try {
 
-        const user = await User.findByIdAndValidateRole(classStudent.user, roleTypes.ROLE_STUDENT, {
-            notFoundErrorMessage: modelErrorMessages.studentNotFound,
-            invalidRoleErrorMessage: modelErrorMessages.notAStudent
+        const user = await User.findByIdAndValidateRole(classStudent.user, roles.ROLE_STUDENT, {
+            notFoundErrorMessage: errors.modelErrorMessages.studentNotFound,
+            invalidRoleErrorMessage: errors.modelErrorMessages.notAStudent
         });
 
         await Class.findByIdAndCheckForSelfAssociation({
@@ -72,7 +67,7 @@ classStudentSchema.methods.checkUser = async function() {
 classStudentSchema.methods.checkKnownInvitationAndSave = async function() {
 
     const classStudent = this;
-    const ClassStudentInvitation = classStudent.model(names.classStudentInvitation.modelName);
+    const ClassStudentInvitation = classStudent.model(db.names.classStudentInvitation.modelName);
 
     try {
 
@@ -84,7 +79,7 @@ classStudentSchema.methods.checkKnownInvitationAndSave = async function() {
         });
 
         if (!classStudentInvitation) {
-            throw new Error(modelErrorMessages.classStudentInvitationRequired);
+            throw new Error(errors.modelErrorMessages.classStudentInvitationRequired);
         }
 
         await classStudentInvitation.remove();
@@ -101,7 +96,7 @@ classStudentSchema.methods.checkKnownInvitationAndSave = async function() {
 classStudentSchema.methods.checkUnknownInvitationAndSave = async function() {
 
     const classStudent = this;
-    const ClassUnknownStudentInvitation = classStudent.model(names.classUnknownStudentInvitation.modelName);
+    const ClassUnknownStudentInvitation = classStudent.model(db.names.classUnknownStudentInvitation.modelName);
 
     try {
 
@@ -113,7 +108,7 @@ classStudentSchema.methods.checkUnknownInvitationAndSave = async function() {
         });
 
         if (!classUnknownStudentInvitation) {
-            throw new Error(modelErrorMessages.classUnknownStudentInvitationRequired);
+            throw new Error(errors.modelErrorMessages.classUnknownStudentInvitationRequired);
         }
 
         await classUnknownStudentInvitation.remove();

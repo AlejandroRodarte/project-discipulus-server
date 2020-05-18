@@ -1,19 +1,19 @@
 const { Schema } = require('mongoose');
 
-const { user } = require('../../../names');
+const { db } = require('../../../../shared');
 
-const { sharedNoteDefinition } = require('../../shared/note');
+const { sharedNoteSchema } = require('../note');
 
 const sharedUserNoteDefinition = {
 
     user: {
         type: Schema.Types.ObjectId,
         required: [true, 'A user _id is required'],
-        ref: user.modelName
+        ref: db.names.user.modelName
     },
 
     note: {
-        type: sharedNoteDefinition,
+        type: sharedNoteSchema,
         required: [true, 'A note object is required']
     }
 

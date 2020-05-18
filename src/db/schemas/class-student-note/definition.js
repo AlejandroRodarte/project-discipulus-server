@@ -1,19 +1,19 @@
 const { Schema } = require('mongoose');
 
-const { classStudent } = require('../../names');
+const { db } = require('../../../shared');
 
-const { sharedNoteSchema } = require('../shared/note');
+const { schemas } = require('../shared');
 
 const classStudentNoteDefinition = {
 
     classStudent: {
         type: Schema.Types.ObjectId,
         required: [true, 'A class-student _id is required'],
-        ref: classStudent.modelName
+        ref: db.names.classStudent.modelName
     },
 
     note: {
-        type: sharedNoteSchema,
+        type: schemas.sharedNoteSchema,
         required: [true, 'A note is required']
     }
 

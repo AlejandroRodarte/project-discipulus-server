@@ -1,19 +1,19 @@
 const { Schema } = require('mongoose');
 
-const { role, user } = require('../../names');
+const { db } = require('../../../shared');
 
 const userRoleDefinition = {
 
     role: {
         type: Schema.Types.ObjectId,
         required: [true, 'A role id is required'],
-        ref: role.modelName
+        ref: db.names.role.modelName
     },
 
     user: {
         type: Schema.Types.ObjectId,
         required: [true, 'A user id is required'],
-        ref: user.modelName
+        ref: db.names.user.modelName
     }
 
 };

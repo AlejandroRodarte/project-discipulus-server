@@ -1,32 +1,31 @@
 
 const { Schema } = require('mongoose');
 
-const classStudentFileDefinition = require('./definition');
-const names = require('../../names');
+const { db } = require('../../../shared');
+const { errors, models } = require('../../../util');
 
-const commonModelUtils = require('../../../util/models/common');
-const { modelErrorMessages } = require('../../../util/errors');
+const classStudentFileDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: names.classStudentFile.collectionName
+    collection: db.names.classStudentFile.collectionName
 };
 
 const classStudentFileSchema = new Schema(classStudentFileDefinition, schemaOpts);
 
 classStudentFileSchema.index({ classStudent: 1, 'file.originalname': 1 }, { unique: true });
 
-classStudentFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
-    modelName: names.classStudentFile.modelName
+classStudentFileSchema.pre('remove', models.common.generateFilePreRemove({
+    modelName: db.names.classStudentFile.modelName
 }));
 
-classStudentFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
+classStudentFileSchema.methods.saveFileAndDoc = models.common.generateSaveFileAndDoc({
 
-    modelName: names.classStudentFile.modelName,
+    modelName: db.names.classStudentFile.modelName,
     
-    validate: commonModelUtils.generateParentDocExistsValidator({
-        parentModelName: names.classStudent.modelName,
+    validate: models.common.generateParentDocExistsValidator({
+        parentModelName: db.names.classStudent.modelName,
         ref: 'classStudent',
-        notFoundErrorMessage: modelErrorMessages.classStudentNotFound
+        notFoundErrorMessage: errors.modelErrorMessages.classStudentNotFound
     })
 
 });

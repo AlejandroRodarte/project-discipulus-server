@@ -1,12 +1,11 @@
-const { Schema, model } = require('mongoose');
+const { Schema } = require('mongoose');
+
+const { db } = require('../../../../shared');
 
 const sharedParentStudentDefinition = require('./definition');
-const { sharedParentStudent, user } = require('../../../names');
-
-const roleTypes = require('../../../../util/roles');
 
 const schemaOpts = {
-    collection: sharedParentStudent.collectionName
+    collection: db.names.sharedParentStudent.collectionName
 };
 
 const parentStudentSchema = new Schema(sharedParentStudentDefinition, schemaOpts);

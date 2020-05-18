@@ -1,34 +1,34 @@
-const { names } = require('../../../db');
+const { db } = require('../../../shared');
 
 const deleteModes = require('../../delete-modes');
 
 const deletionClassRules = [
     {
-        modelName: names.classStudent.modelName,
+        modelName: db.names.classStudent.modelName,
         fieldName: 'class',
         deleteFiles: false,
         deleteMode: deleteModes.REMOVE
     },
     {
-        modelName: names.classStudentInvitation.modelName,
+        modelName: db.names.classStudentInvitation.modelName,
         fieldName: 'class',
         deleteFiles: false,
         deleteMode: deleteModes.DELETE_MANY
     },
     {
-        modelName: names.classUnknownStudentInvitation.modelName,
+        modelName: db.names.classUnknownStudentInvitation.modelName,
         fieldName: 'class',
         deleteFiles: false,
         deleteMode: deleteModes.DELETE_MANY
     },
     {
-        modelName: names.classFile.modelName,
+        modelName: db.names.classFile.modelName,
         fieldName: 'class',
         deleteFiles: true,
         deleteMode: deleteModes.DELETE_MANY
     },
     {
-        modelName: names.classNote.modelName,
+        modelName: db.names.classNote.modelName,
         fieldName: 'class',
         deleteFiles: false,
         deleteMode: deleteModes.DELETE_MANY

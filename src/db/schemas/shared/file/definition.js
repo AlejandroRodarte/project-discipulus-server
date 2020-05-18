@@ -1,5 +1,4 @@
-const { filename, mimeType } = require('../../../../util/regexp');
-const { badWordsFilter } = require('../../../../util/filter/bad-words-filter');
+const { regexp, filter } = require('../../../../util');
 
 const sharedFileDefinition = {
 
@@ -9,13 +8,13 @@ const sharedFileDefinition = {
         validate: [
             (value) => {
 
-                if (!filename.test(value)) {
+                if (!regexp.filename.test(value)) {
                     return false;
                 }
 
                 const [name] = value.split('.');
 
-                if (badWordsFilter.isProfane(name)) {
+                if (filter.badWordsFilter.filter.isProfane(name)) {
                     return false;
                 }
 
@@ -33,7 +32,7 @@ const sharedFileDefinition = {
     mimetype: {
         type: String,
         required: [true, 'A mimetype is required'],
-        validate: [mimeType, 'Please provide a valid mimetype'],
+        validate: [regexp.mimeType, 'Please provide a valid mimetype'],
         unique: false,
         trim: true
     }

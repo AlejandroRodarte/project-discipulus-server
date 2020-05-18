@@ -1,19 +1,19 @@
 const { Schema } = require('mongoose');
 
-const { session } = require('../../names');
+const { db } = require('../../../shared');
 
-const { sharedFileSchema } = require('../shared/file');
+const { schemas } = require('../shared');
 
 const sessionFileDefinition = {
 
     session: {
         type: Schema.Types.ObjectId,
         required: [true, 'A session _id is required'],
-        ref: session.modelName
+        ref: db.names.session.modelName
     },
 
     file: {
-        type: sharedFileSchema,
+        type: schemas.sharedFileSchema,
         required: [true, 'A file is required']
     },
 

@@ -1,4 +1,4 @@
-const { role } = require('../../names');
+const { db } = require('../../../shared');
 
 const getRolesPipeline = (userId) => [
     {
@@ -8,7 +8,7 @@ const getRolesPipeline = (userId) => [
     },
     {
         $lookup: {
-            from: role.collectionName,
+            from: db.names.role.collectionName,
             localField: 'role',
             foreignField: '_id',
             as: 'role'

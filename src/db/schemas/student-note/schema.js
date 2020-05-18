@@ -1,19 +1,18 @@
 const { Schema } = require('mongoose');
 
-const studentNoteDefinition = require('./definition');
-const { studentNote } = require('../../names');
+const { db } = require('../../../shared');
+const { roles, models } = require('../../../util');
 
-const commonModelUtils = require('../../../util/models/common');
-const roleTypes = require('../../../util/roles');
+const studentNoteDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: studentNote.collectionName
+    collection: db.names.studentNote.collectionName
 };
 
 const studentNoteSchema = new Schema(studentNoteDefinition, schemaOpts);
 
 studentNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-studentNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_STUDENT));
+studentNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateUserAndRoleValidator(roles.ROLE_STUDENT));
 
 module.exports = studentNoteSchema;

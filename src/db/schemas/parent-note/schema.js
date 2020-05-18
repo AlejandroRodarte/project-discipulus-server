@@ -1,19 +1,18 @@
 const { Schema } = require('mongoose');
 
-const parentNoteDefinition = require('./definition');
-const { parentNote } = require('../../names');
+const { db } = require('../../../shared');
+const { roles, models } = require('../../../util');
 
-const commonModelUtils = require('../../../util/models/common');
-const roleTypes = require('../../../util/roles');
+const parentNoteDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: parentNote.collectionName
+    collection: db.names.parentNote.collectionName
 };
 
 const parentNoteSchema = new Schema(parentNoteDefinition, schemaOpts);
 
 parentNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-parentNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateUserAndRoleValidator(roleTypes.ROLE_PARENT));
+parentNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateUserAndRoleValidator(roles.ROLE_PARENT));
 
 module.exports = parentNoteSchema;

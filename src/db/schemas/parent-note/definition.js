@@ -1,5 +1,5 @@
-const { sharedUserNoteDefinition } = require('../shared/user-note');
+const { definitions } = require('../shared');
 
-const parenNoteDefinition = sharedUserNoteDefinition;
+const parenNoteDefinition = definitions.sharedUserNoteDefinition;
 
 module.exports = parenNoteDefinition;

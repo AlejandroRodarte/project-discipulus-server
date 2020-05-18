@@ -1,30 +1,30 @@
 const { Schema } = require('mongoose');
 
-const { user } = require('../../../db/names');
-const { sharedTimeRangeSchema } = require('../shared/time-range');
+const { db } = require('../../../shared');
+const { functions } = require('../../../util');
 
-const utilFunctions = require('../../../util/functions');
+const { schemas } = require('../shared');
 
 const userEventDefinition = {
 
     user: {
         type: Schema.Types.ObjectId,
         required: [true, 'A user _id is required'],
-        ref: user.modelName
+        ref: db.names.user.modelName
     },
 
     title: {
         type: String,
         required: [true, 'An event title is required'],
         validate: [
-            (value) => !utilFunctions.isSentenceProfane(value),
+            (value) => !functions.isSentenceProfane(value),
             'Please do not use bad words on your event title'
         ],
         minlength: [3, 'Event title must be at least 3 characters long'],
         maxlength: [50, 'Event title must be shorter than 50 characters'],
         set: (value) => {
             if (value) {
-                return utilFunctions.trimRedundantSpaces(value);
+                return functions.trimRedundantSpaces(value);
             }
         }
     },
@@ -33,19 +33,19 @@ const userEventDefinition = {
         type: String,
         required: false,
         validate: [
-            (value) => !utilFunctions.isSentenceProfane(value),
+            (value) => !functions.isSentenceProfane(value),
             'Please do not use bad words on your event description'
         ],
         maxlength: [200, 'Event description must be shorter than 200 characters'],
         set: (value) => {
             if (value) {
-                return utilFunctions.trimRedundantSpaces(value);
+                return functions.trimRedundantSpaces(value);
             }
         }
     },
 
     timerange: {
-        type: sharedTimeRangeSchema,
+        type: schemas.sharedTimeRangeSchema,
         required: [true, 'Please provide a time range']
     },
 

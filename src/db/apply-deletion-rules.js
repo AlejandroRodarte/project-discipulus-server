@@ -1,7 +1,5 @@
-const storageApi = require('../api/storage');
-const bucketNames = require('../api/storage/config/bucket-names');
-
-const deleteModes = require('../util/delete-modes');
+const { storage } = require('../api');
+const { deleteModes } = require('../util');
 
 const applyDeletionRules = async (doc, rules) => {
 
@@ -17,7 +15,7 @@ const applyDeletionRules = async (doc, rules) => {
     
                 const keynames = fileDocs.map(fileDoc => fileDoc.file.keyname);
     
-                await storageApi.deleteBucketObjects(bucketNames[modelName], keynames);
+                await storage.deleteBucketObjects(storage.config.bucketNames[modelName], keynames);
     
             }
 

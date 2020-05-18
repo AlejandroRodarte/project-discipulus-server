@@ -1,9 +1,8 @@
 const validator = require('validator').default;
 
-const { sharedFileSchema } = require('../shared/file');
-const { fullName, singleName, username, strongPassword, imageMimetype, imageExtension } = require('../../../util/regexp');
-const { badWordsFilter } = require('../../../util/filter/bad-words-filter');
-const utilFunctions = require('../../../util/functions');
+const { regexp, filter, functions } = require('../../../util');
+
+const { schemas } = require('../shared');
 
 const userDefinition = {
 
@@ -13,11 +12,11 @@ const userDefinition = {
         validate: [
             (value) => {
 
-                if (!fullName.test(value) && !singleName.test(value)) {
+                if (!regexp.fullName.test(value) && !singleName.test(value)) {
                     return false;
                 }
 
-                if (value.split(' ').some(word => badWordsFilter.isProfane(word))) {
+                if (value.split(' ').some(word => filter.badWordsFilter.filter.isProfane(word))) {
                     return false;
                 }
 
@@ -31,7 +30,7 @@ const userDefinition = {
         maxlength: [100, 'Your name must not exceed 100 characters long'],
         set: (value) => {
             if (value) {
-                return utilFunctions.trimRedundantSpaces(value);
+                return functions.trimRedundantSpaces(value);
             }
         }
     },
@@ -42,11 +41,11 @@ const userDefinition = {
         validate: [
             (value) => {
 
-                if (!username.test(value)){
+                if (!regexp.username.test(value)){
                     return false;
                 }
 
-                if (badWordsFilter.isProfane(value)) {
+                if (filter.badWordsFilter.filter.isProfane(value)) {
                     return false;
                 }
 
@@ -72,7 +71,7 @@ const userDefinition = {
     password: {
         type: String,
         required: [true, 'A password is required'],
-        validate: [strongPassword, 'Please provide a strong enough password'],
+        validate: [regexp.strongPassword, 'Please provide a strong enough password'],
         minlength: [8, 'Your username must be at least 8 characters long']
     },
 
@@ -81,15 +80,15 @@ const userDefinition = {
     }],
 
     avatar: {
-        type: sharedFileSchema,
+        type: schemas.sharedFileSchema,
         required: false,
         validate: [
             (file) => {
 
-                if (!imageExtension.test(file.originalname)) {
+                if (!regexp.imageExtension.test(file.originalname)) {
                     return false;
                 }
-                if (!imageMimetype.test(file.mimetype)) {
+                if (!regexp.imageMimetype.test(file.mimetype)) {
                     return false;
                 }
 

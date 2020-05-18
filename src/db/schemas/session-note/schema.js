@@ -1,24 +1,23 @@
 
 const { Schema } = require('mongoose');
 
-const sessionNoteDefinition = require('./definition');
-const names = require('../../names');
+const { db } = require('../../../shared');
+const { models, errors } = require('../../../util');
 
-const commonModelUtils = require('../../../util/models/common');
-const { modelErrorMessages } = require('../../../util/errors');
+const sessionNoteDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: names.sessionNote.collectionName
+    collection: db.names.sessionNote.collectionName
 };
 
 const sessionNoteSchema = new Schema(sessionNoteDefinition, schemaOpts);
 
 sessionNoteSchema.index({ session: 1, 'note.title': 1 }, { unique: true });
 
-sessionNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateParentDocExistsValidator({
-    parentModelName: names.session.modelName,
+sessionNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateParentDocExistsValidator({
+    parentModelName: db.names.session.modelName,
     ref: 'session',
-    notFoundErrorMessage: modelErrorMessages.sessionNotFound
+    notFoundErrorMessage: errors.modelErrorMessages.sessionNotFound
 }));
 
 module.exports = sessionNoteSchema;

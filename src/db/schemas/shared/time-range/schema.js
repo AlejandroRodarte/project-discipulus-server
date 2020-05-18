@@ -1,10 +1,11 @@
 const { Schema } = require('mongoose');
 
+const { db } = require('../../../../shared');
+
 const sharedTimeRangeDefinition = require('./definition');
-const { sharedTimeRange } = require('../../../names');
 
 const schemaOpts = {
-    collection: sharedTimeRange.collectionName
+    collection: db.names.sharedTimeRange.collectionName
 };
 
 const sharedTimeRangeSchema = new Schema(sharedTimeRangeDefinition, schemaOpts);

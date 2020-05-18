@@ -1,25 +1,25 @@
 const { Schema } = require('mongoose');
 
-const userFileDefinition = require('./definition');
-const { userFile } = require('../../names');
+const { db } = require('../../../shared');
+const { models } = require('../../../util');
 
-const commonModelUtils = require('../../../util/models/common');
+const userFileDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: userFile.collectionName
+    collection: db.names.userFile.collectionName
 };
 
 const userFileSchema = new Schema(userFileDefinition, schemaOpts);
 
 userFileSchema.index({ user: 1, 'file.originalname': 1 }, { unique: true });
 
-userFileSchema.pre('remove', commonModelUtils.generateFilePreRemove({
-    modelName: userFile.modelName
+userFileSchema.pre('remove', models.common.generateFilePreRemove({
+    modelName: db.names.userFile.modelName
 }));
 
-userFileSchema.methods.saveFileAndDoc = commonModelUtils.generateSaveFileAndDoc({
-    modelName: userFile.modelName,
-    validate: commonModelUtils.userExistsValidator
+userFileSchema.methods.saveFileAndDoc = models.common.generateSaveFileAndDoc({
+    modelName: db.names.userFile.modelName,
+    validate: models.common.userExistsValidator
 });
 
 module.exports = userFileSchema;

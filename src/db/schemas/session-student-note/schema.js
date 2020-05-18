@@ -1,24 +1,23 @@
 
 const { Schema } = require('mongoose');
 
-const sessionStudentNoteDefinition = require('./definition');
-const names = require('../../names');
+const { db } = require('../../../shared');
+const { errors, models } = require('../../../util');
 
-const commonModelUtils = require('../../../util/models/common');
-const { modelErrorMessages } = require('../../../util/errors');
+const sessionStudentNoteDefinition = require('./definition');
 
 const schemaOpts = {
-    collection: names.sessionStudentNote.collectionName
+    collection: db.names.sessionStudentNote.collectionName
 };
 
 const sessionStudentNoteSchema = new Schema(sessionStudentNoteDefinition, schemaOpts);
 
 sessionStudentNoteSchema.index({ sessionStudent: 1, 'note.title': 1 }, { unique: true });
 
-sessionStudentNoteSchema.methods.checkAndSave = commonModelUtils.generateNoteCheckAndSave(commonModelUtils.generateParentDocExistsValidator({
-    parentModelName: names.sessionStudent.modelName,
+sessionStudentNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateParentDocExistsValidator({
+    parentModelName: db.names.sessionStudent.modelName,
     ref: 'sessionStudent',
-    notFoundErrorMessage: modelErrorMessages.sessionStudentNotFouund
+    notFoundErrorMessage: errors.modelErrorMessages.sessionStudentNotFouund
 }));
 
 module.exports = sessionStudentNoteSchema;
