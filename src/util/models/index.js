@@ -4,6 +4,7 @@ const common = require('./common');
 const role = require('./role');
 const user = require('./user');
 const session = require('./session');
+const sessionStudent = require('./session-student');
 
 module.exports = {
     class: clazz,
@@ -11,5 +12,6 @@ module.exports = {
     common,
     role,
     user,
-    session
+    session,
+    sessionStudent
 };
