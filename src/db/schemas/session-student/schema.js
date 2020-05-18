@@ -14,13 +14,13 @@ const sessionStudentSchema = new Schema(sessionStudentDefinition, schemaOpts);
 
 sessionStudentSchema.index({ classStudent: 1, session: 1 }, { unique: true });
 
-sessionStudentSchema.virtual('sessionStudentFiles', {
+sessionStudentSchema.virtual('files', {
     ref: db.names.sessionStudentFile.modelName,
     localField: '_id',
     foreignField: 'sessionStudent'
 });
 
-sessionStudentSchema.virtual('sessionStudentNotes', {
+sessionStudentSchema.virtual('notes', {
     ref: db.names.sessionStudentNote.modelName,
     localField: '_id',
     foreignField: 'sessionStudent'

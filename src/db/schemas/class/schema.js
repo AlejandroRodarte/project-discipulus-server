@@ -15,31 +15,31 @@ const classSchema = new Schema(classDefinition, schemaOpts);
 
 classSchema.index({ user: 1, title: 1 }, { unique: true });
 
-classSchema.virtual('classStudents', {
+classSchema.virtual('students', {
     ref: db.names.classStudent.modelName,
     localField: '_id',
     foreignField: 'class'
 });
 
-classSchema.virtual('classStudentInvitations', {
+classSchema.virtual('invitations', {
     ref: db.names.classStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'class'
 });
 
-classSchema.virtual('classUnknownStudentInvitations', {
+classSchema.virtual('unknownInvitations', {
     ref: db.names.classUnknownStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'class'
 });
 
-classSchema.virtual('classFiles', {
+classSchema.virtual('files', {
     ref: db.names.classFile.modelName,
     localField: '_id',
     foreignField: 'class'
 });
 
-classSchema.virtual('classNotes', {
+classSchema.virtual('notes', {
     ref: db.names.classNote.modelName,
     localField: '_id',
     foreignField: 'class'

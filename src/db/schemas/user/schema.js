@@ -15,37 +15,37 @@ const schemaOpts = {
 
 const userSchema = new Schema(userDefinition, schemaOpts);
 
-userSchema.virtual('userRoles', {
+userSchema.virtual('roles', {
     ref: db.names.userRole.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
-userSchema.virtual('parentStudents', {
+userSchema.virtual('childs', {
     ref: db.names.parentStudent.modelName,
     localField: '_id',
     foreignField: 'parent'
 });
 
-userSchema.virtual('studentParents', {
+userSchema.virtual('parents', {
     ref: db.names.parentStudent.modelName,
     localField: '_id',
     foreignField: 'student'
 });
 
-userSchema.virtual('parentStudentInvitations', {
+userSchema.virtual('childInvitations', {
     ref: db.names.parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'parent'
 });
 
-userSchema.virtual('studentParentInvitations', {
+userSchema.virtual('parentInvitations', {
     ref: db.names.parentStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'student'
 });
 
-userSchema.virtual('userFiles', {
+userSchema.virtual('files', {
     ref: db.names.userFile.modelName,
     localField: '_id',
     foreignField: 'user'
@@ -75,19 +75,19 @@ userSchema.virtual('events', {
     foreignField: 'user'
 });
 
-userSchema.virtual('studentClasses', {
+userSchema.virtual('classes', {
     ref: db.names.classStudent.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
-userSchema.virtual('studentClassInvitations', {
+userSchema.virtual('classInvitations', {
     ref: db.names.classStudentInvitation.modelName,
     localField: '_id',
     foreignField: 'user'
 });
 
-userSchema.virtual('userNotes', {
+userSchema.virtual('notes', {
     ref: db.names.userNote.modelName,
     localField: '_id',
     foreignField: 'user'
