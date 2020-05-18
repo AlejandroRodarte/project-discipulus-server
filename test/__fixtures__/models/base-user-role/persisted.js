@@ -22,8 +22,15 @@ const roleDocs = [
 
 ];
 
-// 0-2: generate 3 enabled fake users
-const users = models.generateFakeUsers(3);
+const users = [
+
+    // 0-2: generate 3 enabled fake users
+    ...models.generateFakeUsers(3, { fakeToken: true }),
+
+    // 3: disabled user
+    ...models.generateFakeUsers(1, { fakeToken: true, enabled: false })
+
+];
 
 const usersRoles = [
 

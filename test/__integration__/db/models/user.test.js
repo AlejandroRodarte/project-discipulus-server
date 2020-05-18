@@ -1,7 +1,9 @@
+const { Types } = require('mongoose');
+
 const chai = require('chai');
 const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
-const { mongo, Error } = require('mongoose');
+const { mongo, Error: MongooseError } = require('mongoose');
 
 const db = require('../../../../src/db');
 const shared = require('../../../../src/shared');
@@ -172,6 +174,40 @@ describe('[db/models/user] - baseUserRole context', () => {
             const hasRole = await user.hasRole(util.roles.ROLE_STUDENT);
 
             expect(hasRole).to.equal(false);
+
+        });
+
+    });
+
+    describe('[db/models/user] - statics.findByIdAndValidateRole', () => {
+
+        const role = util.roles.ROLE_PARENT;
+
+        const errors = {
+            notFoundErrorMessage: 'User not found',
+            invalidRoleErrorMessage: 'Invalid role'
+        };
+
+        it('Should throw error if user does not exist', async () => {
+            await expect(db.models.User.findByIdAndValidateRole(new Types.ObjectId(), role, errors)).to.eventually.be.rejectedWith(Error, errors.notFoundErrorMessage);
+        });
+
+        it('Should throw error if user is disabled', async () => {
+            const userFourId = persistedUsers[3]._id;
+            await expect(db.models.User.findByIdAndValidateRole(userFourId, role, errors)).to.eventually.be.rejectedWith(Error, errors.notFoundErrorMessage);
+        });
+
+        it('Should throw error if user does not have the role included as arg', async () => {
+            const userOneId = persistedUsers[0]._id;
+            await expect(db.models.User.findByIdAndValidateRole(userOneId, role, errors)).to.eventually.be.rejectedWith(Error, errors.invalidRoleErrorMessage);
+        });
+
+        it('Should return user instance if all validations pass', async () => {
+
+            const userTwoId = persistedUsers[1]._id;
+            const user = await db.models.User.findByIdAndValidateRole(userTwoId, role, errors);
+
+            expect(userTwoId.toHexString()).to.equal(user._id.toHexString());
 
         });
 
@@ -510,7 +546,7 @@ describe('[db/models/user] - userAvatar context', function() {
             const userOneId = persistedUsers[0]._id;
             const userOne = await db.models.User.findOne({ _id: userOneId });
 
-            await expect(userOne.saveAvatar(documentFile, buffer)).to.eventually.be.rejectedWith(Error.ValidationError);
+            await expect(userOne.saveAvatar(documentFile, buffer)).to.eventually.be.rejectedWith(MongooseError.ValidationError);
 
         });
 
