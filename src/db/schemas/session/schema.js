@@ -26,6 +26,12 @@ sessionSchema.virtual('sessionNotes', {
     foreignField: 'session'
 });
 
+sessionSchema.virtual('sessionStudents', {
+    ref: db.names.sessionStudent.modelName,
+    localField: '_id',
+    foreignField: 'session'
+});
+
 sessionSchema.pre('remove', async function() {
 
     const session = this;

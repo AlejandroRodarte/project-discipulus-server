@@ -14,6 +14,12 @@ const deletionClassStudentRules = [
         fieldName: 'classStudent',
         deleteFiles: false,
         deleteMode: deleteModes.DELETE_MANY
+    },
+    {
+        modelName: db.names.sessionStudent.modelName,
+        fieldName: 'classStudent',
+        deleteFiles: false,
+        deleteMode: deleteModes.REMOVE
     }
 ];
 

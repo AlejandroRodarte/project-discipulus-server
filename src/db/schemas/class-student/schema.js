@@ -14,18 +14,6 @@ const classStudentSchema = new Schema(classStudentDefinition, schemaOpts);
 
 classStudentSchema.index({ class: 1, user: 1 }, { unique: true });
 
-classStudentSchema.pre('remove', async function() {
-
-    const classStudent = this;
-
-    try {
-        await applyDeletionRules(classStudent, models.classStudent.deletionClassStudentRules);
-    } catch {
-        throw e;
-    }
-
-});
-
 classStudentSchema.virtual('classStudentFiles', {
     ref: db.names.classStudentFile.modelName,
     localField: '_id',
@@ -36,6 +24,24 @@ classStudentSchema.virtual('classStudentNotes', {
     ref: db.names.classStudentNote.modelName,
     localField: '_id',
     foreignField: 'classStudent'
+});
+
+classStudentSchema.virtual('classStudentSessions', {
+    ref: db.names.sessionStudent.modelName,
+    localField: '_id',
+    foreignField: 'classStudent'
+});
+
+classStudentSchema.pre('remove', async function() {
+
+    const classStudent = this;
+
+    try {
+        await applyDeletionRules(classStudent, models.classStudent.deletionClassStudentRules);
+    } catch {
+        throw e;
+    }
+
 });
 
 classStudentSchema.methods.checkUser = async function() {
