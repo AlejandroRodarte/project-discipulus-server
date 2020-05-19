@@ -246,11 +246,13 @@ describe('[db/models/class] - baseClassStudent context', () => {
 
     beforeEach(fixtures.functions.db.init(fixtures.models.baseClassStudentContext.persisted));
 
+    const persistedClasses = fixtures.models.baseClassStudentContext.persisted[shared.db.names.class.modelName];
+    const persistedUsers = fixtures.models.baseClassStudentContext.persisted[shared.db.names.user.modelName];
+
     describe('[db/models/class] - pre remove hook', () => {
 
         let deleteBucketObjectsStub;
 
-        const persistedClasses = fixtures.models.baseClassStudentContext.persisted[shared.db.names.class.modelName];
         const classOneId = persistedClasses[0]._id;
 
         beforeEach(async () => {
@@ -294,6 +296,35 @@ describe('[db/models/class] - baseClassStudent context', () => {
 
         afterEach(() => {
             sinon.restore();
+        });
+
+    });
+
+    describe('[db/models/class] - methods.getEnabledStudentIds', () => {
+
+        it('Should throw error if no students are associated to the class', async () => {
+
+            const classTwoId = persistedClasses[1]._id;
+            const clazz = await db.models.Class.findOne({ _id: classTwoId });
+
+            await expect(clazz.getEnabledStudentIds()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.noClassStudents);
+
+        });
+
+        it('Should retrieve all associated enabled student ids', async () => {
+
+            const studentIds = [
+                persistedUsers[3]._id,
+                persistedUsers[8]._id
+            ].map(id => id.toHexString());
+
+            const classOneId = persistedClasses[0]._id;
+            const classTwo = await db.models.Class.findOne({ _id: classOneId });
+            
+            const classTwoStudentIds = (await classTwo.getEnabledStudentIds()).map(id => id.toHexString());
+
+            expect(classTwoStudentIds).to.have.members(studentIds);
+
         });
 
     });

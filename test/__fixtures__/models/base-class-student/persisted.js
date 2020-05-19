@@ -31,6 +31,12 @@ const users = [
     // 7-10. enabled users
     ...models.generateFakeUsers(4, {
         fakeToken: true,
+    }),
+
+    // 11. disabled user
+    ...models.generateFakeUsers(1, {
+        enabled: false,
+        fakeToken: true,
     })
 
 ];
@@ -68,19 +74,27 @@ const userRoles = [
     ...util.generateOneToMany('user', users[9]._id, [{ role: roles.ids.ROLE_STUDENT }]),
 
     // 10. user[10] is an enabled student
-    ...util.generateOneToMany('user', users[10]._id, [{ role: roles.ids.ROLE_STUDENT }])
+    ...util.generateOneToMany('user', users[10]._id, [{ role: roles.ids.ROLE_STUDENT }]),
+
+    // 11. user[11] is a disabled student
+    ...util.generateOneToMany('user', users[11]._id, [{ role: roles.ids.ROLE_STUDENT }]),
 
 ];
 
 const classes = [
 
-    // 0. user[0] has associated a sample class
     ...util.generateOneToMany('user', users[0]._id, [
+
+        // 0. user[0] has associated a sample class
         models.generateFakeClass({
             titleWords: 5,
             descriptionWords: 20,
             timeRanges: [[0, 20], [50, 80]]
-        })
+        }),
+
+        // 1. user[0] with another class
+        models.generateFakeClass()
+
     ])
 
 ];
@@ -97,6 +111,11 @@ const classStudents = [
         // 1. class[0] has user[8] as student
         { 
             user: users[8]._id 
+        },
+
+        // 1. class[0] has user[11] as student (disabled)
+        { 
+            user: users[11]._id 
         }
 
     ])
