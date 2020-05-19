@@ -325,3 +325,37 @@ describe('[db/models/class] - methods.saveAvatar', () => {
     });
 
 });
+
+describe('[db/models/class] - methods.getEnabledStudentIds', () => {
+
+    let classStudentAggregateStub;
+
+    it('Should throw error if getEnabledClassStudentIds pipeline returns no docs (no students affiliated yet)', async () => {
+
+        classStudentAggregateStub = sinon.stub(db.models.ClassStudent, 'aggregate').resolves([]);
+        await expect(clazz.getEnabledStudentIds()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.noClassStudents);
+
+        sinon.assert.calledOnceWithExactly(classStudentAggregateStub, db.aggregation.classStudentPipelines.getEnabledClassStudentIds(clazz._id));
+
+    });
+
+    it('Should extract student ids on success pipeline data retrieval', async () => {
+
+        const studentIds = [new Types.ObjectId(), new Types.ObjectId()];
+
+        classStudentAggregateStub = sinon.stub(db.models.ClassStudent, 'aggregate').resolves([
+            {
+                _id: new Types.ObjectId,
+                studentIds
+            }
+        ]);
+
+        await expect(clazz.getEnabledStudentIds()).to.eventually.eql(studentIds);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
+    });
+
+});
