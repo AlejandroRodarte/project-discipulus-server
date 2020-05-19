@@ -128,4 +128,22 @@ classStudentSchema.methods.checkUnknownInvitationAndSave = async function() {
 
 };
 
+classStudentSchema.methods.isStudentEnabled = async function() {
+
+    const classStudent = this;
+    const ClassStudent = classStudent.constructor;
+
+    // const pipeline = here goes pipeline;
+    const docs = await ClassStudent.aggregate(pipeline);
+
+    if (docs.length) {
+        throw new Error(errors.modelErrorMessages.classStudentNotFound);
+    }
+
+    const [uniqueClassStudent] = docs;
+
+    return uniqueClassStudent.enabled;
+
+};
+
 module.exports = classStudentSchema;
