@@ -17,5 +17,6 @@ module.exports = {
     classUnknownStudentInvitationRequired: 'An invitation is required before performing a student/class association',
     classStudentNotFound: 'The class-student relation was not found',
     sessionNotFound: 'The session was not found',
-    sessionStudentNotFouund: 'The session-student relation was not found'
+    sessionStudentNotFouund: 'The session-student relation was not found',
+    noClassStudents: 'Your class does not have students yet'
 };

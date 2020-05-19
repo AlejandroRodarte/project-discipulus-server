@@ -4,6 +4,7 @@ const { roles, errors, models } = require('../../../util');
 const { storage } = require('../../../api');
 const { db } = require('../../../shared');
 
+const { classStudentPipelines } = require('../../aggregation');
 const classDefinition = require('./definition');
 const applyDeletionRules = require('../../apply-deletion-rules');
 
@@ -152,6 +153,24 @@ classSchema.methods.saveAvatar = async function(avatarDoc, buffer) {
     }
 
     return clazz;
+
+};
+
+classSchema.methods.getEnabledStudentIds = async function() {
+
+    const clazz = this;
+    const ClassStudent = clazz.model(db.names.classStudent.modelName);
+
+    const pipeline = classStudentPipelines.getEnabledClassStudentIds(clazz._id);
+    const docs = await ClassStudent.aggregate(pipeline);
+
+    if (!docs.length) {
+        throw new Error(errors.modelErrorMessages.noClassStudents);
+    }
+
+    const [uniqueClass] = docs;
+
+    return uniqueClass.studentIds;
 
 };
 
