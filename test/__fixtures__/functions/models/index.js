@@ -10,6 +10,7 @@ const generateFakeEvent = require('./generate-fake-event');
 const generateFakeClass = require('./generate-fake-class');
 const generateFakeNote = require('./generate-fake-note');
 const generateFakeImageFile = require('./generate-fake-image-file');
+const generateFakeSession = require('./generate-fake-session');
 const setup = require('./setup');
 
 module.exports = {
@@ -25,5 +26,6 @@ module.exports = {
     generateFakeClass,
     generateFakeNote,
     generateFakeImageFile,
+    generateFakeSession,
     setup
 };

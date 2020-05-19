@@ -1,7 +1,7 @@
 const { db } = require('../../../shared');
 const { modelErrorMessages } = require('../../errors');
 
-const generateSaveAndAddStudents = (studentModelName) => async function() {
+const generateSaveAndAddStudents = ({ studentModelName, foreignField }) => async function() {
 
     const doc = this;
 
@@ -25,15 +25,17 @@ const generateSaveAndAddStudents = (studentModelName) => async function() {
         const enabledStudentIds = await clazz.getEnabledStudentIds();
 
         const studentModelDocs = enabledStudentIds.map(classStudent => ({
-            doc: doc._id,
+            [foreignField]: doc._id,
             classStudent
         }));
 
-        await StudentModel.insertMany(studentModelDocs);
+        const studentDocs = await StudentModel.insertMany(studentModelDocs);
 
-    } catch (e) { }
+        return [doc, studentDocs];
 
-    return doc;
+    } catch (e) {
+        return [doc, undefined];
+    }
 
 };
 
