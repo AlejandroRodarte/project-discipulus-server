@@ -26,7 +26,7 @@ const getEnabledClassStudentIds = (classId) => [
         $group: {
             _id: '$class',
             studentIds: {
-                $push: '$user._id'
+                $push: '$_id'
             }
         }
     }

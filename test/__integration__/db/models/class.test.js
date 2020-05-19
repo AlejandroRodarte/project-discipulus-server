@@ -247,7 +247,7 @@ describe('[db/models/class] - baseClassStudent context', () => {
     beforeEach(fixtures.functions.db.init(fixtures.models.baseClassStudentContext.persisted));
 
     const persistedClasses = fixtures.models.baseClassStudentContext.persisted[shared.db.names.class.modelName];
-    const persistedUsers = fixtures.models.baseClassStudentContext.persisted[shared.db.names.user.modelName];
+    const persistedClassStudents = fixtures.models.baseClassStudentContext.persisted[shared.db.names.classStudent.modelName];
 
     describe('[db/models/class] - pre remove hook', () => {
 
@@ -314,8 +314,8 @@ describe('[db/models/class] - baseClassStudent context', () => {
         it('Should retrieve all associated enabled student ids', async () => {
 
             const studentIds = [
-                persistedUsers[3]._id,
-                persistedUsers[8]._id
+                persistedClassStudents[0]._id,
+                persistedClassStudents[1]._id
             ].map(id => id.toHexString());
 
             const classOneId = persistedClasses[0]._id;
