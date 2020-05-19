@@ -243,3 +243,36 @@ describe('[db/models/class-student] - methods.checkUnknownInvitationAndSave', ()
     });
 
 });
+
+describe('[db/models/class-student] - methods.isStudentEnabled', () => {
+
+    let classStudentAggregateStub;
+
+    it('Should throw error if isStudentEnabled pipeline returns no docs (no class-student doc exists)', async () => {
+
+        classStudentAggregateStub = sinon.stub(db.models.ClassStudent, 'aggregate').resolves([]);
+        await expect(classStudent.isStudentEnabled()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classStudentNotFound);
+
+        sinon.assert.calledOnceWithExactly(classStudentAggregateStub, db.aggregation.classStudentPipelines.isStudentEnabled(classStudent._id));
+
+    });
+
+    it('Should return student enabled flag on pipeline success', async () => {
+
+        const classStudents = [
+            {
+                _id: new Types.ObjectId(),
+                enabled: true
+            }
+        ];
+
+        classStudentAggregateStub = sinon.stub(db.models.ClassStudent, 'aggregate').resolves(classStudents);
+        await expect(classStudent.isStudentEnabled()).to.eventually.equal(classStudents[0].enabled);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
+    });
+
+});

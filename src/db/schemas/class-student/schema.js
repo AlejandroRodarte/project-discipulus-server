@@ -137,7 +137,7 @@ classStudentSchema.methods.isStudentEnabled = async function() {
     const pipeline = classStudentPipelines.isStudentEnabled(classStudent._id);
     const docs = await ClassStudent.aggregate(pipeline);
 
-    if (docs.length) {
+    if (!docs.length) {
         throw new Error(errors.modelErrorMessages.classStudentNotFound);
     }
 
