@@ -20,7 +20,7 @@ const classDoc = {
     ...fixtures.functions.models.generateFakeClass({
         titleWords: 5,
         descriptionWords: 20,
-        sessions: [[0, 20], [30, 40], [70, 90]]
+        timeRanges: [[0, 20], [30, 40], [70, 90]]
     })
 };
 
@@ -131,16 +131,16 @@ describe('[db/models/class] - Invalid avatar', () => {
 
 });
 
-describe('[db/models/class] - Invalid sessions', () => {
+describe('[db/models/class] - Invalid time ranges', () => {
 
-    it('Should not validate a class that has no sessions', () => {
-        clazz.sessions = [];
-        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.sessions.validate);
+    it('Should not validate a class that has no time ranges', () => {
+        clazz.timeRanges = [];
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.timeRanges.validate);
     });
 
-    it('Should not validate sessions that are not incremental', () => {
+    it('Should not validate time ranges that are not incremental', () => {
 
-        clazz.sessions = [
+        clazz.timeRanges = [
             {
                 start: 30,
                 end: 50
@@ -155,7 +155,7 @@ describe('[db/models/class] - Invalid sessions', () => {
             }
         ];
 
-        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.sessions.validate);
+        fixtures.functions.models.testForInvalidModel(clazz, db.schemas.definitions.classDefinition.timeRanges.validate);
 
     });
     

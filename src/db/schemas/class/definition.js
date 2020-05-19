@@ -64,7 +64,7 @@ const classDefinition = {
         ]
     },
 
-    sessions: {
+    timeRanges: {
         type: [schemas.sharedTimeRangeSchema],
         validate: [
             (timeranges) => {

@@ -16,7 +16,7 @@ const classes = [
         models.generateFakeClass({
             titleWords: 6,
             descriptionWords: 18,
-            sessions: [[0, 30], [40, 100]]
+            timeRanges: [[0, 30], [40, 100]]
         })
     ]),
 
@@ -25,7 +25,7 @@ const classes = [
         models.generateFakeClass({
             titleWords: 6,
             descriptionWords: 18,
-            sessions: [[0, 30], [40, 100]]
+            timeRanges: [[0, 30], [40, 100]]
         })
     ]),
 
@@ -34,7 +34,7 @@ const classes = [
         models.generateFakeClass({
             titleWords: 6,
             descriptionWords: 18,
-            sessions: [[0, 30], [40, 100]]
+            timeRanges: [[0, 30], [40, 100]]
         })
     ]),
 
@@ -46,7 +46,7 @@ const classes = [
             ...models.generateFakeClass({
                 titleWords: 6,
                 descriptionWords: 18,
-                sessions: [[0, 30], [40, 100]]
+                timeRanges: [[0, 30], [40, 100]]
             }),
             title: persistedClasses[0].title
         },
@@ -55,7 +55,7 @@ const classes = [
         models.generateFakeClass({
             titleWords: 7,
             descriptionWords: 21,
-            sessions: [[0, 20], [40, 120]]
+            timeRanges: [[0, 20], [40, 120]]
         })
 
     ])

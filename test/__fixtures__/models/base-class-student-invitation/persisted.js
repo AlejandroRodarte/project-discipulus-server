@@ -53,7 +53,7 @@ const classes = [
         models.generateFakeClass({
             titleWords: 5,
             descriptionWords: 20,
-            sessions: [[0, 20], [50, 80]]
+            timeRanges: [[0, 20], [50, 80]]
         })
     ])
 

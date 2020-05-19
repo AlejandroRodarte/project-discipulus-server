@@ -16,7 +16,7 @@ const classes = [
             titleWords: 5,
             descriptionWords: 12,
             noAvatar: true,
-            sessions: [[0, 20]]
+            timeRanges: [[0, 20]]
         })
     ]),
 
@@ -26,7 +26,7 @@ const classes = [
             titleWords: 8,
             descriptionWords: 15,
             noAvatar: true,
-            sessions: [[10, 40]]
+            timeRanges: [[10, 40]]
         })
     ])
 

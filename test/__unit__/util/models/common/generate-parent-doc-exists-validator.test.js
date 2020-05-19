@@ -17,7 +17,7 @@ const classDoc = {
     ...fixtures.functions.models.generateFakeClass({
         titleWords: 5,
         descriptionWords: 10,
-        sessions: [[0, 10]]
+        timeRanges: [[0, 10]]
     })
 };
 

@@ -16,7 +16,7 @@ const classes = [
             ...models.generateFakeClass({
                 titleWords: 7,
                 descriptionWords: 12,
-                sessions: [[100, 200]]
+                timeRanges: [[100, 200]]
             }),
             title: persistedClasses[0].title
         },
@@ -25,7 +25,7 @@ const classes = [
         models.generateFakeClass({
             titleWords: 5,
             descriptionWords: 10,
-            sessions: [[50, 80]]
+            timeRanges: [[50, 80]]
         })
 
     ])
