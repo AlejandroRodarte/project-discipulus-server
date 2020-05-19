@@ -1,7 +1,7 @@
 const { Schema } = require('mongoose');
 
 const { db } = require('../../../shared');
-const { models } = require('../../../util');
+const { models, errors } = require('../../../util');
 
 const sessionStudentDefinition = require('./definition');
 const applyDeletionRules = require('../../apply-deletion-rules');
@@ -37,5 +37,44 @@ sessionStudentSchema.pre('remove', async function() {
     }
 
 });
+
+sessionStudentSchema.methods.checkAndSave = async function() {
+
+    const sessionStudent = this;
+
+    const ClassStudent = sessionStudent.model(db.names.classStudent.modelName);
+    const Session = sessionStudent.model(db.names.session.modelName);
+
+    const sessionExists = await Session.exists({
+        _id: sessionStudent.session
+    });
+
+    if (!sessionExists) {
+        throw new Error(errors.modelErrorMessages.sessionNotFound);
+    }
+
+    const classStudent = await ClassStudent.findOne({
+        _id: sessionStudent.classStudent
+    });
+
+    if (!classStudent) {
+        throw new Error(errors.modelErrorMessages.classStudentNotFound);
+    }
+
+    // const isStudentEnabled = classStudent.isStudentEnabled();
+
+    // if (!isStudentEnabled) {
+    //     throw new Error(errors.modelErrorMessages.userDisabled);
+    // }
+
+    try {
+        await sessionStudent.save();
+    } catch (e) {
+        throw e;
+    }
+
+    return sessionStudent;
+
+};
 
 module.exports = sessionStudentSchema;

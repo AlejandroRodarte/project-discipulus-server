@@ -18,5 +18,6 @@ module.exports = {
     classStudentNotFound: 'The class-student relation was not found',
     sessionNotFound: 'The session was not found',
     sessionStudentNotFouund: 'The session-student relation was not found',
-    noClassStudents: 'Your class does not have students yet'
+    noClassStudents: 'Your class does not have students yet',
+    userDisabled: 'The user has its account disabled'
 };
