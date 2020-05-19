@@ -3,6 +3,7 @@ const generateSaveFileAndDoc = require('./generate-save-file-and-doc');
 const generateUserAndRoleValidator = require('./generate-user-and-role-validator');
 const generateParentDocExistsValidator = require('./generate-parent-doc-exists-validator');
 const generateNoteCheckAndSave = require('./generate-note-check-and-save');
+const generateSaveAndAddStudents = require('./generate-save-and-add-students');
 const userExistsValidator = require('./user-exists-validator');
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
     generateUserAndRoleValidator,
     generateParentDocExistsValidator,
     generateNoteCheckAndSave,
+    generateSaveAndAddStudents,
     userExistsValidator
 };
