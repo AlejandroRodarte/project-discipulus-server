@@ -68,6 +68,9 @@ describe('[db/models/class-student] - baseClassStudent context', () => {
 
     const unpersistedClassStudents = fixtures.models.baseClassStudentContext.unpersisted[shared.db.names.classStudent.modelName];
 
+    const persistedClassStudents = fixtures.models.baseClassStudentContext.persisted[shared.db.names.classStudent.modelName];
+    const persistedUsers = fixtures.models.baseClassStudentContext.persisted[shared.db.names.user.modelName];
+
     describe('[db/models/class-student] - methods.checkKnownInvitationAndSave', () => {
 
         it('Should not persist if student does not exist', async () => {
@@ -160,8 +163,6 @@ describe('[db/models/class-student] - baseClassStudent context', () => {
 
     describe('[db/models/class-student] - methods.checkUnknownInvitationAndSave', () => {
 
-        const persistedUsers = fixtures.models.baseClassStudentContext.persisted[shared.db.names.user.modelName];
-
         it('Should not persist if student does not exist', async () => {
 
             const classStudentDoc = unpersistedClassStudents[8];
@@ -245,6 +246,30 @@ describe('[db/models/class-student] - baseClassStudent context', () => {
             });
 
             expect(invitationExists).to.equal(false);
+
+        });
+
+    });
+
+    describe('[db/models/class-student] - methods.isStudentEnabled', async () => {
+
+        it('Should throw error if class-student is not found', async () => {
+
+            const classStudentDoc = unpersistedClassStudents[0];
+            const classStudent = new db.models.ClassStudent(classStudentDoc);
+
+            await expect(classStudent.isStudentEnabled()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classStudentNotFound);
+
+        });
+
+        it('Should provide with user enabled flag', async () => {
+
+            const classStudentOneId = persistedClassStudents[0]._id;
+            const classStudent = await db.models.ClassStudent.findOne({ _id: classStudentOneId });
+
+            const userFourEnabled = persistedUsers[3].enabled;
+
+            await expect(classStudent.isStudentEnabled()).to.eventually.equal(userFourEnabled);
 
         });
 
