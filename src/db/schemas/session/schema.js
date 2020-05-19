@@ -48,6 +48,7 @@ sessionSchema.methods.saveAndAddStudents = async function() {
 
     const session = this;
     const Class = session.model(db.names.class.modelName);
+    const SessionStudent = session.model(db.names.sessionStudent.modelName);
 
     const clazz = await Class.findOne({ _id: session.class });
 
@@ -60,6 +61,19 @@ sessionSchema.methods.saveAndAddStudents = async function() {
     } catch (e) {
         throw e;
     }
+
+    try {
+
+        const enabledStudentIds = await clazz.getEnabledStudentIds();
+
+        const sessionStudentDocs = enabledStudentIds.map(classStudent => ({
+            session: session._id,
+            classStudent
+        }));
+
+        await SessionStudent.insertMany(sessionStudentDocs);
+
+    } catch (e) { }
 
     return session;
 
