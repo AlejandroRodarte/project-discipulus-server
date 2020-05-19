@@ -3,6 +3,7 @@ const { Schema } = require('mongoose');
 const { db } = require('../../../shared');
 const { roles, errors, models } = require('../../../util');
 
+const { classStudentPipelines } = require('../../aggregation');
 const classStudentDefinition = require('./definition');
 const applyDeletionRules = require('../../apply-deletion-rules');
 
@@ -133,7 +134,7 @@ classStudentSchema.methods.isStudentEnabled = async function() {
     const classStudent = this;
     const ClassStudent = classStudent.constructor;
 
-    // const pipeline = here goes pipeline;
+    const pipeline = classStudentPipelines.isStudentEnabled(classStudent._id);
     const docs = await ClassStudent.aggregate(pipeline);
 
     if (docs.length) {

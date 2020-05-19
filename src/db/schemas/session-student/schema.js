@@ -61,11 +61,11 @@ sessionStudentSchema.methods.checkAndSave = async function() {
         throw new Error(errors.modelErrorMessages.classStudentNotFound);
     }
 
-    // const isStudentEnabled = classStudent.isStudentEnabled();
+    const isStudentEnabled = await classStudent.isStudentEnabled();
 
-    // if (!isStudentEnabled) {
-    //     throw new Error(errors.modelErrorMessages.userDisabled);
-    // }
+    if (!isStudentEnabled) {
+        throw new Error(errors.modelErrorMessages.userDisabled);
+    }
 
     try {
         await sessionStudent.save();
