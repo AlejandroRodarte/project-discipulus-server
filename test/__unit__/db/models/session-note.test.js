@@ -51,3 +51,29 @@ describe('[db/models/session-note] - valid model', () => {
     });
 
 });
+
+describe('[db/models/session-note] - methods.checkAndSave', () => {
+
+    let sessionExistsStub;
+    let sessionNoteSaveStub;
+
+    it('Generated function should call methods with correct args and return session-note doc', async () => {
+
+        sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
+        sessionNoteSaveStub = sinon.stub(sessionNote, 'save').resolves(sessionNote);
+
+        await expect(sessionNote.checkAndSave()).to.eventually.eql(sessionNote);
+
+        sinon.assert.calledOnceWithExactly(sessionExistsStub, {
+            _id: sessionNote.session
+        });
+
+        sinon.assert.calledOnce(sessionNoteSaveStub);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
+    });
+
+});
