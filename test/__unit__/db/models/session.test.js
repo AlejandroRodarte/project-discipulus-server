@@ -13,10 +13,22 @@ const fixtures = require('../../../__fixtures__');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const [sessionDoc] = fixtures.functions.util.generateOneToMany('class', new Types.ObjectId(), [ fixtures.functions.models.generateFakeSession() ]);
-let session = new db.models.Session(sessionDoc);
+const [classDoc] = fixtures.functions.util.generateOneToMany('user', new Types.ObjectId(), [ fixtures.functions.models.generateFakeClass() ]);
+const [sessionDoc] = fixtures.functions.util.generateOneToMany('class', classDoc._id, [ fixtures.functions.models.generateFakeSession() ]);
 
-beforeEach(() => session = fixtures.functions.models.getNewModelInstance(db.models.Session, sessionDoc));
+const classStudentIds = [new Types.ObjectId(), new Types.ObjectId()];
+
+const sessionStudentDocs = classStudentIds.map(classStudent => ({ session: sessionDoc._id, classStudent }));
+
+let clazz = new db.models.Class(classDoc);
+let session = new db.models.Session(sessionDoc);
+let sessionStudents = sessionStudentDocs.map(sessionStudentDoc => new db.models.SessionStudent(sessionStudentDoc));
+
+beforeEach(() => {
+    clazz = fixtures.functions.models.getNewModelInstance(db.models.Class, classDoc);
+    session = fixtures.functions.models.getNewModelInstance(db.models.Session, sessionDoc);
+    sessionStudents = sessionStudentDocs.map(sessionStudentDoc => fixtures.functions.models.getNewModelInstance(db.models.SessionStudent, sessionStudentDoc));
+});
 
 describe('[db/models/session] - invalid class _id', () => {
 
@@ -109,6 +121,39 @@ describe('[db/models/session] - Default live flag', () => {
 
     it('Should default live session flag to true', () => {
         expect(session.live).to.equal(true);
+    });
+
+});
+
+describe('[db/models/session] - methods.saveAndAddStudents', () => {
+
+    let classFindOneStub;
+    let sessionSaveStub;
+    let classGetEnabledStudentIdsStub;
+    let sessionStudentInsertManyStub;
+
+    it('Generated function should call all functions with the correct args and return instance doc and child student docs in array', async () => {
+
+        classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(clazz);
+        sessionSaveStub = sinon.stub(session, 'save').resolves(session);
+        classGetEnabledStudentIdsStub = sinon.stub(clazz, 'getEnabledStudentIds').resolves(classStudentIds);
+        sessionStudentInsertManyStub = sinon.stub(db.models.SessionStudent, 'insertMany').resolves(sessionStudents);
+
+        await expect(session.saveAndAddStudents()).to.eventually.eql([session, sessionStudents]);
+
+        sinon.assert.calledOnceWithExactly(classFindOneStub, {
+            _id: session.class
+        });
+
+        sinon.assert.calledOnce(sessionSaveStub);
+        sinon.assert.calledOnce(classGetEnabledStudentIdsStub);
+        
+        sinon.assert.calledOnceWithExactly(sessionStudentInsertManyStub, sessionStudentDocs);
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
     });
 
 });

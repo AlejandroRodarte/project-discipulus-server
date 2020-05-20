@@ -11,10 +11,12 @@ const fixtures = require('../../../../__fixtures__');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const classDoc = fixtures.functions.util.generateOneToMany('user', new Types.ObjectId(), [ fixtures.functions.models.generateFakeClass() ]);
+const [classDoc] = fixtures.functions.util.generateOneToMany('user', new Types.ObjectId(), [ fixtures.functions.models.generateFakeClass() ]);
 const [sessionDoc] = fixtures.functions.util.generateOneToMany('class', classDoc._id, [ fixtures.functions.models.generateFakeSession() ]);
 
-const sessionStudentDocs = fixtures.functions.util.generateOneToMany('session', sessionDoc._id, [{ classStudent: new Types.ObjectId() }, { classStudent: new Types.ObjectId() }]);
+const classStudentIds = [new Types.ObjectId(), new Types.ObjectId()];
+
+const sessionStudentDocs = classStudentIds.map(classStudent => ({ session: sessionDoc._id, classStudent }));
 
 let clazz = new db.models.Class(classDoc);
 let session = new db.models.Session(sessionDoc);
@@ -23,7 +25,7 @@ let sessionStudents = sessionStudentDocs.map(sessionStudentDoc => new db.models.
 beforeEach(() => {
     clazz = fixtures.functions.models.getNewModelInstance(db.models.Class, classDoc);
     session = fixtures.functions.models.getNewModelInstance(db.models.Session, sessionDoc);
-    sessionStudents = sessionStudentDocs.map(sessionStudentDoc => new db.models.SessionStudent(sessionStudentDoc));
+    sessionStudents = sessionStudentDocs.map(sessionStudentDoc => fixtures.functions.models.getNewModelInstance(db.models.SessionStudent, sessionStudentDoc));
 });
 
 describe('[util/models/common/generate-save-and-add-students] - general flow', () => {
@@ -84,8 +86,6 @@ describe('[util/models/common/generate-save-and-add-students] - general flow', (
 
     it('Generated function should return array with model instance and undefined student children instances if StudentModel.insertMany (called with correct args) fails', async () => {
 
-        const classStudentIds = [new Types.ObjectId(), new Types.ObjectId()];
-
         classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(clazz);
         sessionSaveStub = sinon.stub(session, 'save').resolves(session);
         classGetEnabledStudentIdsStub = sinon.stub(clazz, 'getEnabledStudentIds').resolves(classStudentIds);
@@ -98,14 +98,11 @@ describe('[util/models/common/generate-save-and-add-students] - general flow', (
         
         await expect(saveAndAddStudents()).to.eventually.eql([session, undefined]);
 
-        const studentModelDocs = classStudentIds.map(classStudent => ({ session: session._id, classStudent }));
-        sinon.assert.calledOnceWithExactly(sessionStudentInsertManyStub, studentModelDocs);
+        sinon.assert.calledOnceWithExactly(sessionStudentInsertManyStub, sessionStudentDocs);
 
     });
 
     it('Generated function should return array with model instance and student children instances if all tasks resolve', async () => {
-
-        const classStudentIds = [new Types.ObjectId(), new Types.ObjectId()];
 
         classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(clazz);
         sessionSaveStub = sinon.stub(session, 'save').resolves(session);
