@@ -1,26 +1,8 @@
-const { Types } = require('mongoose');
-
 const { db } = require('../../../../src/shared');
 
-const { models } = require('../../functions');
+const { models, util } = require('../../functions');
 
-const { roles } = require('../../../../src/util');
-
-const roleDocs = [
-
-    // 0: admin role
-    {
-        _id: new Types.ObjectId(),
-        name: roles.ROLE_ADMIN
-    },
-
-    // 1. parent role
-    {
-        _id: new Types.ObjectId(),
-        name: roles.ROLE_PARENT
-    }
-
-];
+const { roles } = require('../../shared');
 
 const users = [
 
@@ -34,31 +16,16 @@ const users = [
 
 const usersRoles = [
 
-    // 0. user one with admin role
-    {
-        _id: new Types.ObjectId(),
-        user: users[0]._id,
-        role: roleDocs[0]._id
-    },
+    // 0. user[0] with admin role
+    ...util.generateOneToMany('user', users[0]._id, [{ role: roles.ids.ROLE_ADMIN }]),
 
-    // 1. user two with admin role
-    {
-        _id: new Types.ObjectId(),
-        user: users[1]._id,
-        role: roleDocs[0]._id
-    },
-
-    // 2. user two with parent role
-    {
-        _id: new Types.ObjectId(),
-        user: users[1]._id,
-        role: roleDocs[1]._id
-    }
+    // 1-2: user[1] with admin/parent roles
+    ...util.generateOneToMany('user', users[1]._id, [{ role: roles.ids.ROLE_ADMIN }, { role: roles.ids.ROLE_PARENT }])
 
 ];
 
 const persisted = {
-    [db.names.role.modelName]: roleDocs,
+    [db.names.role.modelName]: roles.roles,
     [db.names.user.modelName]: users,
     [db.names.userRole.modelName]: usersRoles
 };
