@@ -38,43 +38,12 @@ sessionStudentSchema.pre('remove', async function() {
 
 });
 
-sessionStudentSchema.methods.checkAndSave = async function() {
-
-    const sessionStudent = this;
-
-    const ClassStudent = sessionStudent.model(db.names.classStudent.modelName);
-    const Session = sessionStudent.model(db.names.session.modelName);
-
-    const sessionExists = await Session.exists({
-        _id: sessionStudent.session
-    });
-
-    if (!sessionExists) {
-        throw new Error(errors.modelErrorMessages.sessionNotFound);
+sessionStudentSchema.methods.checkAndSave = models.common.generateClassStudentChildCheckAndSave({
+    foreignModel: {
+        name: db.names.session.modelName,
+        ref: 'session',
+        notFoundErrorMessage: errors.modelErrorMessages.sessionNotFound
     }
-
-    const classStudent = await ClassStudent.findOne({
-        _id: sessionStudent.classStudent
-    });
-
-    if (!classStudent) {
-        throw new Error(errors.modelErrorMessages.classStudentNotFound);
-    }
-
-    const isStudentEnabled = await classStudent.isStudentEnabled();
-
-    if (!isStudentEnabled) {
-        throw new Error(errors.modelErrorMessages.userDisabled);
-    }
-
-    try {
-        await sessionStudent.save();
-    } catch (e) {
-        throw e;
-    }
-
-    return sessionStudent;
-
-};
+});
 
 module.exports = sessionStudentSchema;

@@ -51,3 +51,9 @@ describe('[db/models/session-student] - valid model', () => {
     });
 
 });
+
+describe('[db/models/session-student] - methods.checkAndSave', () => {
+
+    
+
+});
