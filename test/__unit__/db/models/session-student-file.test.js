@@ -43,3 +43,40 @@ describe('[db/models/session-student-file] - valid model', () => {
     });
 
 });
+
+describe('[db/models/session-student-file] - methods.saveFileAndDoc', () => {
+
+    let sessionStudentExistsStub;
+    let sessionStudentFileSaveStub;
+    let createMultipartObjectStub;
+
+    const buffer = Buffer.alloc(10);
+
+    it('Generated function should call methods with correct args and return session-student-file doc', async () => {
+
+        sessionStudentExistsStub = sinon.stub(db.models.SessionStudent, 'exists').resolves(true);
+        sessionStudentFileSaveStub = sinon.stub(sessionStudentFile, 'save').resolves(sessionStudentFile);
+        createMultipartObjectStub = sinon.stub(api.storage, 'createMultipartObject').resolves();
+
+        await expect(sessionStudentFile.saveFileAndDoc(buffer)).to.eventually.eql(sessionStudentFile);
+
+        sinon.assert.calledOnceWithExactly(sessionStudentExistsStub, {
+            _id: sessionStudentFile.sessionStudent
+        });
+
+        sinon.assert.calledOnce(sessionStudentFileSaveStub);
+
+        sinon.assert.calledOnceWithExactly(createMultipartObjectStub, api.storage.config.bucketNames[shared.db.names.sessionStudentFile.modelName], {
+            keyname: sessionStudentFile.file.keyname,
+            buffer,
+            size: buffer.length,
+            mimetype: sessionStudentFile.file.mimetype
+        });
+
+    });
+
+    afterEach(() => {
+        sinon.restore();
+    });
+
+});
