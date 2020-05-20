@@ -44,39 +44,9 @@ sessionSchema.pre('remove', async function() {
 
 });
 
-sessionSchema.methods.saveAndAddStudents = async function() {
-
-    const session = this;
-    const Class = session.model(db.names.class.modelName);
-    const SessionStudent = session.model(db.names.sessionStudent.modelName);
-
-    const clazz = await Class.findOne({ _id: session.class });
-
-    if (!clazz) {
-        throw new Error(errors.modelErrorMessages.classNotFound);
-    }
-
-    try {
-        await session.save();
-    } catch (e) {
-        throw e;
-    }
-
-    try {
-
-        const enabledStudentIds = await clazz.getEnabledStudentIds();
-
-        const sessionStudentDocs = enabledStudentIds.map(classStudent => ({
-            session: session._id,
-            classStudent
-        }));
-
-        await SessionStudent.insertMany(sessionStudentDocs);
-
-    } catch (e) { }
-
-    return session;
-
-};
+sessionSchema.methods.saveAndAddStudents = models.common.generateSaveAndAddStudents({
+    studentModelName: db.names.sessionStudent.modelName,
+    foreignField: 'session'
+});
 
 module.exports = sessionSchema;
