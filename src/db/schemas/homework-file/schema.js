@@ -22,10 +22,11 @@ homeworkFileSchema.methods.saveFileAndDoc = models.common.generateSaveFileAndDoc
 
     modelName: db.names.homeworkFile.modelName,
 
-    validate: models.common.generateParentDocExistsValidator({
+    validate: models.common.generateDueDateUploadValidator({
         parentModelName: db.names.homework.modelName,
         ref: 'homework',
-        notFoundErrorMessage: errors.modelErrorMessages.homeworkNotFound
+        notFoundErrorMessage: errors.modelErrorMessages.homeworkNotFound,
+        taskExpiredErrorMessage: errors.modelErrorMessages.homeworkExpired
     })
     
 });

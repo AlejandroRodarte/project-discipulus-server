@@ -14,10 +14,11 @@ const sessionNoteSchema = new Schema(homeworkNoteDefinition, schemaOpts);
 
 sessionNoteSchema.index({ homework: 1, 'note.title': 1 }, { unique: true });
 
-sessionNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateParentDocExistsValidator({
+sessionNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateDueDateUploadValidator({
     parentModelName: db.names.homework.modelName,
     ref: 'homework',
-    notFoundErrorMessage: errors.modelErrorMessages.homeworkNotFound
+    notFoundErrorMessage: errors.modelErrorMessages.homeworkNotFound,
+    taskExpiredErrorMessage: errors.modelErrorMessages.homeworkExpired
 }));
 
 module.exports = sessionNoteSchema;

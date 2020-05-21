@@ -21,5 +21,10 @@ module.exports = {
     noClassStudents: 'Your class does not have students yet',
     userDisabled: 'The user has its account disabled',
     roleNotFound: 'The role was not found',
-    homeworkNotFound: 'The homework was not found'
+    homeworkNotFound: 'The homework was not found',
+    projectNotFound: 'The project was not found',
+    examNotFound: 'The exam was not found',
+    homeworkExpired: 'The homework already expired',
+    projectExpired: 'The project already expired',
+    examExpired: 'The exam already expired'
 };
