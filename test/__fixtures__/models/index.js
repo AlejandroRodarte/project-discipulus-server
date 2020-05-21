@@ -51,6 +51,8 @@ const baseSessionContext = require('./base-session');
 const baseSessionStudentContext = require('./base-session-student');
 const baseSessionNoteContext = require('./base-session-note');
 const baseSessionStudentNoteContext = require('./base-session-student-note');
+const baseSessionFileContext = require('./base-session-file');
+const baseSessionStudentFileContext = require('./base-session-student-file');
 
 module.exports = {
     sampleFileContext,
@@ -105,5 +107,7 @@ module.exports = {
     baseSessionContext,
     baseSessionStudentContext,
     baseSessionNoteContext,
-    baseSessionStudentNoteContext
+    baseSessionStudentNoteContext,
+    baseSessionFileContext,
+    baseSessionStudentFileContext
 };
