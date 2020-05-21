@@ -19,6 +19,8 @@ const saveSessionFileContext = require('./save-session-file');
 const saveSessionStudentFileContext = require('./save-session-student-file');
 const removeSessionFileContext = require('./remove-session-file');
 const removeSessionStudentFileContext = require('./remove-session-student-file');
+const removeSessionFilesContext = require('./remove-session-files');
+const removeSessionStudentFilesContext = require('./remove-session-student-files');
 
 module.exports = {
     userAvatarContext,
@@ -41,5 +43,7 @@ module.exports = {
     saveSessionFileContext,
     saveSessionStudentFileContext,
     removeSessionFileContext,
-    removeSessionStudentFileContext
+    removeSessionStudentFileContext,
+    removeSessionFilesContext,
+    removeSessionStudentFilesContext
 };
