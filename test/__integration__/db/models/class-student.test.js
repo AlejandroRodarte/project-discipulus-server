@@ -12,7 +12,7 @@ const fixtures = require('../../../__fixtures__');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe('[db/models/class-student] - fixtures.models.uniqueClassStudentContext', () => {
+describe('[db/models/class-student] - uniqueClassStudent context', () => {
 
     beforeEach(fixtures.functions.db.init(fixtures.models.uniqueClassStudentContext.persisted));
 

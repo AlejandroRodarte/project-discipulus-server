@@ -44,6 +44,7 @@ const uniqueUserEventContext = require('./unique-user-event');
 const uniqueSessionContext = require('./unique-session');
 const uniqueSessionFileContext = require('./unique-session-file');
 const uniqueSessionNoteContext = require('./unique-session-note');
+const uniqueSessionStudentContext = require('./unique-session-student');
 
 module.exports = {
     sampleFileContext,
@@ -91,5 +92,6 @@ module.exports = {
     uniqueUserEventContext,
     uniqueSessionContext,
     uniqueSessionFileContext,
-    uniqueSessionNoteContext
+    uniqueSessionNoteContext,
+    uniqueSessionStudentContext
 };
