@@ -193,3 +193,40 @@ describe('[db/models/session] - baseSessionNote context', () => {
     afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionNoteContext.persisted));
 
 });
+
+describe('[db/models/session] - baseSessionStudent context', () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionStudentContext.persisted));
+
+    const persistedSessions = fixtures.models.baseSessionStudentContext.persisted[shared.db.names.session.modelName];
+
+    describe('[db/models/session] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated session students upon session removal', async () => {
+
+            const sessionOneId = persistedSessions[0]._id;
+            const sessionOne = await db.models.Session.findOne({ _id: sessionOneId });
+
+            await sessionOne.remove();
+
+            const docCount = await db.models.SessionStudent.countDocuments({
+                session: sessionOne
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionNoteContext.persisted));
+
+});
