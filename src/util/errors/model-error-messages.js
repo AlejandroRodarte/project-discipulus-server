@@ -29,5 +29,6 @@ module.exports = {
     examExpired: 'The exam already expired',
     invalidHomeworkType: 'This feature is not allowed on the current homework configuration',
     homeworkStudentNotFound: 'The homework-student association was not found',
-    homeworkAlreadyComplete: 'The homework was already submitted'
+    homeworkAlreadyComplete: 'The homework was already submitted',
+    taskValidationDataNotFound: 'There was a problem fetching the validation data'
 };
