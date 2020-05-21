@@ -27,6 +27,9 @@ const SessionStudent = require('./session-student');
 const SessionStudentFile = require('./session-student-file');
 const SessionStudentNote = require('./session-student-note');
 const Homework = require('./homework');
+const HomeworkFile = require('./homework-file');
+const HomeworkNote = require('./homework-note');
+const HomeworkSection = require('./homework-section');
 const shared = require('./shared');
 
 module.exports = {
@@ -59,5 +62,8 @@ module.exports = {
     SessionStudentFile,
     SessionStudentNote,
     Homework,
+    HomeworkFile,
+    HomeworkNote,
+    HomeworkSection,
     shared
 };

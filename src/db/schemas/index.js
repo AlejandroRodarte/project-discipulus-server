@@ -29,6 +29,7 @@ const { sessionStudentNoteDefinition, sessionStudentNoteSchema } = require('./se
 const { homeworkDefinition, homeworkSchema } = require('./homework');
 const { homeworkFileDefinition, homeworkFileSchema } = require('./homework-file');
 const { homeworkNoteDefinition, homeworkNoteSchema } = require('./homework-note');
+const { homeworkSectionDefinition, homeworkSectionSchema } = require('./homework-section');
 const shared = require('./shared');
 
 module.exports = {
@@ -64,7 +65,8 @@ module.exports = {
         sessionStudentNoteDefinition,
         homeworkDefinition,
         homeworkFileDefinition,
-        homeworkNoteDefinition
+        homeworkNoteDefinition,
+        homeworkSectionDefinition
     },
 
     schemas: {
@@ -98,7 +100,8 @@ module.exports = {
         sessionStudentNoteSchema,
         homeworkSchema,
         homeworkFileSchema,
-        homeworkNoteSchema
+        homeworkNoteSchema,
+        homeworkSectionSchema
     },
 
     shared
