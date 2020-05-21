@@ -25,7 +25,7 @@ sessionStudentFileSchema.methods.saveFileAndDoc = models.common.generateSaveFile
     validate: models.common.generateParentDocExistsValidator({
         parentModelName: db.names.sessionStudent.modelName,
         ref: 'sessionStudent',
-        notFoundErrorMessage: errors.modelErrorMessages.sessionStudentNotFouund
+        notFoundErrorMessage: errors.modelErrorMessages.sessionStudentNotFound
     })
 
 });

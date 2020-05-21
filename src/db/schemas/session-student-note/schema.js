@@ -17,7 +17,7 @@ sessionStudentNoteSchema.index({ sessionStudent: 1, 'note.title': 1 }, { unique:
 sessionStudentNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateParentDocExistsValidator({
     parentModelName: db.names.sessionStudent.modelName,
     ref: 'sessionStudent',
-    notFoundErrorMessage: errors.modelErrorMessages.sessionStudentNotFouund
+    notFoundErrorMessage: errors.modelErrorMessages.sessionStudentNotFound
 }));
 
 module.exports = sessionStudentNoteSchema;

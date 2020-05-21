@@ -47,7 +47,7 @@ describe('[db/models/session-student-note] - baseSessionStudentNote context', ()
             const sessionStudentNoteDoc = unpersistedSessionStudentNotes[0];
             const sessionStudentNote = new db.models.SessionStudentNote(sessionStudentNoteDoc);
 
-            await expect(sessionStudentNote.checkAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.sessionStudentNotFouund);
+            await expect(sessionStudentNote.checkAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.sessionStudentNotFound);
 
         });
 
