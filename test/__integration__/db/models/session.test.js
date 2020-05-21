@@ -43,3 +43,79 @@ describe('[db/models/session] - uniqueSession context', () => {
     afterEach(fixtures.functions.db.teardown(fixtures.models.uniqueSessionContext.persisted));
 
 });
+
+describe('[db/models/session] - baseSession context', () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionContext.persisted));
+
+    const persistedClassStudents = fixtures.models.baseSessionContext.persisted[shared.db.names.classStudent.modelName];
+    const unpersistedSessions = fixtures.models.baseSessionContext.unpersisted[shared.db.names.session.modelName];
+
+    describe('[db/models/session] - methods.saveAndAddStudents', () => {
+
+        it('Should throw error if associated class does not exist', async () => {
+
+            const sessionDoc = unpersistedSessions[0];
+            const session = new db.models.Session(sessionDoc);
+
+            await expect(session.saveAndAddStudents()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classNotFound);
+
+        });
+
+        it('Should throw error if session.save fails (validation or non-uniqueness)', async () => {
+
+            const sessionDoc = unpersistedSessions[1];
+            const session = new db.models.Session(sessionDoc);
+
+            await expect(session.saveAndAddStudents()).to.eventually.be.rejectedWith(mongo.MongoError);
+
+        });
+
+        it('Should return session doc instance and no sessionStudent docs if the class does not have students', async () => {
+
+            const sessionDoc = unpersistedSessions[2];
+            const session = new db.models.Session(sessionDoc);
+
+            await expect(session.saveAndAddStudents()).to.eventually.eql([session, undefined]);
+
+            const sessionStudents = await db.models.SessionStudent.find({
+                session: session._id
+            });
+
+            expect(sessionStudents.length).to.equal(0);
+
+        });
+
+        it('Should generate session doc instance and sessionStudent docs to classStudents that have their accounts enabled', async () => {
+
+            const sessionDoc = unpersistedSessions[3];
+            const session = new db.models.Session(sessionDoc);
+
+            const data = await session.saveAndAddStudents();
+
+            expect(data[0]).to.eql(session);
+
+            const sessionStudents = await db.models.SessionStudent.find({
+                session: session._id
+            });
+
+            expect(sessionStudents.length).to.equal(3);
+            expect(data[1].length).to.equal(3);
+
+            const classStudentIds = sessionStudents.map(sessionStudent => sessionStudent.classStudent.toHexString());
+
+            const enabledClassStudentIds = [
+                persistedClassStudents[1]._id,
+                persistedClassStudents[2]._id,
+                persistedClassStudents[3]._id
+            ].map(id => id.toHexString());
+
+            expect(classStudentIds).to.have.members(enabledClassStudentIds);
+
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionContext.persisted));
+
+});
