@@ -168,6 +168,136 @@ const names = {
     sessionStudentNote: {
         collectionName: 'sessionStudentNotes',
         modelName: 'SessionStudentNote'
+    },
+
+    homework: {
+        collectionName: 'homeworks',
+        modelName: 'Homework'
+    },
+
+    homeworkFile: {
+        collectionName: 'homeworkFiles',
+        modelName: 'HomeworkFile'
+    },
+
+    homeworkNote: {
+        collectionName: 'homeworkNotes',
+        modelName: 'HomeworkNote'
+    },
+
+    homeworkSection: {
+        collectionName: 'homeworkSections',
+        modelName: 'HomeworkSection'
+    },
+
+    homeworkStudent: {
+        collectionName: 'homeworkStudents',
+        modelName: 'HomeworkStudent'
+    },
+
+    homeworkStudentFile: {
+        collectionName: 'homeworkStudentFiles',
+        modelName: 'HomeworkStudentFile'
+    },
+
+    homeworkStudentNote: {
+        collectionName: 'homeworkStudentNotes',
+        modelName: 'HomeworkStudentNote'
+    },
+
+    homeworkStudentSection: {
+        collectionName: 'homeworkStudentSections',
+        modelName: 'HomeworkStudentSection'
+    },
+
+    team: {
+        collectionName: 'teams',
+        modelName: 'Team'
+    },
+
+    teamStudent: {
+        collectionName: 'teamStudents',
+        modelName: 'TeamStudent'
+    },
+
+    project: {
+        collectionName: 'projects',
+        modelName: 'Project'
+    },
+
+    projectFile: {
+        collectionName: 'projectFiles',
+        modelName: 'ProjectFile'
+    },
+
+    projectNote: {
+        collectionName: 'projectNotes',
+        modelName: 'ProjectNote'
+    },
+
+    projectSection: {
+        collectionName: 'projectSections',
+        modelName: 'ProjectSection'
+    },
+
+    projectTeam: {
+        collectionName: 'projectTeams',
+        modelName: 'ProjectTeam'
+    },
+
+    projectTeamFile: {
+        collectionName: 'projectTeamFiles',
+        modelName: 'ProjectTeamFile'
+    },
+
+    projectTeamNote: {
+        collectionName: 'projectTeamNotes',
+        modelName: 'ProjectTeamNote'
+    },
+
+    projectTeamSection: {
+        collectionName: 'projectTeamSections',
+        modelName: 'ProjectTeamSection'
+    },
+
+    exam: {
+        collectionName: 'exams',
+        modelName: 'Exam'
+    },
+
+    examFile: {
+        collectionName: 'examFiles',
+        modelName: 'ExamFile'
+    },
+
+    examNote: {
+        collectionName: 'examNotes',
+        modelName: 'ExamNote'
+    },
+
+    examStudent: {
+        collectionName: 'examStudents',
+        modelName: 'ExamStudent'
+    },
+
+    examStudentFile: {
+        collectionName: 'examStudentFiles',
+        modelName: 'ExamStudentFile'
+    },
+
+    examStudentNote: {
+        collectionName: 'examStudentNotes',
+        modelName: 'ExamStudentNote'
+    },
+
+    examQuestion: {
+        collectionName: 'examQuestions',
+        modelName: 'ExamQuestion'
+    },
+
+    examStudentQuestion: {
+        collectionName: 'examStudentQuestions',
+        modelName: 'ExamStudentQuestion'
     }
 
 };

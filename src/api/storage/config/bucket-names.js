@@ -11,5 +11,11 @@ module.exports = {
     [db.names.classFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-class-files`,
     [db.names.classStudentFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-class-student-files`,
     [db.names.sessionFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-session-files`,
-    [db.names.sessionStudentFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-session-student-files`
+    [db.names.sessionStudentFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-session-student-files`,
+    [db.names.homeworkFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-homework-files`,
+    [db.names.homeworkStudentFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-homework-student-files`,
+    [db.names.projectFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-project-files`,
+    [db.names.projectTeamFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-project-team-files`,
+    [db.names.examFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-exam-files`,
+    [db.names.examStudentFile.modelName]: `${process.env.BUCKET_PREFIX_NAME}-exam-student-files`
 };
