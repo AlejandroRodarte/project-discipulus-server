@@ -15,7 +15,7 @@ const classDefinition = {
 
     title: {
         type: String,
-        required: [true, 'An event title is required'],
+        required: [true, 'A class title is required'],
         validate: [
             (value) => !functions.isSentenceProfane(value),
             'Do not use profane words on your class title'
