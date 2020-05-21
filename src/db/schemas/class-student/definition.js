@@ -16,6 +16,16 @@ const classStudentDefinition = {
         ref: db.names.user.modelName
     },
 
+    forceHomeworkUpload: {
+        type: Boolean,
+        default: false
+    },
+
+    forceExamUpload: {
+        type: Boolean,
+        default: false
+    },
+
     write: {
         type: Boolean,
         default: false

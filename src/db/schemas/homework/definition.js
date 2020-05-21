@@ -8,7 +8,7 @@ const { schemas } = require('../shared');
 const homeworkDefinition = {
 
     class: {
-        type: Schema,
+        type: Schema.Types.ObjectId,
         required: [true, 'A class _id is required'],
         ref: db.names.class.modelName
     },
