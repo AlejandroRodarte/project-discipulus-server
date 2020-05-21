@@ -298,6 +298,11 @@ const names = {
     examStudentQuestion: {
         collectionName: 'examStudentQuestions',
         modelName: 'ExamStudentQuestion'
+    },
+
+    sharedClassGrade: {
+        collectionName: 'sharedClassGrades',
+        modelName: 'SharedClassGrade'
     }
 
 };
