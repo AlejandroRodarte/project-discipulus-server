@@ -438,3 +438,40 @@ describe('[db/models/class] - removeClassFiles context', function() {
     this.afterEach(fixtures.functions.dbStorage.teardown(fixtures.modelsStorage.removeClassFilesContext.persisted));
 
 });
+
+describe('[db/models/class] - baseSession context', async () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionContext.persisted));
+    
+    const persistedClasses = fixtures.models.baseSessionContext.persisted[shared.db.names.class.modelName];
+
+    describe('[db/models/class] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated sessions upon class deletion', async () => {
+
+            const classOneId = persistedClasses[0]._id;
+            const classOne = await db.models.Class.findOne({ _id: classOneId });
+
+            await classOne.remove();
+
+            const docCount = await db.models.Session.countDocuments({
+                class: classOneId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionContext.persisted));
+
+});
