@@ -11,7 +11,7 @@ const deletionSessionRules = [
     },
     {
         modelName: db.names.sessionStudentNote.modelName,
-        fieldName: 'session',
+        fieldName: 'sessionStudent',
         deleteFiles: false,
         deleteMode: deleteModes.DELETE_MANY
     }

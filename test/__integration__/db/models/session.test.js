@@ -227,6 +227,6 @@ describe('[db/models/session] - baseSessionStudent context', () => {
 
     });
 
-    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionNoteContext.persisted));
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionStudentContext.persisted));
 
 });

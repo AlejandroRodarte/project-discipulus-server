@@ -6,7 +6,7 @@ const { db } = require('../../../../src/shared');
 
 const sessionStudents = [
     // 0: sample session student
-    ...util.generateOneToMany('session', new Types.ObjectId(), [{ sessionStudent: new Types.ObjectId() }])
+    ...util.generateOneToMany('session', new Types.ObjectId(), [{ classStudent: new Types.ObjectId() }])
 ];
 
 const sessionStudentFiles = [
@@ -16,5 +16,5 @@ const sessionStudentFiles = [
 
 module.exports = {
     [db.names.sessionStudent.modelName]: sessionStudents,
-    [db.names.classStudentFile.modelName]: sessionStudentFiles
+    [db.names.sessionStudentFile.modelName]: sessionStudentFiles
 };

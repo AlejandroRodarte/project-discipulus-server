@@ -31,7 +31,7 @@ sessionStudentSchema.pre('remove', async function() {
     const sessionStudent = this;
 
     try {
-        applyDeletionRules(sessionStudent, models.sessionStudent.deletionSessionStudentRules);
+        await applyDeletionRules(sessionStudent, models.sessionStudent.deletionSessionStudentRules);
     } catch {
         throw e;
     }

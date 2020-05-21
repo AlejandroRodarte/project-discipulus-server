@@ -111,3 +111,78 @@ describe('[db/models/session-student] - baseSessionStudent context', () => {
     afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionStudentContext.persisted));
 
 });
+
+describe('[db/models/session-student] - baseSessionStudentFile context', () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionStudentFileContext.persisted));
+
+    const persistedSessionStudents = fixtures.models.baseSessionStudentFileContext.persisted[shared.db.names.sessionStudent.modelName];
+
+    describe('[db/models/session-student] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated session student files upon session student removal', async () => {
+
+            const sessionStudentOneId = persistedSessionStudents[0]._id;
+            const sessionStudentOne = await db.models.SessionStudent.findOne({ _id: sessionStudentOneId });
+
+            await sessionStudentOne.remove();
+
+            const docCount = await db.models.SessionStudentFile.countDocuments({
+                sessionStudent: sessionStudentOne
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionStudentFileContext.persisted));
+
+});
+
+describe('[db/models/session-student] - baseSessionStudentNote context', () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionStudentNoteContext.persisted));
+
+    const persistedSessionStudents = fixtures.models.baseSessionStudentNoteContext.persisted[shared.db.names.sessionStudent.modelName];
+
+    describe('[db/models/session-student] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated session student notes upon session student removal', async () => {
+
+            const sessionStudentOneId = persistedSessionStudents[0]._id;
+            const sessionStudentOne = await db.models.SessionStudent.findOne({ _id: sessionStudentOneId });
+
+            await sessionStudentOne.remove();
+
+            const docCount = await db.models.SessionStudentNote.countDocuments({
+                sessionStudent: sessionStudentOne
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionStudentNoteContext.persisted));
+
+});
+
