@@ -34,14 +34,19 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
     let sessionExistsStub;
     let classStudentFindOneStub;
-    let classStudentIsStudentEnabledStub;
     let sessionStudentSaveStub;
+    let validateFake;
 
     it('Generated function should throw error if ForeignModel.exists (called with correct args) resolves false', async () => {
 
         sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(false);
+        validateFake = sinon.fake.resolves();
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave(checkAndSaveArgs).bind(sessionStudent);
+        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+            ...checkAndSaveArgs,
+            validate: validateFake
+        }).bind(sessionStudent);
+
         await expect(checkAndSave()).to.eventually.be.rejectedWith(Error, checkAndSaveArgs.foreignModel.notFoundErrorMessage);
 
         sinon.assert.calledOnceWithExactly(sessionExistsStub, {
@@ -54,8 +59,13 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
         sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(null);
+        validateFake = sinon.fake.resolves();
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave(checkAndSaveArgs).bind(sessionStudent);
+        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+            ...checkAndSaveArgs,
+            validate: validateFake
+        }).bind(sessionStudent);
+
         await expect(checkAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classStudentNotFound);
         
         sinon.assert.calledOnceWithExactly(classStudentFindOneStub, {
@@ -64,16 +74,20 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
     });
 
-    it('Generated function should throw error if classStudent.isStudentEnabled resolves false', async () => {
+    it('Generated function should throw error if validate callback fails', async () => {
 
         sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(classStudent);
-        classStudentIsStudentEnabledStub = sinon.stub(classStudent, 'isStudentEnabled').resolves(false);
+        validateFake = sinon.fake.rejects();
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave(checkAndSaveArgs).bind(sessionStudent);
-        await expect(checkAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.userDisabled);
+        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+            ...checkAndSaveArgs,
+            validate: validateFake
+        }).bind(sessionStudent);
 
-        sinon.assert.calledOnce(classStudentIsStudentEnabledStub);
+        await expect(checkAndSave()).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(validateFake, classStudent);
 
     });
 
@@ -81,10 +95,14 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
         sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(classStudent);
-        classStudentIsStudentEnabledStub = sinon.stub(classStudent, 'isStudentEnabled').resolves(true);
+        validateFake = sinon.fake.resolves();
         sessionStudentSaveStub = sinon.stub(sessionStudent, 'save').rejects();
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave(checkAndSaveArgs).bind(sessionStudent);
+        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+            ...checkAndSaveArgs,
+            validate: validateFake
+        }).bind(sessionStudent);
+
         await expect(checkAndSave()).to.eventually.be.rejectedWith(Error);
 
     });
@@ -93,10 +111,14 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
         sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(classStudent);
-        classStudentIsStudentEnabledStub = sinon.stub(classStudent, 'isStudentEnabled').resolves(true);
+        validateFake = sinon.fake.resolves();
         sessionStudentSaveStub = sinon.stub(sessionStudent, 'save').resolves(sessionStudent);
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave(checkAndSaveArgs).bind(sessionStudent);
+        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+            ...checkAndSaveArgs,
+            validate: validateFake
+        }).bind(sessionStudent);
+
         await expect(checkAndSave()).to.eventually.be.eql(sessionStudent);
 
         sinon.assert.calledOnce(sessionStudentSaveStub);

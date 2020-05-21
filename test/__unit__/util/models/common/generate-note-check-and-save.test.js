@@ -55,6 +55,8 @@ describe('[util/models/common/generate-note-check-and-save]', () => {
         const checkAndSave = util.models.common.generateNoteCheckAndSave(validateFake).bind(userNote);
         await expect(checkAndSave()).to.eventually.eql(userNote);
 
+        sinon.assert.calledOnce(userNoteSaveStub);
+
     });
 
     afterEach(() => {
