@@ -6,7 +6,7 @@ const generateNoteCheckAndSave = require('./generate-note-check-and-save');
 const generateSaveAndAddStudents = require('./generate-save-and-add-students');
 const generateClassStudentChildCheckAndSave = require('./generate-class-student-child-check-and-save');
 const generateDueDateUploadValidator = require('./generate-due-date-upload-validator');
-const generateIsTaskCompleteValidator = require('./generate-is-task-complete-validator');
+const generateTaskValidator = require('./generate-task-validator');
 const userExistsValidator = require('./user-exists-validator');
 
 module.exports = {
@@ -18,6 +18,6 @@ module.exports = {
     generateSaveAndAddStudents,
     generateClassStudentChildCheckAndSave,
     generateDueDateUploadValidator,
-    generateIsTaskCompleteValidator,
+    generateTaskValidator,
     userExistsValidator
 };

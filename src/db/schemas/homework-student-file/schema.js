@@ -1,5 +1,6 @@
 
 const { Schema } = require('mongoose');
+const moment = require('moment');
 
 const { db } = require('../../../shared');
 const { errors, models } = require('../../../util');
@@ -54,11 +55,9 @@ homeworkStudentFileSchema.methods.saveFileAndDoc = models.common.generateSaveFil
 
     modelName: db.names.homeworkStudentFile.modelName,
     
-    validate: models.common.generateIsTaskCompleteValidator({
-        modelName: db.names.homeworkStudent.modelName,
-        ref: 'homeworkStudent',
-        notFoundErrorMessage: errors.modelErrorMessages.homeworkStudentNotFound,
-        alreadyCompleteErrorMessage: errors.modelErrorMessages.homeworkAlreadyComplete
+    validate: models.common.generateTaskValidator({
+        alreadyCompleteErrorMessage: errors.modelErrorMessages.homeworkAlreadyComplete,
+        expiredErrorMessage: errors.modelErrorMessages.homeworkExpired
     })
 
 });
