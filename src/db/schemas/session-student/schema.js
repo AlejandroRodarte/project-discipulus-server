@@ -43,6 +43,15 @@ sessionStudentSchema.methods.checkAndSave = models.common.generateClassStudentCh
         name: db.names.session.modelName,
         ref: 'session',
         notFoundErrorMessage: errors.modelErrorMessages.sessionNotFound
+    },
+    validate: async (classStudent) => {
+
+        const isStudentEnabled = await classStudent.isStudentEnabled();
+
+        if (!isStudentEnabled) {
+            throw new Error(errors.modelErrorMessages.userDisabled);
+        }
+
     }
 });
 

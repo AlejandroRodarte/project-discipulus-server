@@ -1,7 +1,7 @@
 const { db } = require('../../../shared');
 const { modelErrorMessages } = require('../../errors');
 
-const generateClassStudentChildCheckAndSave = ({ foreignModel }) => async function() {
+const generateClassStudentChildCheckAndSave = ({ foreignModel, validate }) => async function() {
 
     const doc = this;
 
@@ -24,13 +24,8 @@ const generateClassStudentChildCheckAndSave = ({ foreignModel }) => async functi
         throw new Error(modelErrorMessages.classStudentNotFound);
     }
 
-    const isStudentEnabled = await classStudent.isStudentEnabled();
-
-    if (!isStudentEnabled) {
-        throw new Error(modelErrorMessages.userDisabled);
-    }
-
     try {
+        await validate(classStudent);
         await doc.save();
     } catch (e) {
         throw e;
