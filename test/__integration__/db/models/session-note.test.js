@@ -42,7 +42,7 @@ describe('[db/models/session-note] - baseSessionNote context', () => {
 
     describe('[db/models/session-note] - methods.checkAndSave', () => {
 
-        it('Should not persist if associated class does not exist', async () => {
+        it('Should not persist if associated session does not exist', async () => {
 
             const sessionNoteDoc = unpersistedSessionNotes[0];
             const sessionNote = new db.models.SessionNote(sessionNoteDoc);
@@ -51,7 +51,7 @@ describe('[db/models/session-note] - baseSessionNote context', () => {
 
         });
 
-        it('Should not persist if class note fails on save (non-unique)', async () => {
+        it('Should not persist if session note fails on save (non-unique)', async () => {
 
             const sessionNoteDoc = unpersistedSessionNotes[1];
             const sessionNote = new db.models.SessionNote(sessionNoteDoc);
@@ -60,7 +60,7 @@ describe('[db/models/session-note] - baseSessionNote context', () => {
 
         });
 
-        it('Should persist on proper class note', async () => {
+        it('Should persist on proper session note', async () => {
 
             const sessionNoteDoc = unpersistedSessionNotes[2];
             const sessionNote = new db.models.SessionNote(sessionNoteDoc);
