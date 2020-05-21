@@ -119,3 +119,77 @@ describe('[db/models/session] - baseSession context', () => {
     afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionContext.persisted));
 
 });
+
+describe('[db/models/session] - baseSessionFile context', () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionFileContext.persisted));
+
+    const persistedSessions = fixtures.models.baseSessionFileContext.persisted[shared.db.names.session.modelName];
+
+    describe('[db/models/session] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated session files upon session removal', async () => {
+
+            const sessionOneId = persistedSessions[0]._id;
+            const sessionOne = await db.models.Session.findOne({ _id: sessionOneId });
+
+            await sessionOne.remove();
+
+            const docCount = await db.models.SessionFile.countDocuments({
+                session: sessionOne
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionFileContext.persisted));
+
+});
+
+describe('[db/models/session] - baseSessionNote context', () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionNoteContext.persisted));
+
+    const persistedSessions = fixtures.models.baseSessionNoteContext.persisted[shared.db.names.session.modelName];
+
+    describe('[db/models/session] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated session notes upon session removal', async () => {
+
+            const sessionOneId = persistedSessions[0]._id;
+            const sessionOne = await db.models.Session.findOne({ _id: sessionOneId });
+
+            await sessionOne.remove();
+
+            const docCount = await db.models.SessionNote.countDocuments({
+                session: sessionOne
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionNoteContext.persisted));
+
+});
