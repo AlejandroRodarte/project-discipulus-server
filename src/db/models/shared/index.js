@@ -5,6 +5,7 @@ const TimeRange = require('./time-range');
 const Note = require('./note');
 const UserNote = require('./user-note');
 const ClassGrade = require('./class-grade');
+const OptionalEndTimeRange = require('./optional-end-time-range');
 
 module.exports = {
     File,
@@ -13,5 +14,6 @@ module.exports = {
     TimeRange,
     Note,
     UserNote,
-    ClassGrade
+    ClassGrade,
+    OptionalEndTimeRange
 };

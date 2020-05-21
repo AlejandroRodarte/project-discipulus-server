@@ -21,7 +21,7 @@ describe('[db/models/shared/time-range] - Default start', () => {
         const end = moment().add(1, 'second').utc().unix();
         timeRange = new db.models.shared.TimeRange({ end });
 
-        expect(timeRange.start).to.not.be.an('integer');
+        expect(timeRange.start).to.be.a('number');
 
     });
 
@@ -45,6 +45,14 @@ describe('[db/models/shared/time-range] - Valid end', () => {
 
     it('Should validate if end date is greater than start date', () => {
         fixtures.functions.models.testForValidModel(timeRange);
+    });
+
+});
+
+describe('[db/models/shared/time-range] - virtuals.duration', () => {
+
+    it('Should provide time range duration', () => {
+        expect(timeRange.duration).to.equal(timeRange.end - timeRange.start);
     });
 
 });

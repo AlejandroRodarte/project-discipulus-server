@@ -303,6 +303,11 @@ const names = {
     sharedClassGrade: {
         collectionName: 'sharedClassGrades',
         modelName: 'SharedClassGrade'
+    },
+
+    sharedOptionalEndTimeRange: {
+        collectionName: 'sharedOptionalEndTimeRanges',
+        modelName: 'SharedOptionalEndTimeRange'
     }
 
 };
