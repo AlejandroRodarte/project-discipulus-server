@@ -230,3 +230,35 @@ describe('[db/models/session] - baseSessionStudent context', () => {
     afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionStudentContext.persisted));
 
 });
+
+describe('[db/models/session] - removeSessionFiles context', function() {
+
+    this.timeout(20000);
+
+    this.beforeEach(fixtures.functions.dbStorage.init(fixtures.modelsStorage.removeSessionFilesContext.persisted));
+
+    const persistedSessions = fixtures.modelsStorage.removeSessionFilesContext.persisted.db[shared.db.names.session.modelName];
+    const persistedStorageSessionFiles = fixtures.modelsStorage.removeSessionFilesContext.persisted.storage[shared.db.names.sessionFile.modelName];
+
+    describe('[db/models/session] - pre remove hook', () => {
+
+        it('Should delete actual session-files from storage upon session deletion', async () => {
+
+            const sessionFileOneKeyname = persistedStorageSessionFiles[0].keyname;
+
+            const sessionOneId = persistedSessions[0]._id;
+            const sessionOne = await db.models.Session.findOne({ _id: sessionOneId });
+
+            await sessionOne.remove();
+
+            const bucketKeys = await api.storage.listBucketKeys(api.storage.config.bucketNames[shared.db.names.sessionFile.modelName]);
+
+            expect(bucketKeys).to.not.include(sessionFileOneKeyname);
+
+        });
+
+    });
+
+    this.afterEach(fixtures.functions.dbStorage.teardown(fixtures.modelsStorage.removeSessionFilesContext.persisted));
+
+});
