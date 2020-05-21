@@ -12,9 +12,12 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const [classStudentDoc] = fixtures.functions.util.generateOneToMany('class', new Types.ObjectId(), [{ user: new Types.ObjectId() }]);
+
+const [sessionDoc] = fixtures.functions.util.generateOneToMany('class', new Types.ObjectId(), [ fixtures.functions.models.generateFakeSession() ]);
 const [sessionStudentDoc] = fixtures.functions.util.generateOneToMany('classStudent', classStudentDoc._id, [{ session: new Types.ObjectId() }]);
 
 let classStudent = new db.models.ClassStudent(classStudentDoc);
+let session = new db.models.Session(sessionDoc);
 let sessionStudent = new db.models.SessionStudent(sessionStudentDoc);
 
 const checkAndSaveArgs = {
@@ -27,19 +30,20 @@ const checkAndSaveArgs = {
 
 beforeEach(() => {
     classStudent = fixtures.functions.models.getNewModelInstance(db.models.ClassStudent, classStudentDoc);
+    session = fixtures.functions.models.getNewModelInstance(db.models.Session, sessionDoc);
     sessionStudent = fixtures.functions.models.getNewModelInstance(db.models.SessionStudent, sessionStudentDoc);
 });
 
 describe('[util/models/common-generate-class-student-child-check-and-save] - general flow', () => {
 
-    let sessionExistsStub;
+    let sessionFindOneStub;
     let classStudentFindOneStub;
     let sessionStudentSaveStub;
     let validateFake;
 
-    it('Generated function should throw error if ForeignModel.exists (called with correct args) resolves false', async () => {
+    it('Generated function should throw error if ForeignModel.findOne (called with correct args) resolves null', async () => {
 
-        sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(false);
+        sessionFindOneStub = sinon.stub(db.models.Session, 'findOne').resolves(null);
         validateFake = sinon.fake.resolves();
 
         const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
@@ -49,7 +53,7 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
         await expect(checkAndSave()).to.eventually.be.rejectedWith(Error, checkAndSaveArgs.foreignModel.notFoundErrorMessage);
 
-        sinon.assert.calledOnceWithExactly(sessionExistsStub, {
+        sinon.assert.calledOnceWithExactly(sessionFindOneStub, {
             _id: sessionStudent.session
         });
 
@@ -57,7 +61,7 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
     it('Generated function should throw error if ClassStudent.findOne (called with correct args) resolves null', async () => {
 
-        sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
+        sessionFindOneStub = sinon.stub(db.models.Session, 'findOne').resolves(session);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(null);
         validateFake = sinon.fake.resolves();
 
@@ -76,7 +80,7 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
     it('Generated function should throw error if validate callback fails', async () => {
 
-        sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
+        sessionFindOneStub = sinon.stub(db.models.Session, 'findOne').resolves(session);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(classStudent);
         validateFake = sinon.fake.rejects();
 
@@ -87,13 +91,13 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
         await expect(checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(validateFake, classStudent);
+        sinon.assert.calledOnceWithExactly(validateFake, classStudent, session);
 
     });
 
     it('Generated function should throw error if doc.save fails', async () => {
 
-        sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
+        sessionFindOneStub = sinon.stub(db.models.Session, 'findOne').resolves(session);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(classStudent);
         validateFake = sinon.fake.resolves();
         sessionStudentSaveStub = sinon.stub(sessionStudent, 'save').rejects();
@@ -109,7 +113,7 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
     it('Generated function should return doc instance if all tasks resolve', async () => {
 
-        sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
+        sessionFindOneStub = sinon.stub(db.models.Session, 'findOne').resolves(session);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(classStudent);
         validateFake = sinon.fake.resolves();
         sessionStudentSaveStub = sinon.stub(sessionStudent, 'save').resolves(sessionStudent);

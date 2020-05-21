@@ -1,4 +1,5 @@
 const { Schema } = require('mongoose');
+const moment = require('moment');
 
 const { db } = require('../../../shared');
 const { models, errors } = require('../../../util');
@@ -19,6 +20,19 @@ homeworkStudentSchema.methods.checkAndSave = models.common.generateClassStudentC
         name: db.names.homework.modelName,
         ref: 'homework',
         notFoundErrorMessage: errors.modelErrorMessages.homeworkNotFound
+    },
+    validate: async (classStudent, homework) => {
+
+        const isStudentEnabled = await classStudent.isStudentEnabled();
+
+        if (!isStudentEnabled) {
+            throw new Error(errors.modelErrorMessages.userDisabled);
+        }
+
+        if (!classStudent.forceHomeworkUpload || (homework.timeRange && homework.timeRange.end && moment().utc().unix() > homework.timeRange.end)) {
+            throw new Error(errors.modelErrorMessages.homeworkExpired);
+        }
+
     }
 });
 

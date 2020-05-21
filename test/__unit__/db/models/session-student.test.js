@@ -14,13 +14,17 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const [classStudentDoc] = fixtures.functions.util.generateOneToMany('class', new Types.ObjectId(), [{ user: new Types.ObjectId() }]);
+
+const [sessionDoc] = fixtures.functions.util.generateOneToMany('class', new Types.ObjectId(), [ fixtures.functions.models.generateFakeSession() ]);
 const [sessionStudentDoc] = fixtures.functions.util.generateOneToMany('classStudent', classStudentDoc._id, [{ session: new Types.ObjectId() }]);
 
 let classStudent = new db.models.ClassStudent(classStudentDoc);
+let session = new db.models.Session(sessionDoc);
 let sessionStudent = new db.models.SessionStudent(sessionStudentDoc);
 
 beforeEach(() => {
     classStudent = fixtures.functions.models.getNewModelInstance(db.models.ClassStudent, classStudentDoc);
+    session = fixtures.functions.models.getNewModelInstance(db.models.Session, sessionDoc);
     sessionStudent = fixtures.functions.models.getNewModelInstance(db.models.SessionStudent, sessionStudentDoc);
 });
 
@@ -60,21 +64,21 @@ describe('[db/models/session-student] - valid model', () => {
 
 describe('[db/models/session-student] - methods.checkAndSave', () => {
 
-    let sessionExistsStub;
+    let sessionFindOneStub;
     let classStudentFindOneStub;
     let classStudentIsStudentEnabledStub;
     let sessionStudentSaveStub;
 
     it('Generated functions should call all required methods properly and resolve by returning sessionStudent doc instance', async () => {
 
-        sessionExistsStub = sinon.stub(db.models.Session, 'exists').resolves(true);
+        sessionFindOneStub = sinon.stub(db.models.Session, 'findOne').resolves(session);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(classStudent);
         classStudentIsStudentEnabledStub = sinon.stub(classStudent, 'isStudentEnabled').resolves(true);
         sessionStudentSaveStub = sinon.stub(sessionStudent, 'save').resolves(sessionStudent);
 
         await expect(sessionStudent.checkAndSave()).to.eventually.eql(sessionStudent);
 
-        sinon.assert.calledOnceWithExactly(sessionExistsStub, {
+        sinon.assert.calledOnceWithExactly(sessionFindOneStub, {
             _id: sessionStudent.session
         });
 

@@ -8,11 +8,11 @@ const generateClassStudentChildCheckAndSave = ({ foreignModel, validate }) => as
     const ClassStudent = doc.model(db.names.classStudent.modelName);
     const ForeignModel = doc.model(foreignModel.name);
 
-    const foreignModelExists = await ForeignModel.exists({
+    const foreignDoc = await ForeignModel.findOne({
         _id: doc[foreignModel.ref]
     });
 
-    if (!foreignModelExists) {
+    if (!foreignDoc) {
         throw new Error(foreignModel.notFoundErrorMessage);
     }
 
@@ -25,7 +25,7 @@ const generateClassStudentChildCheckAndSave = ({ foreignModel, validate }) => as
     }
 
     try {
-        await validate(classStudent);
+        await validate(classStudent, foreignDoc);
         await doc.save();
     } catch (e) {
         throw e;

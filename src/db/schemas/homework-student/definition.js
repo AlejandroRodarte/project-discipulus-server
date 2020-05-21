@@ -40,7 +40,9 @@ const homeworkStudentDefinition = {
 
     directGrade: {
         type: Number,
-        default: 0
+        default: 0,
+        min: [0, 'Minimum grade should be higher or equal to 0'],
+        max: [10000, 'Maximum grade should be lower or equal to 10000']
     },
 
     teacherComments: {
