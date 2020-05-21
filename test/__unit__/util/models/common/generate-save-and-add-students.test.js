@@ -22,6 +22,22 @@ let clazz = new db.models.Class(classDoc);
 let session = new db.models.Session(sessionDoc);
 let sessionStudents = sessionStudentDocs.map(sessionStudentDoc => new db.models.SessionStudent(sessionStudentDoc));
 
+const saveAndAddStudentsArgs = {
+    parent: {
+        modelName: shared.db.names.class.modelName,
+        ref: 'class',
+        notFoundErrorMessage: util.errors.modelErrorMessages.classNotFound,
+        getIdsMethodName: 'getEnabledStudentIds'
+    },
+    child: {
+        modelName: shared.db.names.sessionStudent.modelName,
+        doc: {
+            ref1: 'session',
+            ref2: 'classStudent'
+        }
+    }
+};
+
 beforeEach(() => {
     clazz = fixtures.functions.models.getNewModelInstance(db.models.Class, classDoc);
     session = fixtures.functions.models.getNewModelInstance(db.models.Session, sessionDoc);
@@ -38,10 +54,7 @@ describe('[util/models/common/generate-save-and-add-students] - general flow', (
     it('Generated function should throw error if Class.findOne (called with correct args) resolves null', async () => {
 
         classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(null);
-        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents({
-            studentModelName: shared.db.names.sessionStudent.modelName,
-            foreignField: 'session'
-        }).bind(session);
+        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents(saveAndAddStudentsArgs).bind(session);
 
         await expect(saveAndAddStudents()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classNotFound);
 
@@ -56,10 +69,7 @@ describe('[util/models/common/generate-save-and-add-students] - general flow', (
         classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(clazz);
         sessionSaveStub = sinon.stub(session, 'save').rejects();
 
-        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents({
-            studentModelName: shared.db.names.sessionStudent.modelName,
-            foreignField: 'session'
-        }).bind(session);
+        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents(saveAndAddStudentsArgs).bind(session);
 
         await expect(saveAndAddStudents()).to.eventually.be.rejectedWith(Error);
 
@@ -73,10 +83,7 @@ describe('[util/models/common/generate-save-and-add-students] - general flow', (
         sessionSaveStub = sinon.stub(session, 'save').resolves(session);
         classGetEnabledStudentIdsStub = sinon.stub(clazz, 'getEnabledStudentIds').rejects();
 
-        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents({
-            studentModelName: shared.db.names.sessionStudent.modelName,
-            foreignField: 'session'
-        }).bind(session);
+        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents(saveAndAddStudentsArgs).bind(session);
         
         await expect(saveAndAddStudents()).to.eventually.eql([session, undefined]);
 
@@ -91,10 +98,7 @@ describe('[util/models/common/generate-save-and-add-students] - general flow', (
         classGetEnabledStudentIdsStub = sinon.stub(clazz, 'getEnabledStudentIds').resolves(classStudentIds);
         sessionStudentInsertManyStub = sinon.stub(db.models.SessionStudent, 'insertMany').rejects();
 
-        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents({
-            studentModelName: shared.db.names.sessionStudent.modelName,
-            foreignField: 'session'
-        }).bind(session);
+        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents(saveAndAddStudentsArgs).bind(session);
         
         await expect(saveAndAddStudents()).to.eventually.eql([session, undefined]);
 
@@ -109,10 +113,7 @@ describe('[util/models/common/generate-save-and-add-students] - general flow', (
         classGetEnabledStudentIdsStub = sinon.stub(clazz, 'getEnabledStudentIds').resolves(classStudentIds);
         sessionStudentInsertManyStub = sinon.stub(db.models.SessionStudent, 'insertMany').resolves(sessionStudents);
 
-        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents({
-            studentModelName: shared.db.names.sessionStudent.modelName,
-            foreignField: 'session'
-        }).bind(session);
+        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents(saveAndAddStudentsArgs).bind(session);
         
         await expect(saveAndAddStudents()).to.eventually.eql([session, sessionStudents]);
 

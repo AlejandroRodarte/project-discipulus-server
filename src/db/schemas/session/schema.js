@@ -45,8 +45,19 @@ sessionSchema.pre('remove', async function() {
 });
 
 sessionSchema.methods.saveAndAddStudents = models.common.generateSaveAndAddStudents({
-    studentModelName: db.names.sessionStudent.modelName,
-    foreignField: 'session'
+    parent: {
+        modelName: db.names.class.modelName,
+        ref: 'class',
+        notFoundErrorMessage: errors.modelErrorMessages.classNotFound,
+        getIdsMethodName: 'getEnabledStudentIds'
+    },
+    child: {
+        modelName: db.names.sessionStudent.modelName,
+        doc: {
+            ref1: 'session',
+            ref2: 'classStudent'
+        }
+    }
 });
 
 module.exports = sessionSchema;

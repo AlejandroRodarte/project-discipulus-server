@@ -1,17 +1,14 @@
-const { db } = require('../../../shared');
-const { modelErrorMessages } = require('../../errors');
-
-const generateSaveAndAddStudents = ({ studentModelName, foreignField }) => async function() {
+const generateSaveAndAddStudents = ({ parent, child }) => async function() {
 
     const doc = this;
 
-    const Class = doc.model(db.names.class.modelName);
-    const StudentModel = doc.model(studentModelName);
+    const ParentModel = doc.model(parent.modelName);
+    const ChildModel = doc.model(child.modelName);
 
-    const clazz = await Class.findOne({ _id: doc.class });
+    const parentModel = await ParentModel.findOne({ _id: doc[parent.ref] });
 
-    if (!clazz) {
-        throw new Error(modelErrorMessages.classNotFound);
+    if (!parentModel) {
+        throw new Error(parent.notFoundErrorMessage);
     }
 
     try {
@@ -22,16 +19,16 @@ const generateSaveAndAddStudents = ({ studentModelName, foreignField }) => async
 
     try {
 
-        const enabledStudentIds = await clazz.getEnabledStudentIds();
+        const childIds = await parentModel[parent.getIdsMethodName]();
 
-        const studentModelDocs = enabledStudentIds.map(classStudent => ({
-            [foreignField]: doc._id,
-            classStudent
+        const childModelDocs = childIds.map(childId => ({
+            [child.doc.ref1]: doc._id,
+            [child.doc.ref2]: childId
         }));
 
-        const studentDocs = await StudentModel.insertMany(studentModelDocs);
+        const childDocs = await ChildModel.insertMany(childModelDocs);
 
-        return [doc, studentDocs];
+        return [doc, childDocs];
 
     } catch (e) {
         return [doc, undefined];
