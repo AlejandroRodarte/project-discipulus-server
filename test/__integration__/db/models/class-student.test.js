@@ -293,13 +293,13 @@ describe('[db/models/class-student] - baseClassStudentFile context', () => {
 
         it('Should delete all associated class-student files upon class-student deletion', async () => {
 
-            const classStudentOne = persistedClassStudents[0]._id;
-            const classStudent = await db.models.ClassStudent.findOne({ _id: classStudentOne });
+            const classStudentOneId = persistedClassStudents[0]._id;
+            const classStudent = await db.models.ClassStudent.findOne({ _id: classStudentOneId });
 
             await classStudent.remove();
 
             const docCount = await db.models.ClassStudentFile.countDocuments({
-                classStudent: classStudentOne
+                classStudent: classStudentOneId
             });
 
             expect(docCount).to.equal(0);
@@ -330,13 +330,13 @@ describe('[db/models/class-student] - baseClassStudentNote context', () => {
 
         it('Should delete all associated class-student notes upon class-student deletion', async () => {
 
-            const classStudentOne = persistedClassStudents[0]._id;
-            const classStudent = await db.models.ClassStudent.findOne({ _id: classStudentOne });
+            const classStudentOneId = persistedClassStudents[0]._id;
+            const classStudent = await db.models.ClassStudent.findOne({ _id: classStudentOneId });
 
             await classStudent.remove();
 
             const docCount = await db.models.ClassStudentNote.countDocuments({
-                classStudent: classStudentOne
+                classStudent: classStudentOneId
             });
 
             expect(docCount).to.equal(0);
@@ -381,5 +381,42 @@ describe('[db/models/class-student] - removeClassStudentFiles context', function
     });
 
     this.afterEach(fixtures.functions.dbStorage.teardown(fixtures.modelsStorage.removeClassStudentFilesContext.persisted));
+
+});
+
+describe('[db/models/class-student] - baseSessionStudent context', () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionStudentContext.persisted));
+    
+    const persistedClassStudents = fixtures.models.baseSessionStudentContext.persisted[shared.db.names.classStudent.modelName];
+
+    describe('[db/models/class-student] - pre remove hook', () => {
+
+        let deleteBucketObjectsStub;
+
+        beforeEach(() => deleteBucketObjectsStub = sinon.stub(api.storage, 'deleteBucketObjects').resolves());
+
+        it('Should delete all associated session-student notes upon class-student deletion', async () => {
+
+            const classStudentTwoId = persistedClassStudents[1]._id;
+            const classStudent = await db.models.ClassStudent.findOne({ _id: classStudentTwoId });
+
+            await classStudent.remove();
+
+            const docCount = await db.models.SessionStudent.countDocuments({
+                classStudent: classStudentTwoId
+            });
+
+            expect(docCount).to.equal(0);
+
+        });
+
+        afterEach(() => {
+            sinon.restore();
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionStudentContext.persisted));
 
 });
