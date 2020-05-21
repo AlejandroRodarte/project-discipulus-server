@@ -33,3 +33,44 @@ describe('[db/models/session-note] - uniqueSessionNote context', () => {
     afterEach(fixtures.functions.db.teardown(fixtures.models.uniqueSessionNoteContext.persisted));
 
 });
+
+describe('[db/models/session-note] - baseSessionNote context', () => {
+
+    beforeEach(fixtures.functions.db.init(fixtures.models.baseSessionNoteContext.persisted));
+
+    const unpersistedSessionNotes = fixtures.models.baseSessionNoteContext.unpersisted[shared.db.names.sessionNote.modelName];
+
+    describe('[db/models/session-note] - methods.checkAndSave', () => {
+
+        it('Should not persist if associated class does not exist', async () => {
+
+            const sessionNoteDoc = unpersistedSessionNotes[0];
+            const sessionNote = new db.models.SessionNote(sessionNoteDoc);
+
+            await expect(sessionNote.checkAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.sessionNotFound);
+
+        });
+
+        it('Should not persist if class note fails on save (non-unique)', async () => {
+
+            const sessionNoteDoc = unpersistedSessionNotes[1];
+            const sessionNote = new db.models.SessionNote(sessionNoteDoc);
+
+            await expect(sessionNote.checkAndSave()).to.eventually.be.rejectedWith(mongo.MongoError);
+
+        });
+
+        it('Should persist on proper class note', async () => {
+
+            const sessionNoteDoc = unpersistedSessionNotes[2];
+            const sessionNote = new db.models.SessionNote(sessionNoteDoc);
+
+            await expect(sessionNote.checkAndSave()).to.eventually.eql(sessionNote);
+
+        });
+
+    });
+
+    afterEach(fixtures.functions.db.teardown(fixtures.models.baseSessionNoteContext.persisted));
+
+});
