@@ -86,3 +86,12 @@ describe('[db/models/shared/class-grade] - Valid model', () => {
     });
 
 });
+
+describe('[db/models/shared/class-grade] - virtuals.finalGrade', () => {
+
+    it('Should return sum of all class grades', () => {
+        const finalGrade = Object.keys(classGradeDoc).reduce((acc, cv) => acc + classGradeDoc[cv], 0);
+        expect(classGrade.finalGrade).to.equal(finalGrade);
+    });
+
+});

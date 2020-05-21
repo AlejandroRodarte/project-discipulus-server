@@ -169,6 +169,16 @@ describe('[db/models/class] - Default archive', () => {
 
 });
 
+describe('[db/models/class] - Default grades', () => {
+
+    it('Should default to 0-based class grades if not specified', () => {
+        expect(clazz.grades.homeworks).to.equal(0);
+        expect(clazz.grades.projects).to.equal(0);
+        expect(clazz.grades.exams).to.equal(0);
+    });
+
+});
+
 describe('[db/models/class] - Valid class', () => {
 
     it('Should validate a class that meets all validation requirements', () => {

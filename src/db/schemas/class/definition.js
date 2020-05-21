@@ -90,6 +90,15 @@ const classDefinition = {
         ]
     },
 
+    grades: {
+        type: schemas.sharedClassGradeSchema,
+        default: {
+            homeworks: 0,
+            projects: 0,
+            exams: 0
+        }
+    },
+
     archive: {
         type: Boolean,
         default: false
