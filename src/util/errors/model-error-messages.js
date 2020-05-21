@@ -27,5 +27,7 @@ module.exports = {
     homeworkExpired: 'The homework already expired',
     projectExpired: 'The project already expired',
     examExpired: 'The exam already expired',
-    invalidHomeworkType: 'This feature is not allowed on the current homework configuration'
+    invalidHomeworkType: 'This feature is not allowed on the current homework configuration',
+    homeworkStudentNotFound: 'The homework-student association was not found',
+    homeworkAlreadyComplete: 'The homework was already submitted'
 };

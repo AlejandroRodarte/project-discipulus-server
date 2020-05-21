@@ -30,6 +30,7 @@ const Homework = require('./homework');
 const HomeworkFile = require('./homework-file');
 const HomeworkNote = require('./homework-note');
 const HomeworkSection = require('./homework-section');
+const HomeworkStudent = require('./homework-student');
 const shared = require('./shared');
 
 module.exports = {
@@ -65,5 +66,6 @@ module.exports = {
     HomeworkFile,
     HomeworkNote,
     HomeworkSection,
+    HomeworkStudent,
     shared
 };
