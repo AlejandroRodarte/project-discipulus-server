@@ -16,6 +16,23 @@ const homeworkStudentSchema = new Schema(homeworkStudentDefinition, schemaOpts);
 
 homeworkStudentSchema.index({ classStudent: 1, homework: 1 }, { unique: true });
 
+homeworkStudentSchema.virtual('grade').get(async function() {
+
+    const homeworkStudent = this;
+
+    const type = await homeworkStudent.getHomeworkType();
+
+    switch (type) {
+        case models.class.gradeType.NO_SECTIONS:
+            return homeworkStudent.directGrade;
+        case models.class.gradeType.SECTIONS:
+            return homeworkStudent.directGrade; // TODO: must return ponderated grade
+        default:
+            break;
+    }
+
+});
+
 homeworkStudentSchema.virtual('files', {
     ref: db.names.homeworkStudentFile.modelName,
     localField: '_id',
