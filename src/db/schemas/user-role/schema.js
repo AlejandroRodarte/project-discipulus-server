@@ -17,6 +17,7 @@ userRoleSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(m
     left: {
         modelName: db.names.user.modelName,
         ref: 'user',
+        errorMessage: errors.modelErrorMessages.userNotFoundOrDisabled,
         extraCond: {
             enabled: true
         }
@@ -24,6 +25,7 @@ userRoleSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(m
     right: {
         modelName: db.names.role.modelName,
         ref: 'role',
+        errorMessage: errors.modelErrorMessages.roleNotFound,
         extraCond: {}
     }
 }));

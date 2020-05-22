@@ -1,6 +1,4 @@
-const generalJointExistsValidator = ({ left, right }) => async function() {
-
-    const doc = this;
+const generalJointExistsValidator = ({ left, right }) => async function(doc) {
 
     const LeftModel = doc.model(left.modelName);
     const RightModel = doc.model(right.modelName);
@@ -21,12 +19,6 @@ const generalJointExistsValidator = ({ left, right }) => async function() {
 
     if (!rightModelExists) {
         throw new Error(right.errorMessage);
-    }
-
-    try {
-        await doc.save();
-    } catch (e) {
-        throw e;
     }
 
     return doc;
