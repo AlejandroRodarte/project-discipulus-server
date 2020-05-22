@@ -5,6 +5,7 @@ const role = require('./role');
 const user = require('./user');
 const session = require('./session');
 const sessionStudent = require('./session-student');
+const homework = require('./homework');
 
 module.exports = {
     class: clazz,
@@ -13,5 +14,6 @@ module.exports = {
     role,
     user,
     session,
-    sessionStudent
+    sessionStudent,
+    homework
 };
