@@ -32,5 +32,6 @@ module.exports = {
     homeworkAlreadyComplete: 'The homework was already submitted',
     taskValidationDataNotFound: 'There was a problem fetching the validation data',
     homeworkStudentSectionNotFound: 'The homework-student-section association was not found',
-    invalidSectionPoints: 'The amount of points assigned exceeds the one specified in its section'
+    invalidSectionPoints: 'The amount of points assigned exceeds the one specified in its section',
+    homeworkSectionMisjudgement: 'Your homework has sections, so direct grades are not allowed'
 };

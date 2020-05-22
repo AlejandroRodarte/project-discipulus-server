@@ -4,6 +4,7 @@ const moment = require('moment');
 const { db } = require('../../../shared');
 const { models, errors } = require('../../../util');
 
+const { homeworkStudentPipelines } = require('../../aggregation');
 const homeworkStudentDefinition = require('./definition');
 const applyDeletionRules = require('../../apply-deletion-rules');
 
@@ -33,6 +34,22 @@ homeworkStudentSchema.virtual('sections', {
     foreignField: 'homeworkStudent'
 });
 
+homeworkStudentSchema.pre('save', async function() {
+
+    const homeworkStudent = this;
+
+    if (homeworkStudent.isModified('directGrade')) {
+
+        const type = await homeworkStudent.getHomeworkType();
+
+        if (type === models.class.gradeType.SECTIONS) {
+            throw new Error(errors.modelErrorMessages.homeworkSectionMisjudgement);
+        }
+
+    }
+
+});
+
 homeworkStudentSchema.pre('remove', async function() {
 
     const homeworkStudent = this;
@@ -44,6 +61,23 @@ homeworkStudentSchema.pre('remove', async function() {
     }
 
 });
+
+homeworkStudentSchema.methods.getHomeworkType = async function() {
+
+    const homeworkStudent = this;
+    const HomeworkStudent = homeworkStudent.constructor;
+
+    const docs = await HomeworkStudent.aggregate(homeworkStudentPipelines.getHomeworkType(homeworkStudent._id));
+
+    if (!docs.length) {
+        throw new Error(errors.modelErrorMessages.homeworkStudentNotFound);
+    }
+
+    const [data] = docs;
+
+    return data.type;
+
+};
 
 homeworkStudentSchema.methods.checkAndSave = models.common.generateClassStudentChildCheckAndSave({
     foreignModel: {
