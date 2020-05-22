@@ -24,12 +24,7 @@ homeworkStudentFileSchema.methods.getTaskValidationData = models.common.generate
         collectionName: db.names.homeworkStudent.collectionName,
         ref: 'homeworkStudent'
     },
-    grandChildOne: {
-        collectionName: db.names.classStudent.collectionName,
-        ref: 'classStudent',
-        forcedFlagRef: 'forceHomeworkUpload'
-    },
-    grandChildTwo: {
+    grandChild: {
         collectionName: db.names.homework.collectionName,
         ref: 'homework'
     }

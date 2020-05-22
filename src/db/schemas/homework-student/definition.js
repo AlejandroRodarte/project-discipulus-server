@@ -60,6 +60,11 @@ const homeworkStudentDefinition = {
         }
     },
 
+    forced: {
+        type: Boolean,
+        default: false
+    },
+
     published: {
         type: Boolean,
         default: false

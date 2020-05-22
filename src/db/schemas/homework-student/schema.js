@@ -121,7 +121,7 @@ homeworkStudentSchema.methods.checkAndSave = models.common.generateClassStudentC
         ref: 'homework',
         notFoundErrorMessage: errors.modelErrorMessages.homeworkNotFound
     },
-    validate: async (classStudent, homework) => {
+    validate: async (classStudent, homework, homeworkStudent) => {
 
         const isStudentEnabled = await classStudent.isStudentEnabled();
 
@@ -129,7 +129,7 @@ homeworkStudentSchema.methods.checkAndSave = models.common.generateClassStudentC
             throw new Error(errors.modelErrorMessages.userDisabled);
         }
 
-        if (!classStudent.forceHomeworkUpload && (homework.timeRange && homework.timeRange.end && moment().utc().unix() > homework.timeRange.end)) {
+        if (!homeworkStudent.forced && (homework.timeRange && homework.timeRange.end && moment().utc().unix() > homework.timeRange.end)) {
             throw new Error(errors.modelErrorMessages.homeworkExpired);
         }
 

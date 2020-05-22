@@ -150,6 +150,14 @@ describe('[db/models/homework-student] - valid teacher comments', () => {
 
 });
 
+describe('[db/models/homework-student] - default forced flag', () => {
+
+    it('Should default forced flag to false', () => {
+        expect(homeworkStudent.forced).to.equal(false);
+    });
+
+});
+
 describe('[db/models/homework-student] - default published flag', () => {
 
     it('Should default published flag to false', () => {

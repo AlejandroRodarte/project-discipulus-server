@@ -91,22 +91,6 @@ describe('[db/models/class-student] - Default archive', () => {
 
 });
 
-describe('[db/models/class-student] - Default forceHomeworkUpload', () => {
-
-    it('Should default forceHomeworkUpload flag to false', () => {
-        expect(classStudent.forceHomeworkUpload).to.equal(false);
-    });
-
-});
-
-describe('[db/models/class-student] - Default forceExamUpload', () => {
-
-    it('Should default forceExamUpload flag to false', () => {
-        expect(classStudent.forceExamUpload).to.equal(false);
-    });
-
-});
-
 describe('[db/models/class-student] - Valid model', () => {
 
     it('Should validate correct class-student model', () => {

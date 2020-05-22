@@ -1,4 +1,4 @@
-const getTaskValidationData = (_id, { child, grandChildOne, grandChildTwo }) => [
+const getTaskValidationData = (_id, { child, grandChild }) => [
     {
         $match: { _id }
     },
@@ -21,9 +21,9 @@ const getTaskValidationData = (_id, { child, grandChildOne, grandChildTwo }) => 
                 },
                 {
                     $lookup: {
-                        from: grandChildOne.collectionName,
+                        from: grandChild.collectionName,
                         let: {
-                            grandChildOneId: `$${ grandChildOne.ref }`
+                            grandChildId: `$${ grandChild.ref }`
                         },
                         pipeline: [
                             {
@@ -31,41 +31,17 @@ const getTaskValidationData = (_id, { child, grandChildOne, grandChildTwo }) => 
                                     $expr: {
                                         $eq: [
                                             '$_id',
-                                            '$$grandChildOneId'
+                                            '$$grandChildId'
                                         ]
                                     }
                                 }
                             }
                         ],
-                        as: grandChildOne.ref
+                        as: grandChild.ref
                     }
                 },
                 {
-                    $unwind: `$${ grandChildOne.ref }`
-                },
-                {
-                    $lookup: {
-                        from: grandChildTwo.collectionName,
-                        let: {
-                            grandChildTwoId: `$${ grandChildTwo.ref }`
-                        },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $eq: [
-                                            '$_id',
-                                            '$$grandChildTwoId'
-                                        ]
-                                    }
-                                }
-                            }
-                        ],
-                        as: grandChildTwo.ref
-                    }
-                },
-                {
-                    $unwind: `$${ grandChildTwo.ref }`
+                    $unwind: `$${ grandChild.ref }`
                 }
             ],
             as: child.ref
@@ -77,9 +53,9 @@ const getTaskValidationData = (_id, { child, grandChildOne, grandChildTwo }) => 
     {
         $project: {
             completed: `$${ child.ref }.completed`,
-            forced: `$${ child.ref }.${ grandChildOne.ref }.${ grandChildOne.forcedFlagRef }`,
+            forced: `$${ child.ref }.forced`,
             end: {
-                $ifNull: [ `$${ child.ref }.${ grandChildTwo.ref }.timeRange.end`, undefined ]
+                $ifNull: [ `$${ child.ref }.${ grandChild.ref }.timeRange.end`, undefined ]
             }
         }
     }

@@ -91,7 +91,7 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
         await expect(checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(validateFake, classStudent, session);
+        sinon.assert.calledOnceWithExactly(validateFake, classStudent, session, sessionStudent);
 
     });
 

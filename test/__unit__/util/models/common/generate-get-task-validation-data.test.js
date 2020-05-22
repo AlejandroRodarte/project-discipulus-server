@@ -19,12 +19,7 @@ const args = {
         collectionName: shared.db.names.homeworkStudent.collectionName,
         ref: 'homeworkStudent'
     },
-    grandChildOne: {
-        collectionName: shared.db.names.classStudent.collectionName,
-        ref: 'classStudent',
-        forcedFlagRef: 'forceHomeworkUpload'
-    },
-    grandChildTwo: {
+    grandChild: {
         collectionName: shared.db.names.homework.collectionName,
         ref: 'homework'
     }

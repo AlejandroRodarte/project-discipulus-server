@@ -25,7 +25,7 @@ const generateClassStudentChildCheckAndSave = ({ foreignModel, validate }) => as
     }
 
     try {
-        await validate(classStudent, foreignDoc);
+        await validate(classStudent, foreignDoc, doc);
         await doc.save();
     } catch (e) {
         throw e;
