@@ -14,6 +14,22 @@ const homeworkStudentNoteSchema = new Schema(homeworkStudentNoteDefinition, sche
 
 homeworkStudentNoteSchema.index({ homeworkStudent: 1, 'note.title': 1 }, { unique: true });
 
+homeworkStudentNoteSchema.methods.getTaskValidationData = models.common.generateGetTaskValidationData({
+    child: {
+        collectionName: db.names.homeworkStudent.collectionName,
+        ref: 'homeworkStudent'
+    },
+    grandChildOne: {
+        collectionName: db.names.classStudent.collectionName,
+        ref: 'classStudent',
+        forcedFlagRef: 'forceHomeworkUpload'
+    },
+    grandChildTwo: {
+        collectionName: db.names.homework.collectionName,
+        ref: 'homework'
+    }
+});
+
 homeworkStudentNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateTaskValidator({
     alreadyCompleteErrorMessage: errors.modelErrorMessages.homeworkAlreadyComplete,
     expiredErrorMessage: errors.modelErrorMessages.homeworkExpired

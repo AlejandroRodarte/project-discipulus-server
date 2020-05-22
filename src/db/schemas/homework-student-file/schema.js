@@ -13,7 +13,7 @@ const schemaOpts = {
 
 const homeworkStudentFileSchema = new Schema(homeworkStudentFileDefinition, schemaOpts);
 
-homeworkStudentFileSchema.index({ sessionStudent: 1, 'file.originalname': 1 }, { unique: true });
+homeworkStudentFileSchema.index({ homeworkStudent: 1, 'file.originalname': 1 }, { unique: true });
 
 homeworkStudentFileSchema.pre('remove', models.common.generateFilePreRemove({
     modelName: db.names.homeworkStudentFile.modelName
