@@ -30,12 +30,22 @@ homeworkStudentSchema.virtual('grade').get(async function() {
     }
 
     switch (homework.type) {
+        
         case models.class.gradeType.NO_SECTIONS:
             return homeworkStudent.directGrade;
+
         case models.class.gradeType.SECTIONS:
-            return homeworkStudent.directGrade; // TODO: must return ponderated grade
+
+            try {
+                const data = await homeworkStudent.getSectionedGrades();
+                return (data.homework.grade) * (data.student.points / data.homework.points);
+            } catch (e) {
+                return undefined;
+            }
+
         default:
             break;
+            
     }
 
 });
@@ -85,6 +95,26 @@ homeworkStudentSchema.pre('remove', async function() {
     }
 
 });
+
+homeworkStudentSchema.methods.getSectionedGrades = async function() {
+
+    const homeworkStudent = this;
+    const HomeworkStudent = homeworkStudent.constructor;
+
+    const docs = await HomeworkStudent.aggregate(homeworkStudentPipelines.getSectionedGrades(homeworkStudent._id));
+
+    if (!docs.length) {
+        throw new Error(errors.modelErrorMessages.noGradesAvailable);
+    }
+
+    const [data] = docs;
+
+    return {
+        homework: data.homework,
+        student: data.student
+    };
+
+};
 
 homeworkStudentSchema.methods.checkAndSave = models.common.generateClassStudentChildCheckAndSave({
     foreignModel: {
