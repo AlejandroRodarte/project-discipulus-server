@@ -38,6 +38,28 @@ homeworkSchema.virtual('students', {
     foreignField: 'homework'
 });
 
+homeworkSchema.pre('save', async function() {
+
+    const homework = this;
+
+    if (
+        homework.isModified('type') && 
+        (
+            homework._previousType === models.class.gradeType.NO_SECTIONS && 
+            homework.type === models.class.gradeType.NO_SECTIONS
+        )
+    ) {
+
+        try {
+            await applyDeletionRules(homework, models.homework.deletionGradeTypeChangeRules);
+        } catch (e) {
+            throw e;
+        }
+
+    }
+
+});
+
 homeworkSchema.pre('remove', async function() {
 
     const homework = this;
