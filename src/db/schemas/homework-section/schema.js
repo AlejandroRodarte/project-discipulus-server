@@ -13,6 +13,24 @@ const homeworkSectionSchema = new Schema(homeworkSectionDefinition, schemaOpts);
 
 homeworkSectionSchema.index({ homework: 1, title: 1 }, { unique: true });
 
+homeworkSectionSchema.virtual('students', {
+    ref: db.names.homeworkStudentSection,
+    localField: '_id',
+    foreignField: 'homeworkSection'
+});
+
+homeworkSectionSchema.pre('remove', async function() {
+
+    const homeworkSection = this;
+
+    try {
+        applyDeletionRules(homeworkSection, models.homeworkSection.deletionHomeworkSectionRules);
+    } catch (e) {
+        throw e;
+    }
+
+});
+
 homeworkSectionSchema.methods.saveAndAddStudents = models.common.generateSaveAndAddStudents({
     parent: {
         modelName: db.names.homework.modelName,

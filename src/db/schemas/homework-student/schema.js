@@ -15,6 +15,36 @@ const homeworkStudentSchema = new Schema(homeworkStudentDefinition, schemaOpts);
 
 homeworkStudentSchema.index({ classStudent: 1, homework: 1 }, { unique: true });
 
+homeworkStudentSchema.virtual('files', {
+    ref: db.names.homeworkStudentFile.modelName,
+    localField: '_id',
+    foreignField: 'homeworkStudent'
+});
+
+homeworkStudentSchema.virtual('notes', {
+    ref: db.names.homeworkStudentNote.modelName,
+    localField: '_id',
+    foreignField: 'homeworkStudent'
+});
+
+homeworkStudentSchema.virtual('sections', {
+    ref: db.names.homeworkStudentSection.modelName,
+    localField: '_id',
+    foreignField: 'homeworkStudent'
+});
+
+homeworkStudentSchema.pre('remove', async function() {
+
+    const homeworkStudent = this;
+
+    try {
+        applyDeletionRules(homeworkStudent, models.homeworkStudent.deletionHomeworkStudentRules);
+    } catch (e) {
+        throw e;
+    }
+
+});
+
 homeworkStudentSchema.methods.checkAndSave = models.common.generateClassStudentChildCheckAndSave({
     foreignModel: {
         name: db.names.homework.modelName,

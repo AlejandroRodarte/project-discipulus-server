@@ -6,6 +6,8 @@ const user = require('./user');
 const session = require('./session');
 const sessionStudent = require('./session-student');
 const homework = require('./homework');
+const homeworkStudent = require('./homework-student');
+const homeworkSection = require('./homework-section');
 
 module.exports = {
     class: clazz,
@@ -15,5 +17,7 @@ module.exports = {
     user,
     session,
     sessionStudent,
-    homework
+    homework,
+    homeworkStudent,
+    homeworkSection
 };
