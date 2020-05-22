@@ -21,8 +21,13 @@ let session = new db.models.Session(sessionDoc);
 let sessionStudent = new db.models.SessionStudent(sessionStudentDoc);
 
 const checkAndSaveArgs = {
-    foreignModel: {
-        name: shared.db.names.session.modelName,
+    local: {
+        modelName: shared.db.names.classStudent.modelName,
+        ref: 'classStudent',
+        notFoundErrorMessage: util.errors.modelErrorMessages.classStudentNotFound
+    },
+    foreign: {
+        modelName: shared.db.names.session.modelName,
         ref: 'session',
         notFoundErrorMessage: util.errors.modelErrorMessages.sessionNotFound
     }
@@ -34,7 +39,7 @@ beforeEach(() => {
     sessionStudent = fixtures.functions.models.getNewModelInstance(db.models.SessionStudent, sessionStudentDoc);
 });
 
-describe('[util/models/common-generate-class-student-child-check-and-save] - general flow', () => {
+describe('[util/models/common-generate-class-child-check-and-save] - general flow', () => {
 
     let sessionFindOneStub;
     let classStudentFindOneStub;
@@ -46,12 +51,12 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
         sessionFindOneStub = sinon.stub(db.models.Session, 'findOne').resolves(null);
         validateFake = sinon.fake.resolves();
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+        const checkAndSave = util.models.common.generateClassChildCheckAndSave({
             ...checkAndSaveArgs,
             validate: validateFake
         }).bind(sessionStudent);
 
-        await expect(checkAndSave()).to.eventually.be.rejectedWith(Error, checkAndSaveArgs.foreignModel.notFoundErrorMessage);
+        await expect(checkAndSave()).to.eventually.be.rejectedWith(Error, checkAndSaveArgs.foreign.notFoundErrorMessage);
 
         sinon.assert.calledOnceWithExactly(sessionFindOneStub, {
             _id: sessionStudent.session
@@ -59,18 +64,18 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
 
     });
 
-    it('Generated function should throw error if ClassStudent.findOne (called with correct args) resolves null', async () => {
+    it('Generated function should throw error if LocalModel.findOne (called with correct args) resolves null', async () => {
 
         sessionFindOneStub = sinon.stub(db.models.Session, 'findOne').resolves(session);
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(null);
         validateFake = sinon.fake.resolves();
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+        const checkAndSave = util.models.common.generateClassChildCheckAndSave({
             ...checkAndSaveArgs,
             validate: validateFake
         }).bind(sessionStudent);
 
-        await expect(checkAndSave()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classStudentNotFound);
+        await expect(checkAndSave()).to.eventually.be.rejectedWith(Error, checkAndSaveArgs.local.notFoundErrorMessage);
         
         sinon.assert.calledOnceWithExactly(classStudentFindOneStub, {
             _id: sessionStudent.classStudent
@@ -84,7 +89,7 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
         classStudentFindOneStub = sinon.stub(db.models.ClassStudent, 'findOne').resolves(classStudent);
         validateFake = sinon.fake.rejects();
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+        const checkAndSave = util.models.common.generateClassChildCheckAndSave({
             ...checkAndSaveArgs,
             validate: validateFake
         }).bind(sessionStudent);
@@ -102,7 +107,7 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
         validateFake = sinon.fake.resolves();
         sessionStudentSaveStub = sinon.stub(sessionStudent, 'save').rejects();
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+        const checkAndSave = util.models.common.generateClassChildCheckAndSave({
             ...checkAndSaveArgs,
             validate: validateFake
         }).bind(sessionStudent);
@@ -118,7 +123,7 @@ describe('[util/models/common-generate-class-student-child-check-and-save] - gen
         validateFake = sinon.fake.resolves();
         sessionStudentSaveStub = sinon.stub(sessionStudent, 'save').resolves(sessionStudent);
 
-        const checkAndSave = util.models.common.generateClassStudentChildCheckAndSave({
+        const checkAndSave = util.models.common.generateClassChildCheckAndSave({
             ...checkAndSaveArgs,
             validate: validateFake
         }).bind(sessionStudent);

@@ -115,9 +115,14 @@ homeworkStudentSchema.methods.getSectionedGrades = async function() {
 
 };
 
-homeworkStudentSchema.methods.checkAndSave = models.common.generateClassStudentChildCheckAndSave({
-    foreignModel: {
-        name: db.names.homework.modelName,
+homeworkStudentSchema.methods.checkAndSave = models.common.generateClassChildCheckAndSave({
+    local: {
+        modelName: db.names.classStudent.modelName,
+        ref: 'classStudent',
+        notFoundErrorMessage: errors.modelErrorMessages.classStudentNotFound
+    },
+    foreign: {
+        modelName: db.names.homework.modelName,
         ref: 'homework',
         notFoundErrorMessage: errors.modelErrorMessages.homeworkNotFound
     },

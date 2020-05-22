@@ -38,9 +38,14 @@ sessionStudentSchema.pre('remove', async function() {
 
 });
 
-sessionStudentSchema.methods.checkAndSave = models.common.generateClassStudentChildCheckAndSave({
-    foreignModel: {
-        name: db.names.session.modelName,
+sessionStudentSchema.methods.checkAndSave = models.common.generateClassChildCheckAndSave({
+    local: {
+        modelName: db.names.classStudent.modelName,
+        ref: 'classStudent',
+        notFoundErrorMessage: errors.modelErrorMessages.classStudentNotFound
+    },
+    foreign: {
+        modelName: db.names.session.modelName,
         ref: 'session',
         notFoundErrorMessage: errors.modelErrorMessages.sessionNotFound
     },

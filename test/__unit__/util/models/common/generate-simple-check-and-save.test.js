@@ -23,7 +23,7 @@ let userNote = new db.models.UserNote(userNoteDoc);
 
 beforeEach(() => userNote = fixtures.functions.models.getNewModelInstance(db.models.UserNote, userNoteDoc));
 
-describe('[util/models/common/generate-note-check-and-save]', () => {
+describe('[util/models/common/generate-simple-check-and-save]', () => {
 
     let validateFake;
     let userNoteSaveStub;
