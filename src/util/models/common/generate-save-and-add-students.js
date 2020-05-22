@@ -1,17 +1,18 @@
-const generateSaveAndAddStudents = ({ parent, child }) => async function() {
+const generateSaveAndAddStudents = ({ parent, child, validate = () => Promise.resolve() }) => async function() {
 
     const doc = this;
 
     const ParentModel = doc.model(parent.modelName);
     const ChildModel = doc.model(child.modelName);
 
-    const parentModel = await ParentModel.findOne({ _id: doc[parent.ref] });
+    const parentDoc = await ParentModel.findOne({ _id: doc[parent.ref] });
 
-    if (!parentModel) {
+    if (!parentDoc) {
         throw new Error(parent.notFoundErrorMessage);
     }
 
     try {
+        await validate(parentDoc);
         await doc.save();
     } catch (e) {
         throw e;
@@ -19,7 +20,7 @@ const generateSaveAndAddStudents = ({ parent, child }) => async function() {
 
     try {
 
-        const childIds = await parentModel[parent.getIdsMethodName]();
+        const childIds = await parentDoc[parent.getIdsMethodName]();
 
         const childModelDocs = childIds.map(childId => ({
             [child.doc.ref1]: doc._id,

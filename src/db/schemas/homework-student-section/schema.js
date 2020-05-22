@@ -1,3 +1,5 @@
+const { Schema } = require('mongoose');
+
 const { db } = require('../../../shared');
 const { models, errors } = require('../../../util');
 
@@ -7,8 +9,8 @@ const schemaOpts = {
     collection: db.names.homeworkStudentSection.collectionName
 };
 
-const homeworkSectionSchema = new Schema(homeworkStudentSectionDefinition, schemaOpts);
+const homeworkStudentSectionSchema = new Schema(homeworkStudentSectionDefinition, schemaOpts);
 
-homeworkSectionSchema.index({ homeworkStudent: 1, homeworkSection: 1 }, { unique: true });
+homeworkStudentSectionSchema.index({ homeworkStudent: 1, homeworkSection: 1 }, { unique: true });
 
-module.exports = homeworkStudentSectionDefinition;
+module.exports = homeworkStudentSectionSchema;

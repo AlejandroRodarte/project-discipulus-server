@@ -47,6 +47,7 @@ beforeEach(() => {
 describe('[util/models/common/generate-save-and-add-students] - general flow', () => {
 
     let classFindOneStub;
+    let validateFake;
     let sessionSaveStub;
     let classGetEnabledStudentIdsStub;
     let sessionStudentInsertManyStub;
@@ -61,6 +62,22 @@ describe('[util/models/common/generate-save-and-add-students] - general flow', (
         sinon.assert.calledOnceWithExactly(classFindOneStub, {
             _id: session.class
         });
+
+    });
+
+    it('Generated function should throw error if validate callback fails', async () => {
+
+        classFindOneStub = sinon.stub(db.models.Class, 'findOne').resolves(clazz);
+        validateFake = sinon.fake.rejects();
+
+        const saveAndAddStudents = util.models.common.generateSaveAndAddStudents({
+            ...saveAndAddStudentsArgs,
+            validate: validateFake
+        }).bind(session);
+
+        await expect(saveAndAddStudents()).to.eventually.be.rejectedWith(Error);
+
+        sinon.assert.calledOnceWithExactly(validateFake, clazz);
 
     });
 
