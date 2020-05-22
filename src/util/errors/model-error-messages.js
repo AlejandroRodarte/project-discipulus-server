@@ -30,5 +30,7 @@ module.exports = {
     invalidHomeworkType: 'This feature is not allowed on the current homework configuration',
     homeworkStudentNotFound: 'The homework-student association was not found',
     homeworkAlreadyComplete: 'The homework was already submitted',
-    taskValidationDataNotFound: 'There was a problem fetching the validation data'
+    taskValidationDataNotFound: 'There was a problem fetching the validation data',
+    homeworkStudentSectionNotFound: 'The homework-student-section association was not found',
+    invalidSectionPoints: 'The amount of points assigned exceeds the one specified in its section'
 };
