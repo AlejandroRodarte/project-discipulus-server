@@ -6,6 +6,7 @@ const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 
 const db = require('../../../../src/db');
+const shared = require('../../../../src/shared');
 const util = require('../../../../src/util');
 const fixtures = require('../../../__fixtures__');
 
@@ -269,7 +270,7 @@ describe('[db/models/class-student] - methods.isStudentEnabled', () => {
         classStudentAggregateStub = sinon.stub(db.models.ClassStudent, 'aggregate').resolves([]);
         await expect(classStudent.isStudentEnabled()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.classStudentNotFound);
 
-        sinon.assert.calledOnceWithExactly(classStudentAggregateStub, db.aggregation.classStudentPipelines.isStudentEnabled(classStudent._id));
+        sinon.assert.calledOnceWithExactly(classStudentAggregateStub, shared.db.aggregation.classStudentPipelines.isStudentEnabled(classStudent._id));
 
     });
 

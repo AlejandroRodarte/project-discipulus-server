@@ -5,7 +5,6 @@ const { db } = require('../../../shared');
 const { storage } = require('../../../api');
 const { models } = require('../../../util');
 
-const { userRolePipelines } = require('../../aggregation');
 const userDefinition = require('./definition');
 const applyDeletionRules = require('../../apply-deletion-rules');
 
@@ -174,7 +173,7 @@ userSchema.methods.getUserRoles = async function() {
 
     const user = this;
     
-    const pipeline = userRolePipelines.getRolesPipeline(user._id);
+    const pipeline = db.aggregation.userRolePipelines.getRolesPipeline(user._id);
     const docs = await user.model(db.names.userRole.modelName).aggregate(pipeline);
 
     if (!docs.length) {

@@ -1,4 +1,4 @@
-const { db } = require('../../../shared');
+const { homeworkStudentSection, homework, homeworkSection } = require('../../names');
 
 const getSectionedGrades = _id => [
     {
@@ -6,7 +6,7 @@ const getSectionedGrades = _id => [
     },
     {
         $lookup: {
-            from: db.names.homeworkStudentSection.collectionName,
+            from: homeworkStudentSection.collectionName,
             let: {
                 homeworkStudentId: '$_id'
             },
@@ -38,7 +38,7 @@ const getSectionedGrades = _id => [
     },
     {
         $lookup: {
-            from: db.names.homework.collectionName,
+            from: homework.collectionName,
             let: {
                 homeworkId: '$homework'
             },
@@ -55,7 +55,7 @@ const getSectionedGrades = _id => [
                 },
                 {
                     $lookup: {
-                        from: db.names.homeworkSection.collectionName,
+                        from: homeworkSection.collectionName,
                         let: {
                             homeworkId: '$_id'
                         },

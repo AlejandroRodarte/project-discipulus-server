@@ -345,7 +345,7 @@ describe('[db/models/class] - methods.getEnabledStudentIds', () => {
         classStudentAggregateStub = sinon.stub(db.models.ClassStudent, 'aggregate').resolves([]);
         await expect(clazz.getEnabledStudentIds()).to.eventually.be.rejectedWith(Error, util.errors.modelErrorMessages.noClassStudents);
 
-        sinon.assert.calledOnceWithExactly(classStudentAggregateStub, db.aggregation.classStudentPipelines.getEnabledClassStudentIds(clazz._id));
+        sinon.assert.calledOnceWithExactly(classStudentAggregateStub, shared.db.aggregation.classStudentPipelines.getEnabledClassStudentIds(clazz._id));
 
     });
 

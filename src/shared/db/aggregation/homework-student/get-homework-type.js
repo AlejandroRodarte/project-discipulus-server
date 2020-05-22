@@ -1,4 +1,4 @@
-const { db } = require('../../../shared');
+const { homework } = require('../../names');
 
 const getHomeworkType = _id => [
     {
@@ -6,7 +6,7 @@ const getHomeworkType = _id => [
     },
     {
         $lookup: {
-            from: db.names.homework.collectionName,
+            from: homework.collectionName,
             localField: 'homework',
             foreignField: '_id',
             as: 'homework'

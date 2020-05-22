@@ -298,7 +298,7 @@ describe('[db/models/user] - methods.getUserRoles', () => {
         userAggregateStub = sinon.stub(user.model(shared.db.names.userRole.modelName), 'aggregate').resolves([]);
         const roles = await user.getUserRoles();
 
-        const wasCalledProperly = userAggregateStub.calledOnceWith(db.aggregation.userRolePipelines.getRolesPipeline(user._id));
+        const wasCalledProperly = userAggregateStub.calledOnceWith(shared.db.aggregation.userRolePipelines.getRolesPipeline(user._id));
         expect(wasCalledProperly).to.equal(true);
 
         expect(roles.length).to.equal(0);

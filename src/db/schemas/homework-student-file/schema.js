@@ -6,7 +6,6 @@ const { db } = require('../../../shared');
 const { errors, models } = require('../../../util');
 
 const homeworkStudentFileDefinition = require('./definition');
-const { sharedPipelines } = require('../../aggregation');
 
 const schemaOpts = {
     collection: db.names.homeworkStudentFile.collectionName

@@ -4,7 +4,6 @@ const { roles, errors, models } = require('../../../util');
 const { storage } = require('../../../api');
 const { db } = require('../../../shared');
 
-const { classStudentPipelines } = require('../../aggregation');
 const classDefinition = require('./definition');
 const applyDeletionRules = require('../../apply-deletion-rules');
 
@@ -167,7 +166,7 @@ classSchema.methods.getEnabledStudentIds = async function() {
     const clazz = this;
     const ClassStudent = clazz.model(db.names.classStudent.modelName);
 
-    const pipeline = classStudentPipelines.getEnabledClassStudentIds(clazz._id);
+    const pipeline = db.aggregation.classStudentPipelines.getEnabledClassStudentIds(clazz._id);
     const docs = await ClassStudent.aggregate(pipeline);
 
     if (!docs.length) {

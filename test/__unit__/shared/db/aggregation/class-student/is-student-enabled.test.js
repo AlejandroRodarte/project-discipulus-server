@@ -1,7 +1,7 @@
 const { Types } = require('mongoose');
 const expect = require('chai').expect;
 
-const { aggregation } = require('../../../../../src/db');
+const { aggregation } = require('../../../../../../src/shared/db');
 
 describe('[db/aggregation/class-student] - isStudentEnabled', () => {
 

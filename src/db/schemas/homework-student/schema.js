@@ -4,7 +4,6 @@ const moment = require('moment');
 const { db } = require('../../../shared');
 const { models, errors } = require('../../../util');
 
-const { homeworkStudentPipelines } = require('../../aggregation');
 const homeworkStudentDefinition = require('./definition');
 const applyDeletionRules = require('../../apply-deletion-rules');
 
@@ -101,7 +100,7 @@ homeworkStudentSchema.methods.getSectionedGrades = async function() {
     const homeworkStudent = this;
     const HomeworkStudent = homeworkStudent.constructor;
 
-    const docs = await HomeworkStudent.aggregate(homeworkStudentPipelines.getSectionedGrades(homeworkStudent._id));
+    const docs = await HomeworkStudent.aggregate(db.aggregation.homeworkStudentPipelines.getSectionedGrades(homeworkStudent._id));
 
     if (!docs.length) {
         throw new Error(errors.modelErrorMessages.noGradesAvailable);

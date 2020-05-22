@@ -1,4 +1,4 @@
-const { aggregation } = require('../../../db');
+const { db } = require('../../../shared');
 const { modelErrorMessages } = require('../../errors');
 
 const generateGetTaskValidationData = (pipelineObj) => async function() {
@@ -6,7 +6,7 @@ const generateGetTaskValidationData = (pipelineObj) => async function() {
     const doc = this;
     const Model = doc.constructor;
 
-    const docs = await Model.aggregate(aggregation.sharedPipelines.getTaskValidationData(pipelineObj));
+    const docs = await Model.aggregate(db.aggregation.sharedPipelines.getTaskValidationData(pipelineObj));
 
     if (!docs.length) {
         throw new Error(modelErrorMessages.taskValidationDataNotFound);

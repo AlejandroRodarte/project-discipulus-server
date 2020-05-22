@@ -3,7 +3,6 @@ const { Schema } = require('mongoose');
 const { db } = require('../../../shared');
 const { models, errors } = require('../../../util');
 
-const { homeworkStudentSectionPipelines } = require('../../aggregation');
 const homeworkStudentSectionDefinition = require('./definition');
 
 const schemaOpts = {

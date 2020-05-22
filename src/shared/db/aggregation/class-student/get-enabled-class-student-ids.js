@@ -1,4 +1,4 @@
-const { db } = require('../../../shared');
+const { user } = require('../../names');
 
 const getEnabledClassStudentIds = (classId) => [
     {
@@ -8,7 +8,7 @@ const getEnabledClassStudentIds = (classId) => [
     },
     {
         $lookup: {
-            from: db.names.user.collectionName,
+            from: user.collectionName,
             localField: 'user',
             foreignField: '_id',
             as: 'user'

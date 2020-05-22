@@ -1,4 +1,4 @@
-const { db } = require('../../../shared');
+const { homeworkSection } = require('../../names');
 
 const getSectionPoints = _id => [
     {
@@ -6,7 +6,7 @@ const getSectionPoints = _id => [
     },
     {
         $lookup: {
-            from: db.names.homeworkSection.collectionName,
+            from: homeworkSection.collectionName,
             localField: 'homeworkSection',
             foreignField: '_id',
             as: 'homeworkSection'
