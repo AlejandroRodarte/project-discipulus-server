@@ -17,14 +17,21 @@ homeworkStudentSectionSchema.index({ homeworkStudent: 1, homeworkSection: 1 }, {
 homeworkStudentSectionSchema.pre('save', async function() {
 
     const homeworkStudentSection = this;
+    const HomeworkSection = homeworkStudentSection.model(db.names.homeworkSection.modelName);
 
     if (homeworkStudentSection.isModified('points')) {
 
         try {
 
-            const sectionPoints = await homeworkStudentSection.getSectionPoints();
+            const homeworkSection = await HomeworkSection.findOne({
+                _id: homeworkStudentSection.homeworkSection
+            });
+
+            if (!homeworkSection) {
+                throw new Error(errors.modelErrorMessages.homeworkStudentNotFound);
+            }
             
-            if (sectionPoints < homeworkStudentSection.points) {
+            if (homeworkSection.points < homeworkStudentSection.points) {
                 throw new Error(errors.modelErrorMessages.invalidSectionPoints);
             }
 
@@ -35,23 +42,6 @@ homeworkStudentSectionSchema.pre('save', async function() {
     }
 
 });
-
-homeworkStudentSectionSchema.methods.getSectionPoints = async function() {
-
-    const homeworkStudentSection = this;
-    const HomeworkStudentSection = homeworkStudentSection.constructor;
-
-    const docs = await HomeworkStudentSection.aggregate(homeworkStudentSectionPipelines.getSectionPoints(homeworkStudentSection._id));
-
-    if (!docs.length) {
-        throw new Error(errors.modelErrorMessages.homeworkStudentSectionNotFound);
-    }
-
-    const [data] = docs;
-
-    return data.points;
-
-};
 
 homeworkStudentSectionSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateJointExistsValidator({
     left: {

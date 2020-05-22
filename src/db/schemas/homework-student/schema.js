@@ -19,10 +19,17 @@ homeworkStudentSchema.index({ classStudent: 1, homework: 1 }, { unique: true });
 homeworkStudentSchema.virtual('grade').get(async function() {
 
     const homeworkStudent = this;
+    const Homework = homeworkStudent.model(db.names.homework.modelName);
 
-    const type = await homeworkStudent.getHomeworkType();
+    const homework = await Homework.findOne({
+        _id: homeworkStudent.homework
+    });
 
-    switch (type) {
+    if (!homework) {
+        throw new Error(errors.modelErrorMessages.homeworkNotFound);
+    }
+
+    switch (homework.type) {
         case models.class.gradeType.NO_SECTIONS:
             return homeworkStudent.directGrade;
         case models.class.gradeType.SECTIONS:
@@ -78,23 +85,6 @@ homeworkStudentSchema.pre('remove', async function() {
     }
 
 });
-
-homeworkStudentSchema.methods.getHomeworkType = async function() {
-
-    const homeworkStudent = this;
-    const HomeworkStudent = homeworkStudent.constructor;
-
-    const docs = await HomeworkStudent.aggregate(homeworkStudentPipelines.getHomeworkType(homeworkStudent._id));
-
-    if (!docs.length) {
-        throw new Error(errors.modelErrorMessages.homeworkStudentNotFound);
-    }
-
-    const [data] = docs;
-
-    return data.type;
-
-};
 
 homeworkStudentSchema.methods.checkAndSave = models.common.generateClassStudentChildCheckAndSave({
     foreignModel: {
