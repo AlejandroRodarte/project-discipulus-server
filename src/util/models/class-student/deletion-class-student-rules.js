@@ -20,6 +20,12 @@ const deletionClassStudentRules = [
         fieldName: 'classStudent',
         deleteFiles: false,
         deleteMode: deleteModes.REMOVE
+    },
+    {
+        modelName: db.names.homeworkStudent.modelName,
+        fieldName: 'classStudent',
+        deleteFiles: false,
+        deleteMode: deleteModes.REMOVE
     }
 ];
 

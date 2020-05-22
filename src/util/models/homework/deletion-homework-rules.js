@@ -20,6 +20,12 @@ const deletionSessionRules = [
         fieldName: 'homework',
         deleteFiles: false,
         deleteMode: deleteModes.DELETE_MANY
+    },
+    {
+        modelName: db.names.homeworkStudent.modelName,
+        fieldName: 'homework',
+        deleteFiles: false,
+        deleteMode: deleteModes.REMOVE
     }
 ];
 
