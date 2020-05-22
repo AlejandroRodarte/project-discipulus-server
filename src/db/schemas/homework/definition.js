@@ -49,6 +49,10 @@ const homeworkDefinition = {
         enum: {
             values: [models.class.gradeType.SECTIONS, models.class.gradeType.NO_SECTIONS],
             message: 'Provide a valid homework type'
+        },
+        set: function(type) {
+            this._previousType = this.type;
+            return type;
         }
     },
 
