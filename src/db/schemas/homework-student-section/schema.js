@@ -13,4 +13,17 @@ const homeworkStudentSectionSchema = new Schema(homeworkStudentSectionDefinition
 
 homeworkStudentSectionSchema.index({ homeworkStudent: 1, homeworkSection: 1 }, { unique: true });
 
+homeworkStudentSectionSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateJointExistsValidator({
+    left: {
+        modelName: db.names.homeworkStudent.modelName,
+        ref: 'homeworkStudent',
+        extraCond: {}
+    },
+    right: {
+        modelName: db.names.homeworkSection.modelName,
+        ref: 'homeworkSection',
+        extraCond: {}
+    }
+}));
+
 module.exports = homeworkStudentSectionSchema;

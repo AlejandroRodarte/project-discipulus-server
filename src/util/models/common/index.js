@@ -7,6 +7,7 @@ const generateSaveAndAddStudents = require('./generate-save-and-add-students');
 const generateClassStudentChildCheckAndSave = require('./generate-class-student-child-check-and-save');
 const generateDueDateUploadValidator = require('./generate-due-date-upload-validator');
 const generateTaskValidator = require('./generate-task-validator');
+const generateJointExistsValidator = require('./generate-joint-exists-validator');
 const userExistsValidator = require('./user-exists-validator');
 
 module.exports = {
@@ -19,5 +20,6 @@ module.exports = {
     generateClassStudentChildCheckAndSave,
     generateDueDateUploadValidator,
     generateTaskValidator,
+    generateJointExistsValidator,
     userExistsValidator
 };
