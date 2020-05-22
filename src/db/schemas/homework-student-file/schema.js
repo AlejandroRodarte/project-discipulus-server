@@ -20,36 +20,21 @@ homeworkStudentFileSchema.pre('remove', models.common.generateFilePreRemove({
     modelName: db.names.homeworkStudentFile.modelName
 }));
 
-homeworkStudentFileSchema.methods.getTaskValidationData = async function() {
-
-    const homeworkStudentFile = this;
-    const HomeworkStudentFile = homeworkStudentFile.constructor;
-
-    const docs = await HomeworkStudentFile.aggregate(sharedPipelines.getTaskValidationData({
-        child: {
-            collectionName: db.names.homeworkStudent.collectionName,
-            ref: 'homeworkStudent'
-        },
-        grandChildOne: {
-            collectionName: db.names.classStudent.collectionName,
-            ref: 'classStudent',
-            forcedFlagRef: 'forceHomeworkUpload'
-        },
-        grandChildTwo: {
-            collectionName: db.names.homework.collectionName,
-            ref: 'homework'
-        }
-    }));
-
-    if (!docs.length) {
-        throw new Error(errors.modelErrorMessages.taskValidationDataNotFound);
+homeworkStudentFileSchema.methods.getTaskValidationData = models.common.generateGetTaskValidationData({
+    child: {
+        collectionName: db.names.homeworkStudent.collectionName,
+        ref: 'homeworkStudent'
+    },
+    grandChildOne: {
+        collectionName: db.names.classStudent.collectionName,
+        ref: 'classStudent',
+        forcedFlagRef: 'forceHomeworkUpload'
+    },
+    grandChildTwo: {
+        collectionName: db.names.homework.collectionName,
+        ref: 'homework'
     }
-
-    const [validationData] = docs;
-
-    return validationData;
-
-};
+});
 
 homeworkStudentFileSchema.methods.saveFileAndDoc = models.common.generateSaveFileAndDoc({
 
