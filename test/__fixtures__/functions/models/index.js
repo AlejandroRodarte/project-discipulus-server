@@ -12,6 +12,7 @@ const generateFakeNote = require('./generate-fake-note');
 const generateFakeImageFile = require('./generate-fake-image-file');
 const generateFakeSession = require('./generate-fake-session');
 const generateFakeHomework = require('./generate-fake-homework');
+const generateFakeHomeworkSection = require('./generate-fake-homework-section');
 const setup = require('./setup');
 
 module.exports = {
@@ -29,5 +30,6 @@ module.exports = {
     generateFakeImageFile,
     generateFakeSession,
     generateFakeHomework,
+    generateFakeHomeworkSection,
     setup
 };
