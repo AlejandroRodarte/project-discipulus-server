@@ -14,7 +14,7 @@ const homeworkStudentNoteSchema = new Schema(homeworkStudentNoteDefinition, sche
 
 homeworkStudentNoteSchema.index({ homeworkStudent: 1, 'note.title': 1 }, { unique: true });
 
-homeworkStudentNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateTaskValidator({
+homeworkStudentNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateTaskValidator({
     alreadyCompleteErrorMessage: errors.modelErrorMessages.homeworkAlreadyComplete,
     expiredErrorMessage: errors.modelErrorMessages.homeworkExpired
 }));

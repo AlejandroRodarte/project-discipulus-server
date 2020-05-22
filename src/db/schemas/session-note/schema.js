@@ -14,7 +14,7 @@ const sessionNoteSchema = new Schema(sessionNoteDefinition, schemaOpts);
 
 sessionNoteSchema.index({ session: 1, 'note.title': 1 }, { unique: true });
 
-sessionNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateParentDocExistsValidator({
+sessionNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateParentDocExistsValidator({
     parentModelName: db.names.session.modelName,
     ref: 'session',
     notFoundErrorMessage: errors.modelErrorMessages.sessionNotFound

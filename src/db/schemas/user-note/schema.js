@@ -13,6 +13,6 @@ const userNoteSchema = new Schema(userNoteDefinition, schemaOpts);
 
 userNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-userNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.userExistsValidator);
+userNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.userExistsValidator);
 
 module.exports = userNoteSchema;

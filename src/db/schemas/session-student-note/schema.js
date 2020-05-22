@@ -14,7 +14,7 @@ const sessionStudentNoteSchema = new Schema(sessionStudentNoteDefinition, schema
 
 sessionStudentNoteSchema.index({ sessionStudent: 1, 'note.title': 1 }, { unique: true });
 
-sessionStudentNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateParentDocExistsValidator({
+sessionStudentNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateParentDocExistsValidator({
     parentModelName: db.names.sessionStudent.modelName,
     ref: 'sessionStudent',
     notFoundErrorMessage: errors.modelErrorMessages.sessionStudentNotFound

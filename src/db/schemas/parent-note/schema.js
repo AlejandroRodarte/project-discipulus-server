@@ -13,6 +13,6 @@ const parentNoteSchema = new Schema(parentNoteDefinition, schemaOpts);
 
 parentNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-parentNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateUserAndRoleValidator(roles.ROLE_PARENT));
+parentNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateUserAndRoleValidator(roles.ROLE_PARENT));
 
 module.exports = parentNoteSchema;

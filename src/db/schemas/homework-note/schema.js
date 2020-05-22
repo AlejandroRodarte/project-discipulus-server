@@ -14,7 +14,7 @@ const sessionNoteSchema = new Schema(homeworkNoteDefinition, schemaOpts);
 
 sessionNoteSchema.index({ homework: 1, 'note.title': 1 }, { unique: true });
 
-sessionNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateParentDocExistsValidator({
+sessionNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateParentDocExistsValidator({
     parentModelName: db.names.homework.modelName,
     ref: 'homework',
     notFoundErrorMessage: errors.modelErrorMessages.homeworkNotFound

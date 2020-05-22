@@ -13,6 +13,6 @@ const studentNoteSchema = new Schema(studentNoteDefinition, schemaOpts);
 
 studentNoteSchema.index({ user: 1, 'note.title': 1 }, { unique: true });
 
-studentNoteSchema.methods.checkAndSave = models.common.generateNoteCheckAndSave(models.common.generateUserAndRoleValidator(roles.ROLE_STUDENT));
+studentNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateUserAndRoleValidator(roles.ROLE_STUDENT));
 
 module.exports = studentNoteSchema;

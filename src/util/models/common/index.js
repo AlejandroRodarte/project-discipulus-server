@@ -2,7 +2,7 @@ const generateFilePreRemove = require('./generate-file-pre-remove');
 const generateSaveFileAndDoc = require('./generate-save-file-and-doc');
 const generateUserAndRoleValidator = require('./generate-user-and-role-validator');
 const generateParentDocExistsValidator = require('./generate-parent-doc-exists-validator');
-const generateNoteCheckAndSave = require('./generate-note-check-and-save');
+const generateSimpleCheckAndSave = require('./generate-simple-check-and-save');
 const generateSaveAndAddStudents = require('./generate-save-and-add-students');
 const generateClassStudentChildCheckAndSave = require('./generate-class-student-child-check-and-save');
 const generateDueDateUploadValidator = require('./generate-due-date-upload-validator');
@@ -14,7 +14,7 @@ module.exports = {
     generateSaveFileAndDoc,
     generateUserAndRoleValidator,
     generateParentDocExistsValidator,
-    generateNoteCheckAndSave,
+    generateSimpleCheckAndSave,
     generateSaveAndAddStudents,
     generateClassStudentChildCheckAndSave,
     generateDueDateUploadValidator,
