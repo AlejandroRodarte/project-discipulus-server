@@ -158,6 +158,10 @@ homeworkStudentSchema.methods.checkAndSave = models.common.generateClassChildChe
             throw new Error(errors.modelErrorMessages.userDisabled);
         }
 
+        if (!homework.published) {
+            throw new Error(errors.modelErrorMessages.homeworkNotPublished);
+        }
+
         if (!homeworkStudent.forced && (homework.timeRange && homework.timeRange.end && moment().utc().unix() > homework.timeRange.end)) {
             throw new Error(errors.modelErrorMessages.homeworkExpired);
         }

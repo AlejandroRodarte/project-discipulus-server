@@ -56,7 +56,8 @@ const getTaskValidationData = (_id, { child, grandChild }) => [
             forced: `$${ child.ref }.forced`,
             end: {
                 $ifNull: [ `$${ child.ref }.${ grandChild.ref }.timeRange.end`, undefined ]
-            }
+            },
+            published: `$${ child.ref }.${ grandChild.ref }.published`
         }
     }
 ];

@@ -27,7 +27,8 @@ homeworkStudentNoteSchema.methods.getTaskValidationData = models.common.generate
 
 homeworkStudentNoteSchema.methods.checkAndSave = models.common.generateSimpleCheckAndSave(models.common.generateTaskValidator({
     alreadyCompleteErrorMessage: errors.modelErrorMessages.homeworkAlreadyComplete,
-    expiredErrorMessage: errors.modelErrorMessages.homeworkExpired
+    expiredErrorMessage: errors.modelErrorMessages.homeworkExpired,
+    notAvailableErrorMessage: errors.modelErrorMessages.homeworkNotPublished
 }));
 
 module.exports = homeworkStudentNoteSchema;

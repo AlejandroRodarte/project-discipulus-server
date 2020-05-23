@@ -36,7 +36,8 @@ homeworkStudentFileSchema.methods.saveFileAndDoc = models.common.generateSaveFil
     
     validate: models.common.generateTaskValidator({
         alreadyCompleteErrorMessage: errors.modelErrorMessages.homeworkAlreadyComplete,
-        expiredErrorMessage: errors.modelErrorMessages.homeworkExpired
+        expiredErrorMessage: errors.modelErrorMessages.homeworkExpired,
+        notAvailableErrorMessage: errors.modelErrorMessages.homeworkNotPublished
     })
 
 });

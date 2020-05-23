@@ -44,6 +44,7 @@ describe('[shared/db/aggregation/shared] - getTaskValidationData', () => {
         expect(fourthStage.$project.completed).to.equal(`$${ args.child.ref }.completed`)
         expect(fourthStage.$project.forced).to.equal(`$${ args.child.ref }.forced`)
         expect(fourthStage.$project.end.$ifNull).to.eql([ `$${ args.child.ref }.${ args.grandChild.ref }.timeRange.end`, undefined ]);
+        expect(fourthStage.$project.published).to.equal(`$${ args.child.ref }.${ args.grandChild.ref }.published`)
 
     });
 
