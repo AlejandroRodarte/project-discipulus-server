@@ -15,40 +15,6 @@ const homeworkStudentSchema = new Schema(homeworkStudentDefinition, schemaOpts);
 
 homeworkStudentSchema.index({ classStudent: 1, homework: 1 }, { unique: true });
 
-homeworkStudentSchema.virtual('grade').get(async function() {
-
-    const homeworkStudent = this;
-    const Homework = homeworkStudent.model(db.names.homework.modelName);
-
-    const homework = await Homework.findOne({
-        _id: homeworkStudent.homework
-    });
-
-    if (!homework) {
-        throw new Error(errors.modelErrorMessages.homeworkNotFound);
-    }
-
-    switch (homework.type) {
-        
-        case models.class.gradeType.NO_SECTIONS:
-            return homeworkStudent.directGrade;
-
-        case models.class.gradeType.SECTIONS:
-
-            try {
-                const data = await homeworkStudent.getSectionedGrades();
-                return (data.homework.grade) * (data.student.points / data.homework.points);
-            } catch (e) {
-                return undefined;
-            }
-
-        default:
-            break;
-            
-    }
-
-});
-
 homeworkStudentSchema.virtual('files', {
     ref: db.names.homeworkStudentFile.modelName,
     localField: '_id',
@@ -94,6 +60,64 @@ homeworkStudentSchema.pre('remove', async function() {
     }
 
 });
+
+homeworkStudentSchema.methods.toJSONAsync = async function() {
+
+    const homeworkStudent = this;
+    const homeworkStudentObject = homeworkStudent.toObject();
+
+    delete homeworkStudentObject.directGrade;
+
+    try {
+
+        const grade = await homeworkStudent.getGrade();
+
+        if (grade) {
+            homeworkStudentObject.grade = grade;
+        }
+
+    } catch (e) { }
+
+    return homeworkStudentObject;
+
+};
+
+homeworkStudentSchema.methods.getGrade = async function() {
+
+    const homeworkStudent = this;
+
+    if (!homeworkStudent.published) return undefined;
+
+    const Homework = homeworkStudent.model(db.names.homework.modelName);
+
+    const homework = await Homework.findOne({
+        _id: homeworkStudent.homework
+    });
+
+    if (!homework) {
+        throw new Error(errors.modelErrorMessages.homeworkNotFound);
+    }
+
+    switch (homework.type) {
+        
+        case models.class.gradeType.NO_SECTIONS:
+            return homeworkStudent.directGrade;
+
+        case models.class.gradeType.SECTIONS:
+
+            try {
+                const data = await homeworkStudent.getSectionedGrades();
+                return (data.homework.grade) * (data.student.points / data.homework.points);
+            } catch (e) {
+                return undefined;
+            }
+
+        default:
+            return undefined;
+            
+    }
+
+};
 
 homeworkStudentSchema.methods.getSectionedGrades = async function() {
 
