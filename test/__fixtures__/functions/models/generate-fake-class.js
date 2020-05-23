@@ -5,12 +5,14 @@ const generateFakeClass = ({
     titleWords = 5,
     descriptionWords = 10,
     noAvatar = false,
-    timeRanges = [[0, 10]]
+    timeRanges = [[0, 10]],
+    grades = undefined
 } = {}) => ({
     title: lorem.generateWords(titleWords),
     description: lorem.generateWords(descriptionWords),
     avatar: noAvatar ? undefined : generateFakeImageFile(),
-    timeRanges: timeRanges.map(([start, end]) => ({ start, end }))
+    timeRanges: timeRanges.map(([start, end]) => ({ start, end })),
+    grades
 });
 
 module.exports = generateFakeClass;
