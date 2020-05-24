@@ -39,9 +39,17 @@ homeworkStudentSchema.pre('save', async function() {
 
     if (homeworkStudent.isModified('directGrade')) {
 
-        const type = await homeworkStudent.getHomeworkType();
+        const Homework = homeworkStudent.model(db.names.homework.modelName);
 
-        if (type === models.class.gradeType.SECTIONS) {
+        const homework = await Homework.findOne({
+            _id: homeworkStudent.homework
+        });
+
+        if (!homework) {
+            throw new Error(errors.modelErrorMessages.homeworkNotFound);
+        }
+
+        if (homework.type === models.class.gradeType.SECTIONS) {
             throw new Error(errors.modelErrorMessages.homeworkSectionMisjudgement);
         }
 
