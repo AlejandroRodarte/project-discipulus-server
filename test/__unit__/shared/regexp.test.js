@@ -1,8 +1,8 @@
 const expect = require('chai').expect;
 
-const { regexp } = require('../../../src/util');
+const { regexp } = require('../../../src/shared');
 
-describe('[util/regexp] - roleName', () => {
+describe('[shared/regexp] - roleName', () => {
 
     it('Should return false on invalid role names', () => {
 
@@ -32,7 +32,7 @@ describe('[util/regexp] - roleName', () => {
 
 });
 
-describe('[util/regexp] - singleName', () => {
+describe('[shared/regexp] - singleName', () => {
     
     it('Should return false on invalid single names', () => {
 
@@ -61,7 +61,7 @@ describe('[util/regexp] - singleName', () => {
 
 });
 
-describe('[util/regexp] - fullName', () => {
+describe('[shared/regexp] - fullName', () => {
     
     it('Should return false on invalid full names', () => {
 
@@ -91,7 +91,7 @@ describe('[util/regexp] - fullName', () => {
 
 });
 
-describe('[util/regexp] - username', () => {
+describe('[shared/regexp] - username', () => {
     
     it('Should return false on invalid usernames', () => {
 
@@ -121,7 +121,7 @@ describe('[util/regexp] - username', () => {
 
 });
 
-describe('[util/regexp] - mimeType', () => {
+describe('[shared/regexp] - mimeType', () => {
     
     it('Should return false on invalid mimetypes', () => {
 
@@ -151,7 +151,7 @@ describe('[util/regexp] - mimeType', () => {
 
 });
 
-describe('[util/regexp] - filename', () => {
+describe('[shared/regexp] - filename', () => {
     
     it('Should return false on invalid filenames', () => {
 
@@ -182,7 +182,7 @@ describe('[util/regexp] - filename', () => {
 
 });
 
-describe('[util/regexp] - strongPassword', () => {
+describe('[shared/regexp] - strongPassword', () => {
     
     it('Should return false on invalid strong passwords', () => {
 
@@ -213,7 +213,7 @@ describe('[util/regexp] - strongPassword', () => {
 
 });
 
-describe('[util/regexp] - fileKeyname', () => {
+describe('[shared/regexp] - fileKeyname', () => {
     
     it('Should return false on invalid file keynames', () => {
 
@@ -241,7 +241,7 @@ describe('[util/regexp] - fileKeyname', () => {
 
 });
 
-describe('[util/regexp] - imageMimetype', () => {
+describe('[shared/regexp] - imageMimetype', () => {
     
     it('Should return false on invalid image mimetypes', () => {
 
@@ -268,7 +268,7 @@ describe('[util/regexp] - imageMimetype', () => {
 
 });
 
-describe('[util/regexp] - imageExtension', () => {
+describe('[shared/regexp] - imageExtension', () => {
     
     it('Should return false on invalid image extensions', () => {
 

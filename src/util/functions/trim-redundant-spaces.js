@@ -1,5 +1,5 @@
-const { trimCornerSpaces, reduceMiddleSpaces } = require('../regexp');
+const { regexp } = require('../../shared');
 
-const trimRedundantSpaces = string => string.replace(trimCornerSpaces, '').replace(reduceMiddleSpaces, ' ');
+const trimRedundantSpaces = string => string.replace(regexp.trimCornerSpaces, '').replace(regexp.reduceMiddleSpaces, ' ');
 
 module.exports = trimRedundantSpaces;

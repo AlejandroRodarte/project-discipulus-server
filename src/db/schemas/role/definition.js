@@ -1,4 +1,4 @@
-const regexp = require('../../../util/regexp');
+const { regexp } = require('../../../shared');
 
 const roleDefinition = {
     name: {

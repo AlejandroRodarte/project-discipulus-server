@@ -1,5 +1,9 @@
 const db = require('./db');
+const regexp = require('./regexp');
+const roles = require('./roles');
 
 module.exports = {
-    db
+    db,
+    regexp,
+    roles
 };

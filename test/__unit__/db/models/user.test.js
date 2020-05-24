@@ -254,7 +254,7 @@ describe('[db/models/user] - statics.findByIdAndValidateRole', () => {
 
         userFindOneStub = sinon.stub(db.models.User, 'findOne').resolves(null);
 
-        await expect(db.models.User.findByIdAndValidateRole(userId, util.roles.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, notFoundErrorMessage);
+        await expect(db.models.User.findByIdAndValidateRole(userId, shared.roles.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, notFoundErrorMessage);
 
         sinon.assert.calledOnceWithExactly(userFindOneStub, {
             _id: userId,
@@ -268,9 +268,9 @@ describe('[db/models/user] - statics.findByIdAndValidateRole', () => {
         userFindOneStub = sinon.stub(db.models.User, 'findOne').resolves(user);
         userHasRoleStub = sinon.stub(user, 'hasRole').resolves(false);
 
-        await expect(db.models.User.findByIdAndValidateRole(userId, util.roles.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, invalidRoleErrorMessage);
+        await expect(db.models.User.findByIdAndValidateRole(userId, shared.roles.ROLE_PARENT, errorMessages)).to.eventually.be.rejectedWith(Error, invalidRoleErrorMessage);
 
-        sinon.assert.calledOnceWithExactly(userHasRoleStub, util.roles.ROLE_PARENT);
+        sinon.assert.calledOnceWithExactly(userHasRoleStub, shared.roles.ROLE_PARENT);
 
     });
 
@@ -279,7 +279,7 @@ describe('[db/models/user] - statics.findByIdAndValidateRole', () => {
         userFindOneStub = sinon.stub(db.models.User, 'findOne').resolves(user);
         userHasRoleStub = sinon.stub(user, 'hasRole').resolves(true);
 
-        await expect(db.models.User.findByIdAndValidateRole(userId, util.roles.ROLE_PARENT, errorMessages)).to.eventually.eql(user);
+        await expect(db.models.User.findByIdAndValidateRole(userId, shared.roles.ROLE_PARENT, errorMessages)).to.eventually.eql(user);
 
     });
 
@@ -320,8 +320,8 @@ describe('[db/models/user] - methods.getUserRoles', () => {
             {
                 _id: user._id,
                 roles: [
-                    util.roles.ROLE_ADMIN,
-                    util.roles.ROLE_PARENT
+                    shared.roles.ROLE_ADMIN,
+                    shared.roles.ROLE_PARENT
                 ]
             }
         ]);
@@ -332,8 +332,8 @@ describe('[db/models/user] - methods.getUserRoles', () => {
         
         const [roleOne, roleTwo] = roles;
 
-        expect(roleOne).to.equal(util.roles.ROLE_ADMIN);
-        expect(roleTwo).to.equal(util.roles.ROLE_PARENT);
+        expect(roleOne).to.equal(shared.roles.ROLE_ADMIN);
+        expect(roleTwo).to.equal(shared.roles.ROLE_PARENT);
 
     });
 
@@ -349,9 +349,9 @@ describe('[db/models/user] - methods.hasRole', () => {
 
     it('Should return true on user that has a role', async () => {
 
-        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([util.roles.ROLE_PARENT]);
+        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([shared.roles.ROLE_PARENT]);
 
-        const hasRole = await user.hasRole(util.roles.ROLE_PARENT);
+        const hasRole = await user.hasRole(shared.roles.ROLE_PARENT);
 
         sinon.assert.calledOnce(getUserRolesStub);
         expect(hasRole).to.equal(true);
@@ -360,9 +360,9 @@ describe('[db/models/user] - methods.hasRole', () => {
 
     it('Should return false on user that does not have a role', async () => {
 
-        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([util.roles.ROLE_TEACHER]);
+        getUserRolesStub = sinon.stub(user, 'getUserRoles').resolves([shared.roles.ROLE_TEACHER]);
 
-        const hasRole = await user.hasRole(util.roles.ROLE_STUDENT);
+        const hasRole = await user.hasRole(shared.roles.ROLE_STUDENT);
 
         sinon.assert.calledOnce(getUserRolesStub);
         expect(hasRole).to.equal(false);
@@ -414,7 +414,7 @@ describe('[db/models/user] - methods.saveAvatar', () => {
         await expect(user.saveAvatar(avatarDoc, buffer)).to.eventually.be.rejectedWith(Error);
 
         sinon.assert.calledOnceWithExactly(createMultipartObjectStub, api.storage.config.bucketNames[shared.db.names.user.modelName], sinon.match({
-            keyname: sinon.match(util.regexp.fileKeyname),
+            keyname: sinon.match(shared.regexp.fileKeyname),
             buffer,
             size: buffer.length,
             mimetype: avatarDoc.mimetype

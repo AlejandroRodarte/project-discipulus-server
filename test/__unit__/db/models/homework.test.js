@@ -17,7 +17,7 @@ const homeworkDoc = {
     class: new Types.ObjectId(),
     title: 'Hard stuff',
     description: 'You will suffer',
-    type: util.models.class.gradeType.NO_SECTIONS,
+    type: shared.db.models.class.gradeType.NO_SECTIONS,
     grade: 10
 };
 
@@ -126,8 +126,8 @@ describe('[db/models/homework] - invalid type', () => {
 describe('[db/models/homework] - valid type', () => {
 
     it('Should set previous type properly', () => {
-        homework.type = util.models.class.gradeType.SECTIONS;
-        expect(homework._previousType).to.equal(util.models.class.gradeType.NO_SECTIONS);
+        homework.type = shared.db.models.class.gradeType.SECTIONS;
+        expect(homework._previousType).to.equal(shared.db.models.class.gradeType.NO_SECTIONS);
     });
 
 });

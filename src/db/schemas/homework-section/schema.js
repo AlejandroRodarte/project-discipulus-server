@@ -46,7 +46,7 @@ homeworkSectionSchema.methods.saveAndAddStudents = models.common.generateSaveAnd
         }
     },
     validate: async (homework) => new Promise((resolve, reject) => {
-        if (homework.type !== models.class.gradeType.SECTIONS) {
+        if (homework.type !== db.models.class.gradeType.SECTIONS) {
             reject(new Error(errors.modelErrorMessages.invalidHomeworkType));
         }
         resolve();

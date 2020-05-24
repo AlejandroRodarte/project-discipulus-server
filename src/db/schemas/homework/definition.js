@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 
-const { functions, models } = require('../../../util');
+const { functions } = require('../../../util');
 const { db } = require('../../../shared');
 
 const { schemas } = require('../shared');
@@ -47,7 +47,7 @@ const homeworkDefinition = {
     type: {
         type: String,
         enum: {
-            values: [models.class.gradeType.SECTIONS, models.class.gradeType.NO_SECTIONS],
+            values: [db.models.class.gradeType.SECTIONS, db.models.class.gradeType.NO_SECTIONS],
             message: 'Provide a valid homework type'
         },
         set: function(type) {

@@ -1,4 +1,5 @@
-const { regexp, filter } = require('../../../../util');
+const { filter } = require('../../../../util');
+const { regexp } = require('../../../../shared');
 
 const sharedFileDefinition = {
 

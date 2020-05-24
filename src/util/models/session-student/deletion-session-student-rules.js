@@ -1,19 +1,17 @@
 const { db } = require('../../../shared');
 
-const deleteModes = require('../../delete-modes');
-
 const deletionSessionRules = [
     {
         modelName: db.names.sessionStudentFile.modelName,
         fieldName: 'sessionStudent',
         deleteFiles: true,
-        deleteMode: deleteModes.DELETE_MANY
+        deleteMode: db.deleteModes.DELETE_MANY
     },
     {
         modelName: db.names.sessionStudentNote.modelName,
         fieldName: 'sessionStudent',
         deleteFiles: false,
-        deleteMode: deleteModes.DELETE_MANY
+        deleteMode: db.deleteModes.DELETE_MANY
     }
 ];
 

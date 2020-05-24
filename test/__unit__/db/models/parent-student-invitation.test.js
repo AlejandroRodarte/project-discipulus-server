@@ -6,6 +6,7 @@ const chaiAsPromised = require('chai-as-promised');
 const db = require('../../../../src/db');
 const util = require('../../../../src/util');
 const fixtures = require('../../../__fixtures__');
+const shared = require('../../../../src/shared');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -54,7 +55,7 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
         
         await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
     
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentStudentInvitation.student, util.roles.ROLE_STUDENT, {
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentStudentInvitation.student, shared.roles.ROLE_STUDENT, {
             notFoundErrorMessage: util.errors.modelErrorMessages.studentNotFound,
             invalidRoleErrorMessage: util.errors.modelErrorMessages.notAStudent
         });
@@ -70,7 +71,7 @@ describe('[db/models/parent-student-invitation] - methods.checkAndSave', () => {
 
         await expect(parentStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledWith(userFindByIdAndValidateRole.secondCall, parentStudentInvitation.parent, util.roles.ROLE_PARENT, {
+        sinon.assert.calledWith(userFindByIdAndValidateRole.secondCall, parentStudentInvitation.parent, shared.roles.ROLE_PARENT, {
             notFoundErrorMessage: util.errors.modelErrorMessages.parentNotFound,
             invalidRoleErrorMessage: util.errors.modelErrorMessages.notAParent
         });

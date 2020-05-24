@@ -1,5 +1,5 @@
 const { storage } = require('../api');
-const { deleteModes } = require('../util');
+const { db } = require('../shared');
 
 const applyDeletionRules = async (doc, rules) => {
 
@@ -21,7 +21,7 @@ const applyDeletionRules = async (doc, rules) => {
 
             switch (deleteMode) {
 
-                case deleteModes.DELETE_MANY:
+                case db.deleteModes.DELETE_MANY:
 
                     await doc.model(modelName).deleteMany({
                         [fieldName]: doc._id
@@ -29,7 +29,7 @@ const applyDeletionRules = async (doc, rules) => {
 
                     break;
 
-                case deleteModes.REMOVE:
+                case db.deleteModes.REMOVE:
 
                     const docs = await doc.model(modelName).find({
                         [fieldName]: doc._id

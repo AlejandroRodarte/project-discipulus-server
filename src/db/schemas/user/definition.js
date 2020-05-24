@@ -1,6 +1,7 @@
 const validator = require('validator').default;
 
-const { regexp, filter, functions } = require('../../../util');
+const { filter, functions } = require('../../../util');
+const { regexp } = require('../../../shared');
 
 const { schemas } = require('../shared');
 

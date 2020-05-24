@@ -109,7 +109,7 @@ describe('[db/models/class-student] - methods.checkUser', () => {
         userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').rejects();
         await expect(classStudent.checkUser()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, classStudent.user, util.roles.ROLE_STUDENT, {
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, classStudent.user, shared.roles.ROLE_STUDENT, {
             notFoundErrorMessage: util.errors.modelErrorMessages.studentNotFound,
             invalidRoleErrorMessage: util.errors.modelErrorMessages.notAStudent
         });

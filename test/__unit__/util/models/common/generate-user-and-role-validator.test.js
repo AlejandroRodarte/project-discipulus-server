@@ -5,6 +5,7 @@ const sinon = require('sinon');
 const db = require('../../../../../src/db');
 const util = require('../../../../../src/util');
 const fixtures = require('../../../../__fixtures__');
+const shared = require('../../../../../src/shared');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -32,11 +33,11 @@ describe('[util/models/common/generate-user-and-role-validator] - general flow',
 
         userFindByIdAndValidateRole = sinon.stub(db.models.User, 'findByIdAndValidateRole').rejects();
 
-        const validatorFn = util.models.common.generateUserAndRoleValidator(util.roles.ROLE_PARENT);
+        const validatorFn = util.models.common.generateUserAndRoleValidator(shared.roles.ROLE_PARENT);
 
         await expect(validatorFn(parentFile)).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentFile.user, util.roles.ROLE_PARENT, {
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentFile.user, shared.roles.ROLE_PARENT, {
             notFoundErrorMessage: util.errors.modelErrorMessages.userNotFoundOrDisabled,
             invalidRoleErrorMessage: util.errors.modelErrorMessages.fileStorePermissionDenied
         });
@@ -47,7 +48,7 @@ describe('[util/models/common/generate-user-and-role-validator] - general flow',
 
         userFindByIdAndValidateRole = sinon.stub(db.models.User, 'findByIdAndValidateRole').resolves(user);
 
-        const validatorFn = util.models.common.generateUserAndRoleValidator(util.roles.ROLE_PARENT);
+        const validatorFn = util.models.common.generateUserAndRoleValidator(shared.roles.ROLE_PARENT);
         await expect(validatorFn(parentFile)).to.eventually.be.fulfilled;
 
     });

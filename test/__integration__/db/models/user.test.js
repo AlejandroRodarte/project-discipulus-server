@@ -136,8 +136,8 @@ describe('[db/models/user] - baseUserRole context', () => {
 
             const [roleOne, roleTwo] = roles;
 
-            expect(roleOne).to.equal(util.roles.ROLE_ADMIN);
-            expect(roleTwo).to.equal(util.roles.ROLE_PARENT);
+            expect(roleOne).to.equal(shared.roles.ROLE_ADMIN);
+            expect(roleTwo).to.equal(shared.roles.ROLE_PARENT);
 
         });
 
@@ -162,7 +162,7 @@ describe('[db/models/user] - baseUserRole context', () => {
         it('Should return true on user that has a role', async () => {
 
             const user = await db.models.User.findOne({ _id: userOneId });
-            const hasRole = await user.hasRole(util.roles.ROLE_ADMIN);
+            const hasRole = await user.hasRole(shared.roles.ROLE_ADMIN);
 
             expect(hasRole).to.equal(true);
 
@@ -171,7 +171,7 @@ describe('[db/models/user] - baseUserRole context', () => {
         it('Should return false on user that does not have a role', async () => {
 
             const user = await db.models.User.findOne({ _id: userTwoId });
-            const hasRole = await user.hasRole(util.roles.ROLE_STUDENT);
+            const hasRole = await user.hasRole(shared.roles.ROLE_STUDENT);
 
             expect(hasRole).to.equal(false);
 
@@ -181,7 +181,7 @@ describe('[db/models/user] - baseUserRole context', () => {
 
     describe('[db/models/user] - statics.findByIdAndValidateRole', () => {
 
-        const role = util.roles.ROLE_PARENT;
+        const role = shared.roles.ROLE_PARENT;
 
         const errors = {
             notFoundErrorMessage: 'User not found',

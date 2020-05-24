@@ -7,6 +7,7 @@ const sinon = require('sinon');
 const db = require('../../../../src/db');
 const util = require('../../../../src/util');
 const fixtures = require('../../../__fixtures__');
+const shared = require('../../../../src/shared');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -42,7 +43,7 @@ describe('[db/models/parent-note] - methods.checkAndSave', () => {
 
         await expect(parentNote.checkAndSave()).to.eventually.eql(parentNote);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentNote.user, util.roles.ROLE_PARENT, {
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRole, parentNote.user, shared.roles.ROLE_PARENT, {
             notFoundErrorMessage: util.errors.modelErrorMessages.userNotFoundOrDisabled,
             invalidRoleErrorMessage: util.errors.modelErrorMessages.fileStorePermissionDenied
         });

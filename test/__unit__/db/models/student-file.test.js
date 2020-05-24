@@ -42,7 +42,7 @@ describe('[db/models/student-file] - methods.saveFileAndDoc', () => {
 
         await expect(studentFile.saveFileAndDoc(buffer)).to.eventually.eql(studentFile);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, studentFile.user, util.roles.ROLE_STUDENT, {
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, studentFile.user, shared.roles.ROLE_STUDENT, {
             notFoundErrorMessage: util.errors.modelErrorMessages.userNotFoundOrDisabled,
             invalidRoleErrorMessage: util.errors.modelErrorMessages.fileStorePermissionDenied
         });

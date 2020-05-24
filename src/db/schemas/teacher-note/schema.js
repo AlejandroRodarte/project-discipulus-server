@@ -1,7 +1,7 @@
 const { Schema } = require('mongoose');
 
-const { db } = require('../../../shared');
-const { roles, models } = require('../../../util');
+const { db, roles } = require('../../../shared');
+const { models } = require('../../../util');
 
 const teacherNoteDefinition = require('./definition');
 

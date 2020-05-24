@@ -1,8 +1,6 @@
 const { Types } = require('mongoose');
 
-const { db } = require('../../../../src/shared');
-
-const { roles } = require('../../../../src/util');
+const { db, roles } = require('../../../../src/shared');
 
 const persisted = {
 

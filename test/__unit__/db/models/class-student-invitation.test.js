@@ -7,6 +7,7 @@ const sinon = require('sinon');
 const db = require('../../../../src/db');
 const util = require('../../../../src/util');
 const fixtures = require('../../../__fixtures__');
+const shared = require('../../../../src/shared');
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -79,7 +80,7 @@ describe('[db/models/class-student-invitation] - methods.checkAndSave', () => {
         userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').rejects();
         await expect(classStudentInvitation.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, classStudentInvitation.user, util.roles.ROLE_STUDENT, {
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, classStudentInvitation.user, shared.roles.ROLE_STUDENT, {
             notFoundErrorMessage: util.errors.modelErrorMessages.studentNotFound,
             invalidRoleErrorMessage: util.errors.modelErrorMessages.notAStudent
         });

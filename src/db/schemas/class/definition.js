@@ -1,7 +1,7 @@
 const { Schema } = require('mongoose');
 
-const { functions, regexp } = require('../../../util');
-const { db } = require('../../../shared');
+const { functions } = require('../../../util');
+const { db, regexp } = require('../../../shared');
 
 const { schemas } = require('../shared');
 

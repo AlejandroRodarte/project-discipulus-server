@@ -1,8 +1,8 @@
 const { Schema } = require('mongoose');
 
-const { roles, errors, models } = require('../../../util');
+const { errors, models } = require('../../../util');
 const { storage } = require('../../../api');
-const { db } = require('../../../shared');
+const { db, roles } = require('../../../shared');
 
 const classDefinition = require('./definition');
 const applyDeletionRules = require('../../apply-deletion-rules');

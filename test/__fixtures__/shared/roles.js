@@ -1,6 +1,6 @@
 const { Types } = require('mongoose');
 
-const { roles } = require('../../../src/util');
+const { roles } = require('../../../src/shared');
 
 const roleDocs = [
     {

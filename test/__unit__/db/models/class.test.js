@@ -237,7 +237,7 @@ describe('[db/models/class] - methods.checkAndSave', () => {
         userFindByIdAndValidateRoleStub = sinon.stub(db.models.User, 'findByIdAndValidateRole').rejects();
         await expect(clazz.checkAndSave()).to.eventually.be.rejectedWith(Error);
 
-        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, clazz.user, util.roles.ROLE_TEACHER, {
+        sinon.assert.calledOnceWithExactly(userFindByIdAndValidateRoleStub, clazz.user, shared.roles.ROLE_TEACHER, {
             notFoundErrorMessage: util.errors.modelErrorMessages.teacherNotFound,
             invalidRoleErrorMessage: util.errors.modelErrorMessages.notATeacher
         });
@@ -310,7 +310,7 @@ describe('[db/models/class] - methods.saveAvatar', () => {
         expect(clazz.avatar).to.be.undefined;
 
         sinon.assert.calledOnceWithExactly(createMultipartObjectStub, api.storage.config.bucketNames[shared.db.names.class.modelName], {
-            keyname: sinon.match(util.regexp.fileKeyname),
+            keyname: sinon.match(shared.regexp.fileKeyname),
             buffer,
             size: buffer.length,
             mimetype: pngImage.mimetype

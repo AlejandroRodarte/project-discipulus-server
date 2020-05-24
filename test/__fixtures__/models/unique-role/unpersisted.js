@@ -1,6 +1,4 @@
-const { roles } = require('../../../../src/util');
-
-const { db } = require('../../../../src/shared');
+const { db, roles } = require('../../../../src/shared');
 
 const persisted = require('./persisted');
 

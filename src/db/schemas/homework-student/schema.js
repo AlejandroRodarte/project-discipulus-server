@@ -49,7 +49,7 @@ homeworkStudentSchema.pre('save', async function() {
             throw new Error(errors.modelErrorMessages.homeworkNotFound);
         }
 
-        if (homework.type === models.class.gradeType.SECTIONS) {
+        if (homework.type === db.models.class.gradeType.SECTIONS) {
             throw new Error(errors.modelErrorMessages.homeworkSectionMisjudgement);
         }
 
@@ -108,10 +108,10 @@ homeworkStudentSchema.methods.getGrade = async function() {
 
     switch (homework.type) {
         
-        case models.class.gradeType.NO_SECTIONS:
+        case db.models.class.gradeType.NO_SECTIONS:
             return homeworkStudent.directGrade;
 
-        case models.class.gradeType.SECTIONS:
+        case db.models.class.gradeType.SECTIONS:
 
             try {
                 const data = await homeworkStudent.getSectionedGrades();

@@ -45,8 +45,8 @@ homeworkSchema.pre('save', async function() {
     if (
         homework.isModified('type') && 
         (
-            homework._previousType === models.class.gradeType.NO_SECTIONS && 
-            homework.type === models.class.gradeType.NO_SECTIONS
+            homework._previousType === db.models.class.gradeType.NO_SECTIONS && 
+            homework.type === db.models.class.gradeType.NO_SECTIONS
         )
     ) {
 
