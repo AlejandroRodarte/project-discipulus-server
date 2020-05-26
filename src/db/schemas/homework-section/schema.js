@@ -45,12 +45,11 @@ homeworkSectionSchema.methods.saveAndAddStudents = models.common.generateSaveAnd
             ref2: 'homeworkStudent'
         }
     },
-    validate: async (homework) => new Promise((resolve, reject) => {
+    validate: async (homework) => {
         if (homework.type !== db.models.class.gradeType.SECTIONS) {
-            reject(new Error(errors.modelErrorMessages.invalidHomeworkType));
+            throw new Error(errors.modelErrorMessages.invalidHomeworkType);
         }
-        resolve();
-    })
+    }
 });
 
 module.exports = homeworkSectionSchema;
