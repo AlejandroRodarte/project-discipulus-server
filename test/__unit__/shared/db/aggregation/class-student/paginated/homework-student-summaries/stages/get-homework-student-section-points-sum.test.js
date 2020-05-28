@@ -4,7 +4,7 @@ const { aggregation, names } = require('../../../../../../../../../src/shared/db
 
 describe('[shared/db/aggregation/class-student/paginated/homework-student-summaries/stages/get-homework-student-section-points-sum] - general flow', () => {
 
-    it('$let and $match dynamic expressions should be correct when restricted flag is set to true', () => {
+    it('$let and $match dynamic expressions should be correct when restricted flag is set to true (get sections from published homeworks)', () => {
 
         const [firstStage] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.stages.getHomeworkStudentSectionPointsSum(true);
         const { from: fromExpr, let: letExpr, pipeline } = firstStage.$lookup;
@@ -36,7 +36,7 @@ describe('[shared/db/aggregation/class-student/paginated/homework-student-summar
 
     });
 
-    it('$let and $match dynamic expressions should be correct when restricted flag is set to false', () => {
+    it('$let and $match dynamic expressions should be correct when restricted flag is set to false (get all homework sections)', () => {
 
         const [firstStage] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.stages.getHomeworkStudentSectionPointsSum(false);
         const { from: fromExpr, let: letExpr, pipeline } = firstStage.$lookup;

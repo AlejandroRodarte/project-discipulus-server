@@ -68,10 +68,15 @@ const getPipeline = (
     // a middle pipeline (to join homework-related data) is required if...
     // 1. a sort mapper exists (homework.title -> homeworkData.title)
     // 2. homework matches exist (homework.title or homework.type)
-    const requiredMiddlePipeline = requiresSortMapper || requiresHomeworkMatches;
+    const requiresMiddlePipeline = requiresSortMapper || requiresHomeworkMatches;
 
     // get pipelines for aggregatePipeline
-    const [middlePipeline, sortPipeline, docsPipeline] = getPipelinesForPagination(restricted, requiredMiddlePipeline, homeworkMatch, rule);
+    const [middlePipeline, sortPipeline, docsPipeline] = getPipelinesForPagination({
+        restricted,
+        requiresMiddlePipeline,
+        homeworkMatch,
+        rule
+    });
 
     const pipeline = [
         {

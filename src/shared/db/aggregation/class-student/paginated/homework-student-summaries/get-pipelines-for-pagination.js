@@ -2,12 +2,12 @@ const { homework } = require('../../../../names');
 const { getHomeworkSectionPointsSum, getHomeworkStudentProject, getHomeworkStudentSectionPointsSum } = require('./stages');
 const { rules } = require('./values');
 
-const getPipelinesForPagination = (
+const getPipelinesForPagination = ({
     restricted = true, 
     requiresMiddlePipeline = false, 
     homeworkMatch = {}, 
-    sortBy = rules.types.NONE
-) => {
+    rule = rules.types.NONE
+}) => {
 
     // get specific pipelines for this query
     const homeworkStudentSectionPointsSum = getHomeworkStudentSectionPointsSum(restricted);
@@ -52,7 +52,7 @@ const getPipelinesForPagination = (
 
     }
 
-    switch (sortBy) {
+    switch (rule) {
 
         case rules.types.POINTS_SUM:
             sortPipeline.push(
