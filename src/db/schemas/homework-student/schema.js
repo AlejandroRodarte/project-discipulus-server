@@ -99,4 +99,40 @@ homeworkStudentSchema.methods.checkAndSave = models.common.generateClassChildChe
     }
 });
 
+homeworkStudentSchema.methods.getDetailsForStudent = async function() {
+
+    const homeworkStudent = this;
+    const HomeworkStudent = homeworkStudent.constructor;
+
+    const pipeline = db.aggregation.homeworkStudentPipelines.getDetailsForStudent(homeworkStudent._id);
+    const docs = await HomeworkStudent.aggregate(pipeline);
+
+    if (!docs.length) {
+        throw new Error(errors.modelErrorMessages.homeworkStudentNotFound);
+    }
+
+    const [details] = docs;
+
+    return details;
+
+};
+
+homeworkStudentSchema.methods.getDetailsForTeacher = async function() {
+
+    const homeworkStudent = this;
+    const HomeworkStudent = homeworkStudent.constructor;
+
+    const pipeline = db.aggregation.homeworkStudentPipelines.getDetailsForTeacher(homeworkStudent._id);
+    const docs = await HomeworkStudent.aggregate(pipeline);
+
+    if (!docs.length) {
+        throw new Error(errors.modelErrorMessages.homeworkStudentNotFound);
+    }
+
+    const [details] = docs;
+
+    return details;
+
+};
+
 module.exports = homeworkStudentSchema;

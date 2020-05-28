@@ -152,4 +152,30 @@ classStudentSchema.methods.isStudentEnabled = async function() {
 
 };
 
+classStudentSchema.methods.getPaginatedHomeworkStudentSummaries = async function(restricted, params) {
+
+    const classStudent = this;
+    const ClassStudent = classStudent.constructor;
+
+    const pipeline = 
+        db.aggregation
+            .classStudentPipelines
+            .paginated
+            .homeworkStudentSummaries
+            .getPipeline(classStudent._id, restricted, params);
+
+    console.log(JSON.stringify(pipeline, undefined, 2));
+    
+    const docs = await ClassStudent.aggregate(pipeline);
+
+    if (!docs.length) {
+        throw new Error(errors.modelErrorMessages.classStudentNotFound);
+    }
+
+    const [uniqueClassStudent] = docs;
+
+    return uniqueClassStudent.homeworks;
+
+};
+
 module.exports = classStudentSchema;
