@@ -107,8 +107,10 @@ homeworkSchema.methods.getPaginatedHomeworkStudentSummaries = async function(par
     }
 
     const [uniqueHomework] = docs;
+    const { students } = uniqueHomework;
+    const [data] = students;
 
-    return uniqueHomework.students;
+    return data;
 
 };
 
