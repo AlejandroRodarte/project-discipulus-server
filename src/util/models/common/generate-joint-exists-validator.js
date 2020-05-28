@@ -21,8 +21,6 @@ const generalJointExistsValidator = ({ left, right }) => async function(doc) {
         throw new Error(right.errorMessage);
     }
 
-    return doc;
-
 };
 
 module.exports = generalJointExistsValidator;
