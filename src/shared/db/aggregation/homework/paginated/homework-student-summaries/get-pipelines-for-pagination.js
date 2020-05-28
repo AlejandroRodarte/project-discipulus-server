@@ -13,16 +13,10 @@ const getPipelinesForPagination = (
     const sortPipeline = [];
     const docsPipeline = [];
 
-    let isUserInfoFetched = false;
-
     if (queryRules.match === rules.types.USER || queryRules.sort === rules.types.USER) {
-
         middlePipeline.push(
             ...getUserInfo(userMatch)
         );
-
-        isUserInfoFetched = true;
-
     } else {
         docsPipeline.push(
             ...getUserInfo()
