@@ -14,7 +14,7 @@ const getPipelinesForPagination = (
     const homeworkSectionPointsSum = getHomeworkSectionPointsSum();
     const homeworkStudentProject = getHomeworkStudentProject(restricted);
 
-    const nestedPipeline = [];
+    const middlePipeline = [];
     const sortPipeline = [];
     const docsPipeline = [];
 
@@ -22,7 +22,7 @@ const getPipelinesForPagination = (
 
         // if a middle pipeline for homework-related data is required, push it into the nested pipeline
         // along with its corresponding matches
-        nestedPipeline.push(
+        middlePipeline.push(
             {
                 $lookup: {
                     from: homework.collectionName,
@@ -94,7 +94,7 @@ const getPipelinesForPagination = (
 
     }
 
-    return [nestedPipeline, sortPipeline, docsPipeline];
+    return [middlePipeline, sortPipeline, docsPipeline];
 
 };
 

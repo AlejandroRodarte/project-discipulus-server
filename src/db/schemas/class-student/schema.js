@@ -163,8 +163,6 @@ classStudentSchema.methods.getPaginatedHomeworkStudentSummaries = async function
             .paginated
             .homeworkStudentSummaries
             .getPipeline(classStudent._id, restricted, params);
-
-    console.log(JSON.stringify(pipeline, undefined, 2));
     
     const docs = await ClassStudent.aggregate(pipeline);
 

@@ -71,7 +71,7 @@ const getPipeline = (
     const requiredMiddlePipeline = requiresSortMapper || requiresHomeworkMatches;
 
     // get pipelines for aggregatePipeline
-    const [nestedPipeline, sortPipeline, docsPipeline] = getPipelinesForPagination(restricted, requiredMiddlePipeline, homeworkMatch, rule);
+    const [middlePipeline, sortPipeline, docsPipeline] = getPipelinesForPagination(restricted, requiredMiddlePipeline, homeworkMatch, rule);
 
     const pipeline = [
         {
@@ -96,7 +96,7 @@ const getPipeline = (
                         },
                         middle: {
                             include: true,
-                            pipeline: nestedPipeline
+                            pipeline: middlePipeline
                         },
                         sort: {
                             baseField: !hasSortRule,
