@@ -1,7 +1,7 @@
 const { homeworkStudent } = require('../../../../names');
 const { aggregatePaginate } = require('../../../shared');
 
-const getPipelinesForPagination = require('./get-pipelines-for-pagination');
+const helpers = require('./helpers');
 const values = require('./values');
 
 const getPipeline = (
@@ -71,7 +71,7 @@ const getPipeline = (
     const requiresMiddlePipeline = requiresSortMapper || requiresHomeworkMatches;
 
     // get pipelines for aggregatePipeline
-    const [middlePipeline, sortPipeline, docsPipeline] = getPipelinesForPagination({
+    const [middlePipeline, sortPipeline, docsPipeline] = helpers.getPipelinesForPagination({
         restricted,
         requiresMiddlePipeline,
         homeworkMatch,

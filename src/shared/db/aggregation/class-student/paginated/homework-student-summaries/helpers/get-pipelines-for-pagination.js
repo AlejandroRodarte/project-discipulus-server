@@ -1,6 +1,6 @@
-const { homework } = require('../../../../names');
-const { getHomeworkSectionPointsSum, getHomeworkStudentProject, getHomeworkStudentSectionPointsSum } = require('./stages');
-const { rules } = require('./values');
+const { homework } = require('../../../../../names');
+const { getHomeworkSectionPointsSum, getHomeworkStudentProject, getHomeworkStudentSectionPointsSum } = require('../stages');
+const { rules } = require('../values');
 
 const getPipelinesForPagination = ({
     restricted = true, 

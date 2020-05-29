@@ -1,15 +1,14 @@
-const { Types } = require('mongoose');
 const expect = require('chai').expect;
 
-const { aggregation, names } = require('../../../../../../../../src/shared/db');
+const { aggregation, names } = require('../../../../../../../../../src/shared/db');
 
-describe('[shared/db/aggregation/class-student/paginated/homework-student-summaries/get-pipelines-for-pagination] - general flow', () => {
+describe('[shared/db/aggregation/class-student/paginated/homework-student-summaries/helpers/get-pipelines-for-pagination] - general flow', () => {
 
     const rules = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.values.rules;
 
     it('Include homework $lookup if middle pipeline is required along with its match object', () => {
 
-        const [middlePipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.getPipelinesForPagination({
+        const [middlePipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.helpers.getPipelinesForPagination({
             requiresMiddlePipeline: true,
             homeworkMatch: {
                 published: true
@@ -27,7 +26,7 @@ describe('[shared/db/aggregation/class-student/paginated/homework-student-summar
 
     it('Produce correct pipelines on rules.types.POINTS_SUM scenario', () => {
 
-        const [, sortPipeline, docsPipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.getPipelinesForPagination({
+        const [, sortPipeline, docsPipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.helpers.getPipelinesForPagination({
             rule: rules.types.POINTS_SUM
         });
 
@@ -41,7 +40,7 @@ describe('[shared/db/aggregation/class-student/paginated/homework-student-summar
 
     it('Produce correct pipelines on rules.types.HOMEWORK_POINTS_SUM scenario', () => {
 
-        const [, sortPipeline, docsPipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.getPipelinesForPagination({
+        const [, sortPipeline, docsPipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.helpers.getPipelinesForPagination({
             rule: rules.types.HOMEWORK_POINTS_SUM
         });
 
@@ -55,7 +54,7 @@ describe('[shared/db/aggregation/class-student/paginated/homework-student-summar
 
     it('Produce correct pipelines on rules.types.GRADE scenario', () => {
 
-        const [, sortPipeline, docsPipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.getPipelinesForPagination({
+        const [, sortPipeline, docsPipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.helpers.getPipelinesForPagination({
             rule: rules.types.GRADE
         });
 
@@ -70,7 +69,7 @@ describe('[shared/db/aggregation/class-student/paginated/homework-student-summar
 
     it('Produce correct pipelines on rules.types.NONE scenario', () => {
 
-        const [, sortPipeline, docsPipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.getPipelinesForPagination({
+        const [, sortPipeline, docsPipeline] = aggregation.classStudentPipelines.paginated.homeworkStudentSummaries.helpers.getPipelinesForPagination({
             rule: rules.types.NONE
         });
 
