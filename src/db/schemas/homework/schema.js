@@ -88,6 +88,28 @@ homeworkSchema.methods.saveAndAddStudents = models.common.generateSaveAndAddStud
     }
 });
 
+homeworkSchema.methods.getDetails = async function() {
+
+    const homework = this;
+    const Homework = homework.constructor;
+
+    const pipeline =
+        db.aggregation
+            .homeworkPipelines
+            .getDetails(homework._id);
+
+    const docs = await Homework.aggregate(pipeline);
+
+    if (!docs.length) {
+        throw new Error(errors.modelErrorMessages.homeworkNotFound);
+    }
+
+    const [uniqueHomework] = docs;
+
+    return uniqueHomework;
+
+};
+
 homeworkSchema.methods.getPaginatedHomeworkStudentSummaries = async function(params) {
 
     const homework = this;
