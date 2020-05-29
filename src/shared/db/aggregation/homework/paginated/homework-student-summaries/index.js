@@ -1,11 +1,11 @@
 const stages = require('./stages');
 const values = require('./values');
+const helpers = require('./helpers');
 const getPipeline = require('./get-pipeline');
-const getPipelinesForPagination = require('./get-pipelines-for-pagination');
 
 module.exports = {
     stages,
     values,
-    getPipeline,
-    getPipelinesForPagination
+    helpers,
+    getPipeline
 };

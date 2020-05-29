@@ -1,5 +1,5 @@
-const { getUserInfo, homeworkStudentProject, homeworkStudentSectionPointsSum } = require('./stages');
-const { rules } = require('./values');
+const { getUserInfo, homeworkStudentProject, homeworkStudentSectionPointsSum } = require('../stages');
+const { rules } = require('../values');
 
 const getPipelinesForPagination = (
     userMatch = {}, 

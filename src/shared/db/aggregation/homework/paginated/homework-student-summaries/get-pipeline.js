@@ -1,7 +1,7 @@
 const { homeworkSection, homeworkStudent } = require('../../../../names');
-const { aggregatePaginate } = require('../../../shared');
+const shared = require('../../../shared');
 
-const getPipelinesForPagination = require('./get-pipelines-for-pagination');
+const helpers = require('./helpers');
 const values = require('./values');
 
 const getPipeline = (
@@ -58,7 +58,7 @@ const getPipeline = (
     const hasSortRule = queryRules.sort !== values.rules.types.NONE;
     const hasSortMapper = values.sortMapper[field] !== undefined;
 
-    const [middlePipeline, sortPipeline, docsPipeline] = getPipelinesForPagination(userMatch, queryRules);
+    const [middlePipeline, sortPipeline, docsPipeline] = helpers.getPipelinesForPagination(userMatch, queryRules);
 
     const pipeline = [
         {
@@ -108,7 +108,7 @@ const getPipeline = (
                     sectionPoints: '$points.sum',
                     homeworkGrade: '$grade'
                 },
-                pipeline: aggregatePaginate(
+                pipeline: shared.aggregatePaginate(
                     {
                         match: {
                             $expr: {
