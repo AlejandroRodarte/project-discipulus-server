@@ -1,6 +1,6 @@
 const { homeworkStudent } = require('../../../../names');
-const { aggregatePaginate } = require('../../../shared');
 
+const shared = require('../../../shared');
 const helpers = require('./helpers');
 const values = require('./values');
 
@@ -88,7 +88,7 @@ const getPipeline = (
                 let: {
                     classStudentId: '$_id'
                 },
-                pipeline: aggregatePaginate(
+                pipeline: shared.aggregatePaginate(
                     {
                         match: {
                             $expr: {
