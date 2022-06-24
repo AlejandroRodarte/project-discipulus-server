@@ -41,7 +41,7 @@
     "dompurify": "^2.0.17",
     "express": "^4.17.1",
     "ibm-cos-sdk": "^1.6.1",
-    "jsdom": "^16.2.2",
+    "jsdom": "^16.5.0",
     "jsonwebtoken": "^8.5.1",
     "marked": "^4.0.10",
     "moment": "^2.29.2",
